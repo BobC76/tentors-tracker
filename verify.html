@@ -322,8 +322,8 @@ async function main() {
   }).addTo(map);
 
   // Add direction arrows at midpoints between consecutive waypoints.
-  for (let i = 0; i < waypoints.length - 1; i++) {
-    const a = waypoints[i], b = waypoints[i + 1];
+  for (let i = 0; i < wps.length - 1; i++) {
+    const a = wps[i], b = wps[i + 1];
     const midLat = (a.lat + b.lat) / 2, midLon = (a.lon + b.lon) / 2;
     const dLat = b.lat - a.lat, dLon = (b.lon - a.lon) * Math.cos(a.lat * Math.PI / 180);
     const bearing = Math.atan2(dLon, dLat) * 180 / Math.PI;

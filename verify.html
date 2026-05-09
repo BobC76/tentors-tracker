@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Ten Tors Route E — Tracker</title>
+  <title>Ten Tors Tracker</title>
   <link rel="stylesheet" href="vendor/leaflet.css" />
   <style>
     html, body, #map { height: 100%; margin: 0; }
@@ -39,29 +39,52 @@
     .pred .row .val { font-weight: 600; font-feature-settings: "tnum"; }
     .pred .camp .val { color: #c60; }
     .pred .eta .val { color: #06c; }
-    /* Mobile: pin to bottom, full-width edge-to-edge, larger text */
+    /* Mobile: pin to bottom, full-width edge-to-edge, 2x larger text */
     @media (max-width: 640px) {
-      body { font-size: 15px; }
+      body { font-size: 26px; }
       .panel {
         left: 0; right: 0; bottom: 0;
         max-width: none; border-radius: 12px 12px 0 0;
-        max-height: 55vh; padding: 14px 18px 18px;
+        max-height: 50vh; padding: 16px 20px 20px;
       }
-      .panel h2 { font-size: 17px; }
-      .meta { font-size: 13px; }
-      .team .nm { font-size: 17px; }
-      .team .wp { font-size: 14px; }
-      .stats { font-size: 13px; }
-      .pred { font-size: 15px; }
-      .pred .row { padding: 5px 0; }
+      .panel h2 { font-size: 30px; }
+      .meta { font-size: 22px; }
+      .team .nm { font-size: 30px; }
+      .team .wp { font-size: 24px; }
+      .stats { font-size: 22px; gap: 10px 16px; }
+      .pred { font-size: 26px; }
+      .pred .row { padding: 8px 0; }
+      /* Keep Leaflet controls above the panel and properly sized */
+      .leaflet-top.leaflet-left { top: 10px; left: 10px; }
+      .leaflet-control-zoom a,
+      .leaflet-top.leaflet-left button {
+        width: 44px !important; height: 44px !important;
+        font-size: 22px !important; line-height: 44px !important;
+        padding: 0 !important;
+      }
+      .tent-icon { font-size: 56px !important; }
+      .leaflet-tooltip.team-tt { font-size: 20px !important; padding: 6px 12px !important; }
     }
     .leaflet-tooltip.team-tt { background: rgba(0,0,0,0.75); color: white; border: 0; }
+    .tent-icon { line-height: 1; text-shadow: 0 0 3px white, 0 0 3px white, 0 0 3px white; }
+    .route-sel {
+      display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap;
+    }
+    .route-sel a {
+      padding: 4px 12px; border-radius: 6px; text-decoration: none;
+      background: #eee; color: #333; font-weight: 600; font-size: 14px;
+    }
+    .route-sel a.active { background: #0066cc; color: white; }
+    @media (max-width: 640px) {
+      .route-sel a { font-size: 22px; padding: 8px 18px; }
+    }
   </style>
 </head>
 <body>
 <div id="map"></div>
 <div class="panel">
-  <h2>Ten Tors Route E</h2>
+  <div class="route-sel" id="route-sel"></div>
+  <h2 id="title">Ten Tors Tracker</h2>
   <div class="meta" id="meta">loading…</div>
   <div id="teams"></div>
 </div>
@@ -94,11 +117,36 @@ function bisect(arr, target) {
   return Math.max(0, lo - 1);
 }
 
+// ---- route config ----
+const ROUTES = {
+  B: { label: "Route B", team: "Long Ashton", filter: /long\s*ashton/i, dist: 35 },
+  D: { label: "Route D", team: "Horizon",     filter: /horizon/i,      dist: 35 },
+  E: { label: "Route E", team: "Barracudas",  filter: /barr?acuda/i,   dist: 35 },
+};
+const params = new URLSearchParams(location.search);
+const ROUTE = (params.get("route") || "E").toUpperCase();
+const CFG = ROUTES[ROUTE] || ROUTES.E;
+
+// Build route selector links.
+{
+  const sel = document.getElementById("route-sel");
+  for (const [letter, r] of Object.entries(ROUTES)) {
+    const a = document.createElement("a");
+    a.href = `?route=${letter}`;
+    a.textContent = `${letter}: ${r.team}`;
+    if (letter === ROUTE) a.className = "active";
+    sel.appendChild(a);
+  }
+  document.getElementById("title").textContent = `Ten Tors ${CFG.label}`;
+  document.title = `Ten Tors ${CFG.label} — Tracker`;
+}
+
 // ---- main ----
 async function main() {
-  const wps = await (await fetch("waypoints.json")).json();
-  const routeGeo = await (await fetch("route.geojson")).json();
-  const imgInfo = await (await fetch("image-bounds.json")).json().catch(() => null);
+  const base = `routes/${ROUTE}/`;
+  const wps = await (await fetch(base + "waypoints.json")).json();
+  const routeGeo = await (await fetch(base + "route.geojson")).json();
+  const imgInfo = await (await fetch(base + "image-bounds.json")).json().catch(() => null);
 
   let routeCoords = routeGeo.features[0].geometry.coordinates.slice(); // [[lon,lat],...]
   // The polyline is a closed loop but its starting index is wherever the
@@ -120,31 +168,24 @@ async function main() {
   routeCoords = routeCoords.slice(rotIdx).concat(routeCoords.slice(0, rotIdx));
   routeCoords.push(routeCoords[0]); // close again
 
-  // ---- Manual route corrections ----
-  // The PDF trace is wrong in places where the route uses specific footpaths
-  // or roads that don't show up in the contour. Each entry replaces the
-  // traced polyline points BETWEEN two named waypoints with hand-set via
-  // points. Coords are [lon, lat]. Add more entries here as needed.
-  const CORRECTIONS = [
-    // Approach Postbridge: from Water Hill via a gate on the footpath north
-    // of Merripit Hill, down the footpath to where it meets B3212, then west
-    // ~300 m along B3212 to the SC. Never goes south of the B3212.
-    { from: "WATER HILL",  to: "POSTBRIDGE", via: [
-      [-3.914287, 50.598373], // gate, north of Merripit Hill (footpath top)
-      [-3.911050, 50.594510], // footpath meets B3212
-    ] },
-    // Depart Postbridge: leave the B3212 at the SC, head NW toward HWT.
-    { from: "POSTBRIDGE",  to: "HIGHER WHITE TOR", via: [
-      [-3.918960, 50.594630], // exit point off B3212
-    ] },
-    // Hare Tor → Nodden Gate: replace the kinked contour with three via
-    // points tracing the actual approach.
-    { from: "HARE TOR",    to: "NODDEN GATE", via: [
-      [-4.063610, 50.646410],
-      [-4.072920, 50.647480],
-      [-4.077560, 50.652510],
-    ] },
-  ];
+  // ---- Manual route corrections (per-route) ----
+  const CORRECTIONS_BY_ROUTE = {
+    E: [
+      { from: "WATER HILL",  to: "POSTBRIDGE", via: [
+        [-3.914287, 50.598373],
+        [-3.911050, 50.594510],
+      ] },
+      { from: "POSTBRIDGE",  to: "HIGHER WHITE TOR", via: [
+        [-3.918960, 50.594630],
+      ] },
+      { from: "HARE TOR",    to: "NODDEN GATE", via: [
+        [-4.063610, 50.646410],
+        [-4.072920, 50.647480],
+        [-4.077560, 50.652510],
+      ] },
+    ],
+  };
+  const CORRECTIONS = CORRECTIONS_BY_ROUTE[ROUTE] || [];
   const corrOps = [];
   for (const c of CORRECTIONS) {
     const fW = wps.find((w) => w.label === c.from);
@@ -181,15 +222,20 @@ async function main() {
   }
   const totalDist = cumDist[cumDist.length - 1];
 
-  // Route-E NT values (only ~6 published; others are unconstrained here).
-  const NT = {
-    "WATER HILL":      "18:00",
-    "POSTBRIDGE":      "18:20",
-    "HIGHER WHITE TOR":"18:20",
-    "HOLMING BEAM":    "18:10",
-    "WHITE BARROW":    "18:30",
-    "STANDON FARM":    "17:50",
+  // NT values from waypoints (populated by build-routes.mjs) or route-specific overrides.
+  const NT_OVERRIDES = {
+    E: {
+      "WATER HILL":      "18:00",
+      "POSTBRIDGE":      "18:20",
+      "HIGHER WHITE TOR":"18:20",
+      "HOLMING BEAM":    "18:10",
+      "WHITE BARROW":    "18:30",
+      "STANDON FARM":    "17:50",
+    },
   };
+  const NT = NT_OVERRIDES[ROUTE] || {};
+  // Also use any NT values embedded in the waypoints data.
+  for (const w of wps) { if (w.nt && !NT[w.label]) NT[w.label] = w.nt; }
   // Snap each waypoint to its nearest route coord, then in route order.
   // Because the polyline is cyclic, "nearest" of a waypoint near START could
   // bind to either index 0 or N-1; force route-order monotonicity by walking
@@ -299,7 +345,7 @@ async function main() {
   }
 
   async function refresh() {
-    const html = await (await fetch("/api/routee?_=" + Date.now())).text();
+    const html = await (await fetch(`/api/route/${ROUTE.toLowerCase()}?_=` + Date.now())).text();
     const doc = new DOMParser().parseFromString(html, "text/html");
 
     // Last-updated stamp.
@@ -308,7 +354,7 @@ async function main() {
 
     // Find the largest table — that's the team data.
     const tables = [...doc.querySelectorAll("table")];
-    if (!tables.length) { document.getElementById("meta").textContent = "no table found in routee.html"; return; }
+    if (!tables.length) { document.getElementById("meta").textContent = `no table found in route${ROUTE.toLowerCase()}.html`; return; }
     let table = tables[0];
     for (const t of tables) if (t.querySelectorAll("tr").length > table.querySelectorAll("tr").length) table = t;
 
@@ -321,7 +367,7 @@ async function main() {
       return wpStops.find((w) => normalize(w.label) === target) || null;
     });
 
-    const TEAM_FILTER = /barr?acuda/i;
+    const TEAM_FILTER = CFG.filter;
     const teams = [];
     for (const row of rows.slice(1)) {
       const cells = [...row.querySelectorAll("th, td")].map((c) => c.textContent.trim());
@@ -460,10 +506,12 @@ async function main() {
         } else if (team._stopped) {
           // They camp at lastWp; show that, plus the NT they couldn't make,
           // plus Sunday-restart finish ETA.
+          const isMobile = window.innerWidth <= 640;
+          const tentSize = isMobile ? 64 : 32;
           const tent = L.divIcon({
             className: "",
-            html: `<div style="font-size:28px;line-height:1;text-shadow:0 0 3px white,0 0 3px white,0 0 3px white;">⛺</div>`,
-            iconSize: [32, 32], iconAnchor: [16, 28],
+            html: `<div class="tent-icon" style="font-size:${isMobile ? 56 : 28}px;">⛺</div>`,
+            iconSize: [tentSize, tentSize], iconAnchor: [tentSize / 2, tentSize - 4],
           });
           L.marker([lastWp.lat, lastWp.lon], { icon: tent })
             .addTo(teamLayer)

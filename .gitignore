@@ -1,6 +1,6 @@
 node_modules/
 debug-*.png
-route-pixels.json
+/route-pixels.json
 *.log
 .DS_Store
 .vercel/

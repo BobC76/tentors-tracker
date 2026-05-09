@@ -1,0 +1,86 @@
+[
+  {
+    "label": "START",
+    "lat": 50.716005069357365,
+    "lon": -4.001751965330856,
+    "via": false,
+    "nt": null
+  },
+  {
+    "label": "DINGER TOR",
+    "lat": 50.67525895853212,
+    "lon": -4.001999058641055,
+    "via": false,
+    "nt": null
+  },
+  {
+    "label": "HARE TOR",
+    "lat": 50.64015232575805,
+    "lon": -4.050291131637478,
+    "via": false,
+    "nt": null
+  },
+  {
+    "label": "STANDON FARM",
+    "lat": 50.61465439743198,
+    "lon": -4.057946123938382,
+    "via": false,
+    "nt": null
+  },
+  {
+    "label": "LITTLE MIS TOR",
+    "lat": 50.56894605045148,
+    "lon": -4.028274040333112,
+    "via": false,
+    "nt": null
+  },
+  {
+    "label": "HIGHER WHITE TOR",
+    "lat": 50.590726476633506,
+    "lon": -3.9537640154999063,
+    "via": false,
+    "nt": null
+  },
+  {
+    "label": "POSTBRIDGE",
+    "lat": 50.593090822017516,
+    "lon": -3.9143004027278447,
+    "via": false,
+    "nt": null
+  },
+  {
+    "label": "FERNWORTHY",
+    "lat": 50.6426698584481,
+    "lon": -3.9238112309551303,
+    "via": false,
+    "nt": null
+  },
+  {
+    "label": "STEEPERTON TOR",
+    "lat": 50.68321792336624,
+    "lon": -3.9570378277926856,
+    "via": false,
+    "nt": null
+  },
+  {
+    "label": "SHILSTONE TOR",
+    "lat": 50.69591941641717,
+    "lon": -3.9014929725707033,
+    "via": false,
+    "nt": null
+  },
+  {
+    "label": "OKE TOR",
+    "lat": 50.69109055440604,
+    "lon": -3.9648695841158808,
+    "via": false,
+    "nt": null
+  },
+  {
+    "label": "FINISH",
+    "lat": 50.716005069357365,
+    "lon": -4.001751965330856,
+    "via": false,
+    "nt": null
+  }
+]

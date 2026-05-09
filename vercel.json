@@ -6,9 +6,11 @@
     { "src": "*.json", "use": "@vercel/static" },
     { "src": "*.geojson", "use": "@vercel/static" },
     { "src": "*.png", "use": "@vercel/static" },
+    { "src": "routes/**", "use": "@vercel/static" },
     { "src": "vendor/**", "use": "@vercel/static" }
   ],
   "routes": [
+    { "src": "/api/route/([a-j])", "dest": "/api/route/[letter].js?letter=$1" },
     { "src": "/api/routee", "dest": "/api/routee.js" },
     { "src": "/api/version", "dest": "/api/version.js" },
     { "src": "/", "dest": "/verify.html" },

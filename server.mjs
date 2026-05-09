@@ -8,9 +8,11 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 
-async function proxyRoutee(_req, res) {
+async function proxyRoute(req, res) {
+  const letter = (req.params.letter || "e").toLowerCase();
+  if (!/^[a-j]$/.test(letter)) { res.status(400).send("Invalid route letter"); return; }
   try {
-    const r = await fetch("https://tentors.org.uk/eventdata/routee.html", {
+    const r = await fetch(`https://tentors.org.uk/eventdata/route${letter}.html`, {
       headers: { "User-Agent": "tentors-tracker/0.1" },
     });
     res.status(r.status).type("text/html").send(await r.text());
@@ -18,8 +20,9 @@ async function proxyRoutee(_req, res) {
     res.status(502).type("text/plain").send("Upstream fetch failed: " + e.message);
   }
 }
-app.get("/routee.html", proxyRoutee);
-app.get("/api/routee", proxyRoutee);
+app.get("/route:letter.html", proxyRoute);
+app.get("/api/route:letter", proxyRoute);
+app.get("/api/route/:letter", proxyRoute);
 
 app.use((_req, res, next) => {
   res.setHeader("Cache-Control", "no-store");

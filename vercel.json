@@ -10,6 +10,7 @@
   ],
   "routes": [
     { "src": "/api/routee", "dest": "/api/routee.js" },
+    { "src": "/api/version", "dest": "/api/version.js" },
     { "src": "/", "dest": "/verify.html" },
     { "src": "/(.*)", "dest": "/$1" }
   ]

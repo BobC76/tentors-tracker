@@ -77,12 +77,11 @@ function haversine(a, b) {
   return 2 * R * Math.asin(Math.sqrt(x));
 }
 function parseHHMM(s, base) {
-  const m = s && s.match(/^(\d{1,2}):(\d{2})$/);
+  // Accept HH:MM anywhere in the cell — source includes "CAMPED" suffix etc.
+  const m = s && s.match(/(\d{1,2}):(\d{2})/);
   if (!m) return null;
   const d = new Date(base);
   d.setHours(+m[1], +m[2], 0, 0);
-  // If event spans midnight: if HH is in early-morning hours and base time is
-  // in the evening, this is the next day. Cheap heuristic:
   if (+m[1] < 6 && base.getHours() > 12) d.setDate(d.getDate() + 1);
   return d;
 }
@@ -214,11 +213,49 @@ async function main() {
   console.log("route distances:", wpStops.map((w) => `${w.label}=${(w.routeDist/1000).toFixed(1)}km`).join(", "));
 
   // ---- map setup ----
-  const center = [50.62, -3.97];
-  const map = L.map("map").setView(center, 11);
+  // Compute route bounds (with a small buffer) for initial view + max-bounds.
+  let latMin = Infinity, latMax = -Infinity, lonMin = Infinity, lonMax = -Infinity;
+  for (const [lon, lat] of routeCoords) {
+    if (lat < latMin) latMin = lat; if (lat > latMax) latMax = lat;
+    if (lon < lonMin) lonMin = lon; if (lon > lonMax) lonMax = lon;
+  }
+  const padDeg = 0.02; // ~2 km buffer
+  const routeBounds = L.latLngBounds(
+    [latMin - padDeg, lonMin - padDeg],
+    [latMax + padDeg, lonMax + padDeg]
+  );
+  // Restrict panning to a slightly larger area so the user can't drift far.
+  const panPadDeg = 0.06;
+  const maxBounds = L.latLngBounds(
+    [latMin - panPadDeg, lonMin - panPadDeg],
+    [latMax + panPadDeg, lonMax + panPadDeg]
+  );
+
+  const map = L.map("map", {
+    maxBounds,
+    maxBoundsViscosity: 1.0,
+    minZoom: 10,
+  }).fitBounds(routeBounds);
   const osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "© OpenStreetMap", maxZoom: 19,
   }).addTo(map);
+
+  // Recenter button (bottom-right Leaflet control).
+  const RecenterCtl = L.Control.extend({
+    options: { position: "topleft" },
+    onAdd() {
+      const btn = L.DomUtil.create("button", "");
+      btn.innerHTML = "⌂ Recenter";
+      btn.style.cssText = "padding:6px 10px;border:0;background:white;cursor:pointer;font:13px system-ui;border-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,0.3);";
+      btn.title = "Reset map to route";
+      L.DomEvent.on(btn, "click", (e) => {
+        L.DomEvent.stop(e);
+        map.fitBounds(routeBounds);
+      });
+      return btn;
+    },
+  });
+  map.addControl(new RecenterCtl());
 
   // Route line — built from the live (post-corrections) routeCoords.
   L.polyline(routeCoords.map(([lon, lat]) => [lat, lon]), {
@@ -304,15 +341,22 @@ async function main() {
 
     for (const team of teams) {
       // Find their last reached waypoint (latest non-empty cell with a time).
+      // Source cells like "19:40\nCAMPED" mean: arrived at 19:40 and the SC
+      // has flagged them as camping at this waypoint — definitive ground
+      // truth, overrides any pace-based prediction.
       let firstT = null, lastT = null, lastIdx = -1, lastWp = null;
+      let campedAtCell = -1;
       for (let i = 0; i < team.cells.length; i++) {
         const wp = colToWp[i + 1];
-        const t = parseHHMM(team.cells[i], now);
+        const cell = team.cells[i];
+        const t = parseHHMM(cell, now);
         if (t && wp) {
           if (firstT === null) firstT = t;
           lastT = t; lastIdx = i; lastWp = wp;
+          if (/CAMPED/i.test(cell)) campedAtCell = i;
         }
       }
+      const isCamped = campedAtCell >= 0;
 
       const row = document.createElement("div");
       row.className = "team";
@@ -328,12 +372,12 @@ async function main() {
         const paceKmh = distSoFar / 1000 / elapsedH;
 
         // Decide whether the team is still moving or has stopped.
-        // They stop if (a) they've finished, or (b) the next NT-bound
-        // waypoint is one they can't make at current pace — in that case
-        // they'll be told to camp where they are (lastWp), so freeze.
+        // Three reasons to stop: finished; SC has flagged them CAMPED in the
+        // source data (definitive); or next NT-bound waypoint is unreachable
+        // at current pace.
         const isFinished = normalize(lastWp.label) === "FINISH";
-        let stopped = isFinished, missedNt = null;
-        if (!isFinished) {
+        let stopped = isFinished || isCamped, missedNt = null;
+        if (!stopped) {
           const startIdx = wpStops.findIndex((w) => w === lastWp);
           for (let k = startIdx + 1; k < wpStops.length; k++) {
             const wp = wpStops[k];
@@ -361,15 +405,19 @@ async function main() {
         pos = [a[1] + t * (b[1] - a[1]), a[0] + t * (b[0] - a[0])];
 
         if (isFinished) row.classList.add("finished");
+        const cellTime = (team.cells[lastIdx].match(/(\d{1,2}:\d{2})/) || [])[1] || team.cells[lastIdx];
         status = isFinished
-          ? `finished at ${team.cells[lastIdx]}`
-          : stopped
-            ? `stopped at ${lastWp.label} (${team.cells[lastIdx]})`
-            : `${lastWp.label} @ ${team.cells[lastIdx]}`;
+          ? `finished at ${cellTime}`
+          : isCamped
+            ? `⛺ camped at ${lastWp.label} (${cellTime})`
+            : stopped
+              ? `stopped at ${lastWp.label} (${cellTime})`
+              : `${lastWp.label} @ ${cellTime}`;
         pace = paceKmh > 0 ? ` · ${paceKmh.toFixed(1)} km/h` : "";
 
         // Stash for the prediction block below.
         team._stopped = stopped;
+        team._isCamped = isCamped;
         team._missedNt = missedNt;
         team._isFinished = isFinished;
         team._paceKmh = paceKmh;
@@ -400,7 +448,6 @@ async function main() {
           direction: "right", className: "team-tt", offset: [10, 0],
           permanent: true,
         });
-        map.setView(pos, 12);
 
         // ---- prediction block ----
         const pred = document.createElement("div");
@@ -409,7 +456,7 @@ async function main() {
         const paceKmh = team._paceKmh;
 
         if (team._isFinished) {
-          pred.innerHTML = `<div class="row eta"><span class="lbl">🏁 Finished</span><span class="val">${team.cells[lastIdx]}</span></div>`;
+          pred.innerHTML = `<div class="row eta"><span class="lbl">🏁 Finished</span><span class="val">${(team.cells[lastIdx].match(/(\d{1,2}:\d{2})/)||[])[1] || team.cells[lastIdx]}</span></div>`;
         } else if (team._stopped) {
           // They camp at lastWp; show that, plus the NT they couldn't make,
           // plus Sunday-restart finish ETA.
@@ -461,6 +508,23 @@ async function main() {
 
   refresh();
   setInterval(refresh, 60_000);
+
+  // ---- auto-reload on deploy ----
+  // Poll /api/version every 60 s. If the deployed commit SHA changes, reload
+  // the page so the user gets the new code without refreshing manually.
+  let bootVersion = null;
+  async function checkVersion() {
+    try {
+      const v = await (await fetch("/api/version?_=" + Date.now())).json();
+      if (bootVersion === null) {
+        bootVersion = v.sha;
+      } else if (v.sha && v.sha !== bootVersion) {
+        location.reload();
+      }
+    } catch (_) { /* ignore */ }
+  }
+  checkVersion();
+  setInterval(checkVersion, 60_000);
 }
 main().catch((e) => {
   document.getElementById("meta").textContent = "error: " + e.message;

@@ -81,12 +81,11 @@
     .route-sel a.active { background: #0066cc; color: white; }
     /* Fix Leaflet layer control icon (missing image assets) */
     .leaflet-control-layers-toggle {
-      background-image: none !important;
-      font-size: 20px;
-      line-height: 36px;
-      text-align: center;
+      background-image: url(layer.svg) !important;
+      background-size: 24px 24px !important;
+      background-position: center !important;
     }
-    .leaflet-control-layers-toggle::after { content: "🗺"; }
+    .leaflet-control-layers-toggle::after { content: none; }
     @media (max-width: 640px) {
       .route-sel a { font-size: 14px; padding: 6px 8px; }
     }

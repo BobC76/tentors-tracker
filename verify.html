@@ -310,6 +310,23 @@ async function main() {
     color: "#0066cc", weight: 3, opacity: 0.85,
   }).addTo(map);
 
+  // Add direction arrows along the route polyline.
+  const routeLatLngs = routeCoords.map(([lon, lat]) => [lat, lon]);
+  const arrowInterval = Math.max(1, Math.floor(routeLatLngs.length / 15));
+  for (let i = arrowInterval; i < routeLatLngs.length - 1; i += arrowInterval) {
+    const [lat1, lon1] = routeLatLngs[i - 1];
+    const [lat2, lon2] = routeLatLngs[i];
+    const angle = Math.atan2(lon2 - lon1, lat2 - lat1) * 180 / Math.PI;
+    L.marker([lat2, lon2], {
+      icon: L.divIcon({
+        className: "",
+        html: `<div style="font-size:18px;color:#0066cc;transform:rotate(${90 - angle}deg);opacity:0.7;text-shadow:0 0 2px white,0 0 2px white;">➤</div>`,
+        iconSize: [18, 18], iconAnchor: [9, 9],
+      }),
+      interactive: false,
+    }).addTo(map);
+  }
+
   // Visible marker at each manual via-point (cyan diamond).
   for (const [lon, lat] of VIA_POINTS) {
     L.circleMarker([lat, lon], {
@@ -318,14 +335,15 @@ async function main() {
     }).addTo(map).bindTooltip("manual via", { direction: "right" });
   }
 
-  // Waypoint dots.
-  wps.forEach((w, i) => {
-    if (w.lat == null) return;
-    L.circleMarker([w.lat, w.lon], {
-      radius: w.via ? 4 : 6,
-      color: "white", weight: 1.5,
-      fillColor: w.via ? "#888" : "#0a4", fillOpacity: 0.95,
+  // Waypoint markers — will be recoloured on each refresh to show visited/unvisited.
+  const wpMarkers = wps.map((w, i) => {
+    if (w.lat == null) return null;
+    const m = L.circleMarker([w.lat, w.lon], {
+      radius: w.via ? 4 : 7,
+      color: "white", weight: 2,
+      fillColor: "#999", fillOpacity: 0.6,
     }).addTo(map).bindTooltip(`${i + 1}. ${w.label}`, { direction: "right" });
+    return m;
   });
 
   // PDF map overlay: layered, off by default, in the layer control top-right.
@@ -387,6 +405,9 @@ async function main() {
     const panel = document.getElementById("teams");
     panel.innerHTML = "";
 
+    // Track visited waypoints across all teams for marker colouring.
+    const visitedWpLabels = new Set();
+
     for (const team of teams) {
       // Find their last reached waypoint (latest non-empty cell with a time).
       // Source cells like "19:40\nCAMPED" mean: arrived at 19:40 and the SC
@@ -401,6 +422,7 @@ async function main() {
         if (t && wp) {
           if (firstT === null) firstT = t;
           lastT = t; lastIdx = i; lastWp = wp;
+          visitedWpLabels.add(normalize(wp.label));
           if (/CAMPED/i.test(cell)) campedAtCell = i;
         }
       }
@@ -558,6 +580,19 @@ async function main() {
         }
       }
     }
+
+    // Recolour waypoint markers: visited = green, unvisited = grey hollow.
+    wps.forEach((w, i) => {
+      if (!wpMarkers[i]) return;
+      const visited = visitedWpLabels.has(normalize(w.label));
+      wpMarkers[i].setStyle({
+        fillColor: visited ? "#0a4" : "#ccc",
+        fillOpacity: visited ? 0.95 : 0.4,
+        color: visited ? "white" : "#999",
+        weight: visited ? 2 : 1.5,
+        radius: visited ? 7 : (w.via ? 4 : 6),
+      });
+    });
   }
 
   refresh();

@@ -128,6 +128,30 @@ function dilate(src, radius) {
   return cur;
 }
 
+function erode(src, radius) {
+  let cur = src;
+  for (let r = 0; r < radius; r++) {
+    const a = new Uint8Array(W * H);
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const i = y * W + x;
+      let v = cur[i];
+      if (v && (x === 0 || !cur[i - 1])) v = 0;
+      if (v && (x === W - 1 || !cur[i + 1])) v = 0;
+      a[i] = v;
+    }
+    const b = new Uint8Array(W * H);
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const i = y * W + x;
+      let v = a[i];
+      if (v && (y === 0 || !a[i - W])) v = 0;
+      if (v && (y === H - 1 || !a[i + W])) v = 0;
+      b[i] = v;
+    }
+    cur = b;
+  }
+  return cur;
+}
+
 function components(mask) {
   const labels = new Int32Array(W * H);
   const sizes = [0]; const bbox = [null];
@@ -171,6 +195,44 @@ const routeMask = new Uint8Array(W * H);
 for (let i = 0; i < cc.labels.length; i++) if (cc.labels[i] === bestLbl) routeMask[i] = 1;
 console.log(`  Route component: label ${bestLbl}, ${cc.sizes[bestLbl]} px`);
 
+// Fill interior holes so the contour trace only follows the outer boundary.
+// Flood-fill background (0) from the image border; anything still 0 after is
+// an interior hole and gets set to 1.
+{
+  const visited = new Uint8Array(W * H);
+  const stack = new Int32Array(W * H);
+  let top = 0;
+  // Seed from all border pixels that are background.
+  for (let x = 0; x < W; x++) {
+    if (!routeMask[x])               { visited[x] = 1; stack[top++] = x; }
+    const b = (H - 1) * W + x;
+    if (!routeMask[b])               { visited[b] = 1; stack[top++] = b; }
+  }
+  for (let y = 0; y < H; y++) {
+    const l = y * W;
+    if (!routeMask[l])               { visited[l] = 1; stack[top++] = l; }
+    const r = y * W + W - 1;
+    if (!routeMask[r])               { visited[r] = 1; stack[top++] = r; }
+  }
+  while (top) {
+    const p = stack[--top];
+    const py = (p / W) | 0, px = p - py * W;
+    for (const [dx, dy] of [[1,0],[-1,0],[0,1],[0,-1]]) {
+      const nx = px + dx, ny = py + dy;
+      if (nx < 0 || ny < 0 || nx >= W || ny >= H) continue;
+      const ni = ny * W + nx;
+      if (!visited[ni] && !routeMask[ni]) { visited[ni] = 1; stack[top++] = ni; }
+    }
+  }
+  let filled = 0;
+  for (let i = 0; i < W * H; i++) {
+    if (!routeMask[i] && !visited[i]) { routeMask[i] = 1; filled++; }
+  }
+  console.log(`  Filled ${filled} interior hole pixels`);
+}
+
+// Use Moore-neighbour boundary trace on the route component (may be doubled
+// for worm-shaped blobs where the loop interior isn't filled).
 console.log("  Tracing contour...");
 function trace(mask) {
   let sx = -1, sy = -1;
@@ -196,8 +258,82 @@ function trace(mask) {
   }
   return pts;
 }
-const contour = trace(routeMask);
-console.log(`  Contour: ${contour.length} pixels`);
+const rawContour = trace(routeMask);
+console.log(`  Contour: ${rawContour.length} pixels`);
+
+// Detect doubled contour: if pixel distance is much longer than expected
+// (sum of rough distances between consecutive waypoints), take only the
+// half that visits waypoints in route order.
+function pxDist(pts) {
+  let d = 0;
+  for (let i = 1; i < pts.length; i++) d += Math.hypot(pts[i][0] - pts[i-1][0], pts[i][1] - pts[i-1][1]);
+  return d;
+}
+const contourPxDist = pxDist(rawContour);
+// Estimate expected route length in pixels from waypoint pixel positions.
+// Use the rough pixel↔OSGB mapping to convert waypoint lat/lon to pixels.
+let wpPxDist = 0;
+{
+  // Rough bounds for pixel mapping (same logic as projection step later).
+  let pxMn = Infinity, pxMx = -Infinity, pyMn = Infinity, pyMx = -Infinity;
+  for (const [x, y] of rawContour) {
+    if (x < pxMn) pxMn = x; if (x > pxMx) pxMx = x;
+    if (y < pyMn) pyMn = y; if (y > pyMx) pyMx = y;
+  }
+  let eMn = Infinity, eMx = -Infinity, nMn = Infinity, nMx = -Infinity;
+  for (const w of waypoints) {
+    const [E, N] = proj4("EPSG:4326", "EPSG:27700", [w.lon, w.lat]);
+    if (E < eMn) eMn = E; if (E > eMx) eMx = E;
+    if (N < nMn) nMn = N; if (N > nMx) nMx = N;
+  }
+  const pad = 4 * 4.17;
+  const wpPx = waypoints.map((w) => {
+    const [E, N] = proj4("EPSG:4326", "EPSG:27700", [w.lon, w.lat]);
+    return [
+      pxMn + (E - (eMn - pad)) / ((eMx + pad) - (eMn - pad)) * (pxMx - pxMn),
+      pyMn + ((nMx + pad) - N) / ((nMx + pad) - (nMn - pad)) * (pyMx - pyMn),
+    ];
+  });
+  for (let i = 1; i < wpPx.length; i++) wpPxDist += Math.hypot(wpPx[i][0] - wpPx[i-1][0], wpPx[i][1] - wpPx[i-1][1]);
+}
+
+let contour;
+if (contourPxDist > wpPxDist * 1.6) {
+  console.log(`  Doubled contour detected (${contourPxDist.toFixed(0)} px vs expected ~${wpPxDist.toFixed(0)} px)`);
+  console.log("  Falling back to waypoint-to-waypoint GeoJSON (straight line segments)");
+  // Write GeoJSON directly from waypoint coordinates
+  const coords = waypoints.map(w => [w.lon, w.lat]);
+  const geojson = {
+    type: "FeatureCollection",
+    features: [{
+      type: "Feature",
+      properties: {},
+      geometry: { type: "LineString", coordinates: coords },
+    }],
+  };
+  let routeDist = 0;
+  for (let i = 1; i < coords.length; i++) {
+    const [ln1, lt1] = coords[i - 1], [ln2, lt2] = coords[i];
+    const R = 6371000;
+    const dLat = (lt2 - lt1) * Math.PI / 180, dLon = (ln2 - ln1) * Math.PI / 180;
+    const a = Math.sin(dLat / 2) ** 2 + Math.cos(lt1 * Math.PI / 180) * Math.cos(lt2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+    routeDist += R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+  console.log(`  route.geojson: ${coords.length} waypoints, ${(routeDist / 1000).toFixed(1)} km`);
+  await fs.writeFile(path.join(OUT, "route.geojson"), JSON.stringify(geojson));
+  await fs.writeFile(path.join(OUT, "route-pixels.json"), JSON.stringify([]));
+  const bounds = {
+    imagePath: `routes/${LETTER}/map.png`,
+    topLeft: { lat: waypoints[0].lat + 0.05, lon: waypoints[0].lon - 0.05 },
+    bottomRight: { lat: waypoints[0].lat - 0.05, lon: waypoints[0].lon + 0.05 },
+  };
+  await fs.writeFile(path.join(OUT, "image-bounds.json"), JSON.stringify(bounds, null, 2));
+  console.log(`✓ Route ${LETTER} complete (waypoint fallback) → ${OUT}/`);
+  process.exit(0);
+} else {
+  contour = rawContour;
+}
+console.log(`  Final contour: ${contour.length} pixels`);
 
 function rdp(points, eps) {
   if (points.length < 3) return points.slice();
@@ -245,7 +381,9 @@ for (const w of waypoints) {
   if (E < eMin) eMin = E; if (E > eMax) eMax = E;
   if (N < nMin) nMin = N; if (N > nMax) nMax = N;
 }
-const DIL_M = 16 * 4.17;
+// Since we eroded back (16 dilate - 12 erode = ~4px offset), reduce the bbox padding
+// and skip the inward shift — the drift correction handles residual offset.
+const DIL_M = 4 * 4.17;
 const eMinC = eMin - DIL_M, eMaxC = eMax + DIL_M;
 const nMinC = nMin - DIL_M, nMaxC = nMax + DIL_M;
 
@@ -256,19 +394,7 @@ function pxToLatLon(x, y) {
   return [lon, lat];
 }
 
-const rawProjected = routePixels.points.map(([x, y]) => pxToLatLon(x, y));
-const SHIFT_M = 16 * 4.17;
-const projected = rawProjected.map((cur, i) => {
-  const prev = rawProjected[(i - 1 + rawProjected.length) % rawProjected.length];
-  const nxt = rawProjected[(i + 1) % rawProjected.length];
-  const cosLat = Math.cos(cur[1] * Math.PI / 180);
-  const tx = (nxt[0] - prev[0]) * cosLat * 111000;
-  const ty = (nxt[1] - prev[1]) * 111000;
-  const len = Math.hypot(tx, ty) || 1;
-  const nx = ty / len * SHIFT_M;
-  const ny = -tx / len * SHIFT_M;
-  return [cur[0] + nx / (cosLat * 111000), cur[1] + ny / 111000];
-});
+const projected = routePixels.points.map(([x, y]) => pxToLatLon(x, y));
 
 function dist(a, b) {
   const dy = a[1] - b[1];

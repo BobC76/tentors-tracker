@@ -41,29 +41,31 @@
     .pred .eta .val { color: #06c; }
     /* Mobile: pin to bottom, full-width edge-to-edge, 2x larger text */
     @media (max-width: 640px) {
-      body { font-size: 26px; }
+      body { font-size: 32px; }
       .panel {
         left: 0; right: 0; bottom: 0;
         max-width: none; border-radius: 12px 12px 0 0;
         max-height: 50vh; padding: 16px 20px 20px;
       }
-      .panel h2 { font-size: 30px; }
-      .meta { font-size: 22px; }
-      .team .nm { font-size: 30px; }
-      .team .wp { font-size: 24px; }
-      .stats { font-size: 22px; gap: 10px 16px; }
-      .pred { font-size: 26px; }
+      .panel h2 { font-size: 40px; }
+      .meta { font-size: 28px; }
+      .team .nm { font-size: 40px; }
+      .team .wp { font-size: 32px; }
+      .stats { font-size: 28px; gap: 10px 16px; }
+      .pred { font-size: 32px; }
       .pred .row { padding: 8px 0; }
+      .route-sel { font-size: 28px; }
+      .route-sel a { padding: 8px 14px; font-size: 28px; }
       /* Keep Leaflet controls above the panel and properly sized */
       .leaflet-top.leaflet-left { top: 10px; left: 10px; }
       .leaflet-control-zoom a,
       .leaflet-top.leaflet-left button {
-        width: 44px !important; height: 44px !important;
-        font-size: 22px !important; line-height: 44px !important;
+        width: 52px !important; height: 52px !important;
+        font-size: 26px !important; line-height: 52px !important;
         padding: 0 !important;
       }
       .tent-icon { font-size: 56px !important; }
-      .leaflet-tooltip.team-tt { font-size: 20px !important; padding: 6px 12px !important; }
+      .leaflet-tooltip.team-tt { font-size: 28px !important; padding: 8px 14px !important; }
     }
     .leaflet-tooltip.team-tt { background: rgba(0,0,0,0.75); color: white; border: 0; }
     .tent-icon { line-height: 1; text-shadow: 0 0 3px white, 0 0 3px white, 0 0 3px white; }
@@ -439,16 +441,20 @@ async function main() {
 
         let target;
         if (stopped) {
+          // Use the waypoint's actual coordinates, not the route polyline
+          pos = [lastWp.lat, lastWp.lon];
           target = lastWp.routeDist;
         } else {
           const sinceLast = (now - lastT) / 3600000;
           const extrap = Math.max(0, paceKmh * sinceLast * 1000);
           target = Math.min(lastWp.routeDist + extrap, totalDist);
         }
-        const i = bisect(cumDist, target);
-        const t = (target - cumDist[i]) / (cumDist[i + 1] - cumDist[i] || 1);
-        const a = routeCoords[i], b = routeCoords[i + 1] || a;
-        pos = [a[1] + t * (b[1] - a[1]), a[0] + t * (b[0] - a[0])];
+        if (!pos) {
+          const i = bisect(cumDist, target);
+          const t = (target - cumDist[i]) / (cumDist[i + 1] - cumDist[i] || 1);
+          const a = routeCoords[i], b = routeCoords[i + 1] || a;
+          pos = [a[1] + t * (b[1] - a[1]), a[0] + t * (b[0] - a[0])];
+        }
 
         if (isFinished) row.classList.add("finished");
         const cellTime = (team.cells[lastIdx].match(/(\d{1,2}:\d{2})/) || [])[1] || team.cells[lastIdx];

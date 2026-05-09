@@ -575,7 +575,7 @@ async function main() {
             </div>
             <div class="row eta">
               <span class="lbl">🏁 ETA at FINISH</span>
-              <span class="val">${etaTime.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit",hour12:false})} Sun</span>
+              <span class="val">${new Date(etaTime.getTime()-1800000).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",hour12:false})}–${new Date(etaTime.getTime()+1800000).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",hour12:false})} Sun</span>
             </div>`;
         } else if (paceKmh > 0) {
           // Still moving and on track to make every published NT.
@@ -585,7 +585,7 @@ async function main() {
           pred.innerHTML = `
             <div class="row eta">
               <span class="lbl">🏁 ETA at FINISH</span>
-              <span class="val">${etaTime.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit",hour12:false})} · ${remainingKm.toFixed(1)} km left</span>
+              <span class="val">${new Date(etaTime.getTime()-1800000).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",hour12:false})}–${new Date(etaTime.getTime()+1800000).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",hour12:false})} · ${remainingKm.toFixed(1)} km left</span>
             </div>`;
         }
       }

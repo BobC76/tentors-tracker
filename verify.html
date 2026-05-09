@@ -516,12 +516,12 @@ async function main() {
           L.marker([lastWp.lat, lastWp.lon], { icon: tent })
             .addTo(teamLayer)
             .bindTooltip(`Camp: ${lastWp.label}`, { direction: "right", offset: [12, -10] });
-          const sunday0700 = new Date(now);
-          sunday0700.setDate(sunday0700.getDate() + 1);
-          sunday0700.setHours(7, 0, 0, 0);
+          const sunday0600 = new Date(now);
+          sunday0600.setDate(sunday0600.getDate() + 1);
+          sunday0600.setHours(6, 0, 0, 0);
           const remainingKm = (totalDist - lastWp.routeDist) / 1000;
           const hoursToFinish = remainingKm / Math.max(paceKmh, 0.01);
-          const etaTime = new Date(sunday0700.getTime() + hoursToFinish * 3600000);
+          const etaTime = new Date(sunday0600.getTime() + hoursToFinish * 3600000);
           const missedRow = team._missedNt
             ? `<div class="row"><span class="lbl">✕ Couldn't make</span><span class="val">${team._missedNt.label} NT ${team._missedNt.nt}</span></div>`
             : "";
@@ -533,7 +533,7 @@ async function main() {
             ${missedRow}
             <div class="row">
               <span class="lbl">↑ Restart Sunday</span>
-              <span class="val">07:00 · ${remainingKm.toFixed(1)} km left</span>
+              <span class="val">06:00 · ${remainingKm.toFixed(1)} km left</span>
             </div>
             <div class="row eta">
               <span class="lbl">🏁 ETA at FINISH</span>

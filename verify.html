@@ -40,33 +40,33 @@
     .pred .row .val { font-weight: 600; font-feature-settings: "tnum"; }
     .pred .camp .val { color: #c60; }
     .pred .eta .val { color: #06c; }
-    /* Mobile: pin to bottom, full-width edge-to-edge, 2x larger text */
+    /* Mobile: pin to bottom, full-width, max 30% viewport height */
     @media (max-width: 640px) {
-      body { font-size: 32px; }
+      body { font-size: 16px; }
       .panel {
         left: 0; right: 0; bottom: 0;
         max-width: none; border-radius: 12px 12px 0 0;
-        max-height: 50vh; padding: 16px 20px 20px;
+        max-height: 30vh; padding: 10px 14px 14px;
       }
-      .panel h2 { font-size: 40px; }
-      .meta { font-size: 28px; }
-      .team .nm { font-size: 40px; }
-      .team .wp { font-size: 32px; }
-      .stats { font-size: 28px; gap: 10px 16px; }
-      .pred { font-size: 32px; }
-      .pred .row { padding: 8px 0; }
-      .route-sel { font-size: 28px; }
-      .route-sel a { padding: 8px 14px; font-size: 28px; }
+      .panel h2 { font-size: 20px; }
+      .meta { font-size: 14px; }
+      .team .nm { font-size: 20px; }
+      .team .wp { font-size: 16px; }
+      .stats { font-size: 14px; gap: 6px 10px; }
+      .pred { font-size: 16px; }
+      .pred .row { padding: 4px 0; }
+      .route-sel { font-size: 16px; }
+      .route-sel a { padding: 6px 10px; font-size: 16px; }
       /* Keep Leaflet controls above the panel and properly sized */
       .leaflet-top.leaflet-left { top: 10px; left: 10px; }
       .leaflet-control-zoom a,
       .leaflet-top.leaflet-left button {
-        width: 52px !important; height: 52px !important;
-        font-size: 26px !important; line-height: 52px !important;
+        width: 44px !important; height: 44px !important;
+        font-size: 22px !important; line-height: 44px !important;
         padding: 0 !important;
       }
-      .tent-icon { font-size: 56px !important; }
-      .leaflet-tooltip.team-tt { font-size: 28px !important; padding: 8px 14px !important; }
+      .tent-icon { font-size: 40px !important; }
+      .leaflet-tooltip.team-tt { font-size: 18px !important; padding: 4px 8px !important; }
     }
     .leaflet-tooltip.team-tt { background: rgba(0,0,0,0.75); color: white; border: 0; }
     .tent-icon { line-height: 1; text-shadow: 0 0 3px white, 0 0 3px white, 0 0 3px white; }
@@ -599,6 +599,24 @@ async function main() {
         radius: visited ? 7 : (w.via ? 4 : 6),
       });
     });
+
+    // Auto-zoom to show team positions with some context.
+    // Include the team marker(s) plus the next unvisited waypoint.
+    const zoomPoints = [];
+    teamLayer.eachLayer((l) => {
+      if (l.getLatLng) zoomPoints.push(l.getLatLng());
+    });
+    // Add the next unvisited waypoint so you can see where they're heading.
+    for (const w of wpStops) {
+      if (!visitedWpLabels.has(normalize(w.label))) {
+        zoomPoints.push(L.latLng(w.lat, w.lon));
+        break;
+      }
+    }
+    if (zoomPoints.length) {
+      const teamBounds = L.latLngBounds(zoomPoints).pad(0.3);
+      map.fitBounds(teamBounds, { paddingBottomRight: [0, window.innerWidth <= 640 ? window.innerHeight * 0.3 : 0] });
+    }
   }
 
   refresh();

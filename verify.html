@@ -321,23 +321,17 @@ async function main() {
     color: "#0066cc", weight: 3, opacity: 0.85,
   }).addTo(map);
 
-  // Add direction arrows along the route polyline.
-  // Use a wide look-ahead window for smooth bearings.
-  const routeLatLngs = routeCoords.map(([lon, lat]) => [lat, lon]);
-  const arrowCount = 12;
-  const arrowInterval = Math.max(1, Math.floor(routeLatLngs.length / arrowCount));
-  const lookAhead = Math.max(3, Math.floor(arrowInterval / 2));
-  for (let i = arrowInterval; i < routeLatLngs.length - lookAhead; i += arrowInterval) {
-    const [lat1, lon1] = routeLatLngs[i];
-    const j = Math.min(i + lookAhead, routeLatLngs.length - 1);
-    const [lat2, lon2] = routeLatLngs[j];
-    const dLat = lat2 - lat1, dLon = (lon2 - lon1) * Math.cos(lat1 * Math.PI / 180);
-    const bearing = Math.atan2(dLon, dLat) * 180 / Math.PI; // 0=N, 90=E
-    L.marker([lat1, lon1], {
+  // Add direction arrows at midpoints between consecutive waypoints.
+  for (let i = 0; i < waypoints.length - 1; i++) {
+    const a = waypoints[i], b = waypoints[i + 1];
+    const midLat = (a.lat + b.lat) / 2, midLon = (a.lon + b.lon) / 2;
+    const dLat = b.lat - a.lat, dLon = (b.lon - a.lon) * Math.cos(a.lat * Math.PI / 180);
+    const bearing = Math.atan2(dLon, dLat) * 180 / Math.PI;
+    L.marker([midLat, midLon], {
       icon: L.divIcon({
         className: "",
-        html: `<div style="font-size:18px;color:#0066cc;transform:rotate(${bearing}deg);opacity:0.7;text-shadow:0 0 2px white,0 0 2px white;">⬆</div>`,
-        iconSize: [18, 18], iconAnchor: [9, 9],
+        html: `<div style="font-size:28px;color:#0066cc;transform:rotate(${bearing}deg);opacity:0.8;text-shadow:0 0 3px white,0 0 3px white;">⬆</div>`,
+        iconSize: [28, 28], iconAnchor: [14, 14],
       }),
       interactive: false,
     }).addTo(map);

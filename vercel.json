@@ -9,6 +9,7 @@
     { "src": "vendor/**", "use": "@vercel/static" }
   ],
   "routes": [
+    { "src": "/api/routee", "dest": "/api/routee.js" },
     { "src": "/", "dest": "/verify.html" },
     { "src": "/(.*)", "dest": "/$1" }
   ]

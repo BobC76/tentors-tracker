@@ -40,23 +40,25 @@
     .pred .row .val { font-weight: 600; font-feature-settings: "tnum"; }
     .pred .camp .val { color: #c60; }
     .pred .eta .val { color: #06c; }
-    /* Mobile: pin to bottom, full-width, max 30% viewport height */
+    /* Mobile: pin to bottom, full-width, fit content without scrolling */
     @media (max-width: 640px) {
-      body { font-size: 16px; }
+      body { font-size: 12px; }
       .panel {
         left: 0; right: 0; bottom: 0;
-        max-width: none; border-radius: 12px 12px 0 0;
-        max-height: 30vh; padding: 10px 14px 14px;
+        max-width: none; border-radius: 10px 10px 0 0;
+        max-height: 30vh; padding: 6px 10px 8px;
+        overflow: hidden;
       }
-      .panel h2 { font-size: 20px; }
-      .meta { font-size: 14px; }
-      .team .nm { font-size: 20px; }
-      .team .wp { font-size: 16px; }
-      .stats { font-size: 14px; gap: 6px 10px; }
-      .pred { font-size: 16px; }
-      .pred .row { padding: 4px 0; }
-      .route-sel { font-size: 16px; }
-      .route-sel a { padding: 6px 10px; font-size: 16px; }
+      .panel h2 { font-size: 14px; margin: 0 0 2px; }
+      .meta { font-size: 10px; margin-bottom: 4px; }
+      .team { padding: 2px 0; }
+      .team .nm { font-size: 14px; }
+      .team .wp { font-size: 12px; margin-top: 1px; }
+      .stats { font-size: 11px; gap: 2px 8px; padding: 2px 0 4px; }
+      .pred { font-size: 12px; padding: 4px 0 2px; margin-top: 3px; }
+      .pred .row { padding: 2px 0; }
+      .route-sel { gap: 3px; margin-bottom: 4px; }
+      .route-sel a { padding: 4px 6px; font-size: 12px; }
       /* Keep Leaflet controls above the panel and properly sized */
       .leaflet-top.leaflet-left { top: 10px; left: 10px; }
       .leaflet-control-zoom a,
@@ -66,7 +68,7 @@
         padding: 0 !important;
       }
       .tent-icon { font-size: 40px !important; }
-      .leaflet-tooltip.team-tt { font-size: 18px !important; padding: 4px 8px !important; }
+      .leaflet-tooltip.team-tt { font-size: 14px !important; padding: 3px 6px !important; }
     }
     .leaflet-tooltip.team-tt { background: rgba(0,0,0,0.75); color: white; border: 0; }
     .tent-icon { line-height: 1; text-shadow: 0 0 3px white, 0 0 3px white, 0 0 3px white; }

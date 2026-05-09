@@ -322,10 +322,34 @@ if (contourPxDist > wpPxDist * 1.6) {
   console.log(`  route.geojson: ${coords.length} waypoints, ${(routeDist / 1000).toFixed(1)} km`);
   await fs.writeFile(path.join(OUT, "route.geojson"), JSON.stringify(geojson));
   await fs.writeFile(path.join(OUT, "route-pixels.json"), JSON.stringify([]));
+  // Compute image bounds from waypoints OSGB extent mapped to image pixel corners.
+  let eMn = Infinity, eMx = -Infinity, nMn = Infinity, nMx = -Infinity;
+  for (const w of waypoints) {
+    const [E, N] = proj4("EPSG:4326", "EPSG:27700", [w.lon, w.lat]);
+    if (E < eMn) eMn = E; if (E > eMx) eMx = E;
+    if (N < nMn) nMn = N; if (N > nMx) nMx = N;
+  }
+  const pad = 16 * 4.17;
+  const bb = cc.bbox[bestLbl];
+  function fbPxToLatLon(x, y) {
+    const E = (eMn - pad) + x / W * ((eMx + pad) - (eMn - pad));
+    const N2 = (nMx + pad) - y / H * ((nMx + pad) - (nMn - pad));
+    const [lon, lat] = proj4("EPSG:27700", "EPSG:4326", [E, N2]);
+    return [lon, lat];
+  }
+  const corners = {
+    topLeft: fbPxToLatLon(0, 0), topRight: fbPxToLatLon(W, 0),
+    bottomLeft: fbPxToLatLon(0, H), bottomRight: fbPxToLatLon(W, H),
+  };
+  const south = Math.min(corners.bottomLeft[1], corners.bottomRight[1]);
+  const north = Math.max(corners.topLeft[1], corners.topRight[1]);
+  const west  = Math.min(corners.topLeft[0], corners.bottomLeft[0]);
+  const east  = Math.max(corners.topRight[0], corners.bottomRight[0]);
   const bounds = {
     imagePath: `routes/${LETTER}/map.png`,
-    topLeft: { lat: waypoints[0].lat + 0.05, lon: waypoints[0].lon - 0.05 },
-    bottomRight: { lat: waypoints[0].lat - 0.05, lon: waypoints[0].lon + 0.05 },
+    width: W, height: H,
+    bounds: [[south, west], [north, east]],
+    corners,
   };
   await fs.writeFile(path.join(OUT, "image-bounds.json"), JSON.stringify(bounds, null, 2));
   console.log(`✓ Route ${LETTER} complete (waypoint fallback) → ${OUT}/`);

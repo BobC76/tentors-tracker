@@ -119,9 +119,9 @@ function bisect(arr, target) {
 
 // ---- route config ----
 const ROUTES = {
-  B: { label: "Route B", team: "Long Ashton", filter: /long\s*ashton/i, dist: 35 },
-  D: { label: "Route D", team: "Horizon",     filter: /horizon/i,      dist: 35 },
-  E: { label: "Route E", team: "Barracudas",  filter: /barr?acuda/i,   dist: 35 },
+  B: { label: "Route B", team: "Long Ashton", filter: /long\s*ashton/i, dist: 35, line: "straight line" },
+  D: { label: "Route D", team: "Horizon",     filter: /horizon/i,      dist: 35, line: "best guess" },
+  E: { label: "Route E", team: "Barracudas",  filter: /barr?acuda/i,   dist: 35, line: "best guess" },
 };
 const params = new URLSearchParams(location.search);
 const ROUTE = (params.get("route") || "E").toUpperCase();
@@ -283,7 +283,7 @@ async function main() {
     minZoom: 10,
   }).fitBounds(routeBounds);
   const osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: "© OpenStreetMap", maxZoom: 19,
+    attribution: '© OpenStreetMap · Data: <a href="https://tentors.org.uk" target="_blank">Ten Tors</a>', maxZoom: 19,
   }).addTo(map);
 
   // Recenter button (bottom-right Leaflet control).
@@ -332,7 +332,7 @@ async function main() {
     const pdfOverlay = L.imageOverlay(imgInfo.imagePath, imgInfo.bounds, { opacity: 0.6 });
     layerCtl = L.control.layers(
       { "OSM": osm },
-      { "Route E PDF map": pdfOverlay }
+      { [`${CFG.label} PDF map`]: pdfOverlay }
     ).addTo(map);
   }
 
@@ -378,8 +378,8 @@ async function main() {
 
     // Use the team's reported "now" (last-updated time today) for pace calc.
     const now = new Date();
-    document.getElementById("meta").textContent =
-      `Source updated: ${updated || "?"}    Now: ${now.toLocaleTimeString().slice(0, 5)}    ${teams.length} teams    (${CORRECTION_STATUS})`;
+    document.getElementById("meta").innerHTML =
+      `<a href="https://tentors.org.uk/eventdata/route${ROUTE.toLowerCase()}.html" target="_blank" style="color:#4af;text-decoration:underline">Source</a> updated: ${updated || "?"}    Now: ${now.toLocaleTimeString().slice(0, 5)}    ${teams.length} team${teams.length !== 1 ? "s" : ""}    (route: ${CFG.line})`;
 
     teamLayer.clearLayers();
     const panel = document.getElementById("teams");

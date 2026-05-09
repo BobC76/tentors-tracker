@@ -1,0 +1,136 @@
+[
+  {
+    "label": "START",
+    "lat": 50.71680569,
+    "lon": -4.00212532,
+    "via": false,
+    "source": "user"
+  },
+  {
+    "label": "OKE TOR",
+    "lat": 50.69109055440604,
+    "lon": -3.9648695841158808,
+    "via": true,
+    "source": "tentors.org.uk",
+    "grid_ref": "SX 6131 8978"
+  },
+  {
+    "label": "OKEMENT HILL",
+    "lat": 50.67259474327585,
+    "lon": -3.9789576840495755,
+    "via": false,
+    "source": "tentors.org.uk",
+    "grid_ref": "SX 6026 8775"
+  },
+  {
+    "label": "WATERN TOR",
+    "lat": 50.66558357097767,
+    "lon": -3.9413043771648293,
+    "via": false,
+    "source": "tentors.org.uk",
+    "grid_ref": "SX 6290 8690"
+  },
+  {
+    "label": "FERNWORTHY",
+    "lat": 50.6426698584481,
+    "lon": -3.9238112309551303,
+    "via": false,
+    "source": "tentors.org.uk",
+    "grid_ref": "SX 6407 8432"
+  },
+  {
+    "label": "SITTAFORD TOR",
+    "lat": 50.631086982632404,
+    "lon": -3.93351939700269,
+    "via": true,
+    "source": "tentors.org.uk",
+    "grid_ref": "SX 6335 8305"
+  },
+  {
+    "label": "WATER HILL",
+    "lat": 50.61605507837809,
+    "lon": -3.8793275022123113,
+    "via": false,
+    "source": "tentors.org.uk",
+    "grid_ref": "SX 6714 8128"
+  },
+  {
+    "label": "POSTBRIDGE",
+    "lat": 50.593090822017516,
+    "lon": -3.9143004027278447,
+    "via": true,
+    "source": "tentors.org.uk",
+    "grid_ref": "SX 6460 7879"
+  },
+  {
+    "label": "HIGHER WHITE TOR",
+    "lat": 50.590726476633506,
+    "lon": -3.9537640154999063,
+    "via": false,
+    "source": "tentors.org.uk",
+    "grid_ref": "SX 6180 7860"
+  },
+  {
+    "label": "HOLMING BEAM",
+    "lat": 50.570857086908525,
+    "lon": -3.9905076152158663,
+    "via": false,
+    "source": "tentors.org.uk",
+    "grid_ref": "SX 5914 7646"
+  },
+  {
+    "label": "WHITE BARROW",
+    "lat": 50.59591374765946,
+    "lon": -4.023922600085826,
+    "via": true,
+    "source": "tentors.org.uk",
+    "grid_ref": "SX 5685 7931"
+  },
+  {
+    "label": "STANDON FARM",
+    "lat": 50.61465439743198,
+    "lon": -4.057946123938382,
+    "via": false,
+    "source": "tentors.org.uk",
+    "grid_ref": "SX 5450 8146"
+  },
+  {
+    "label": "HARE TOR",
+    "lat": 50.64015232575805,
+    "lon": -4.050291131637478,
+    "via": false,
+    "source": "tentors.org.uk",
+    "grid_ref": "SX 5512 8428"
+  },
+  {
+    "label": "NODDEN GATE",
+    "lat": 50.65795421228233,
+    "lon": -4.081061962886664,
+    "via": false,
+    "source": "tentors.org.uk",
+    "grid_ref": "SX 5300 8632"
+  },
+  {
+    "label": "KITTY TOR",
+    "lat": 50.66894998765095,
+    "lon": -4.02876097000316,
+    "via": true,
+    "source": "tentors.org.uk",
+    "grid_ref": "SX 5673 8744"
+  },
+  {
+    "label": "EAST MILL TOR",
+    "lat": 50.69157092206343,
+    "lon": -3.984287176506426,
+    "via": false,
+    "source": "tentors.org.uk",
+    "grid_ref": "SX 5994 8987"
+  },
+  {
+    "label": "FINISH",
+    "lat": 50.71788492,
+    "lon": -4.00205018,
+    "via": false,
+    "source": "user"
+  }
+]

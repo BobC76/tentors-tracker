@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Ten Tors Route E — Tracker</title>
+  <link rel="stylesheet" href="vendor/leaflet.css" />
+  <style>
+    html, body, #map { height: 100%; margin: 0; }
+    body { font: 13px/1.4 system-ui, sans-serif; }
+    .panel {
+      position: absolute; bottom: 10px; left: 10px; z-index: 1000;
+      background: white; padding: 10px 14px;
+      border-radius: 6px; box-shadow: 0 1px 6px rgba(0,0,0,0.3);
+      max-height: 70vh; overflow: auto; min-width: 280px; max-width: 360px;
+    }
+    .panel h2 { margin: 0 0 4px; font-size: 14px; }
+    .meta { font-size: 11px; color: #666; margin-bottom: 8px; }
+    .team { padding: 4px 0; }
+    .team .nm { font-weight: 600; font-size: 13px; }
+    .team .wp { color: #666; font-size: 11px; margin-top: 2px; }
+    .team .pace { color: #999; }
+    .team.finished .nm { color: #2a8; }
+    .team.notstarted .nm { color: #aaa; }
+    .stats {
+      display: flex; flex-wrap: wrap; gap: 8px 12px;
+      padding: 4px 0 8px; font-size: 11px; color: #555;
+      border-bottom: 1px solid #eee;
+    }
+    .stats b { color: #222; font-weight: 600; }
+    .pred {
+      padding: 8px 0 4px; font-size: 12px;
+      border-top: 1px dashed #ddd; margin-top: 6px;
+    }
+    .pred .row {
+      display: flex; justify-content: space-between; padding: 2px 0;
+    }
+    .pred .row .lbl { color: #555; }
+    .pred .row .val { font-weight: 600; font-feature-settings: "tnum"; }
+    .pred .camp .val { color: #c60; }
+    .pred .eta .val { color: #06c; }
+    .leaflet-tooltip.team-tt { background: rgba(0,0,0,0.75); color: white; border: 0; }
+  </style>
+</head>
+<body>
+<div id="map"></div>
+<div class="panel">
+  <h2>Ten Tors Route E</h2>
+  <div class="meta" id="meta">loading…</div>
+  <div id="teams"></div>
+</div>
+<script src="vendor/leaflet.js"></script>
+<script>
+// ---- helpers ----
+function haversine(a, b) {
+  const R = 6371000;
+  const φ1 = a[1] * Math.PI / 180, φ2 = b[1] * Math.PI / 180;
+  const dφ = (b[1] - a[1]) * Math.PI / 180;
+  const dλ = (b[0] - a[0]) * Math.PI / 180;
+  const x = Math.sin(dφ / 2) ** 2 + Math.cos(φ1) * Math.cos(φ2) * Math.sin(dλ / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(x));
+}
+function parseHHMM(s, base) {
+  const m = s && s.match(/^(\d{1,2}):(\d{2})$/);
+  if (!m) return null;
+  const d = new Date(base);
+  d.setHours(+m[1], +m[2], 0, 0);
+  // If event spans midnight: if HH is in early-morning hours and base time is
+  // in the evening, this is the next day. Cheap heuristic:
+  if (+m[1] < 6 && base.getHours() > 12) d.setDate(d.getDate() + 1);
+  return d;
+}
+function bisect(arr, target) {
+  let lo = 0, hi = arr.length - 1;
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1;
+    if (arr[mid] < target) lo = mid + 1; else hi = mid;
+  }
+  return Math.max(0, lo - 1);
+}
+
+// ---- main ----
+async function main() {
+  const wps = await (await fetch("waypoints.json")).json();
+  const routeGeo = await (await fetch("route.geojson")).json();
+  const imgInfo = await (await fetch("image-bounds.json")).json().catch(() => null);
+
+  let routeCoords = routeGeo.features[0].geometry.coordinates.slice(); // [[lon,lat],...]
+  // The polyline is a closed loop but its starting index is wherever the
+  // contour tracer started (topmost-leftmost), not necessarily at START.
+  // Find the index nearest to START (waypoints[0]) and rotate the array.
+  const startWp0 = wps[0];
+  let rotIdx = 0, rotD = Infinity;
+  for (let i = 0; i < routeCoords.length; i++) {
+    const d = haversine([startWp0.lon, startWp0.lat], routeCoords[i]);
+    if (d < rotD) { rotD = d; rotIdx = i; }
+  }
+  // Drop the explicit closing duplicate (last == first) before rotating, then
+  // rotate so the start point sits at index 0. Re-close with a copy of START.
+  if (
+    routeCoords.length > 1 &&
+    routeCoords[0][0] === routeCoords[routeCoords.length - 1][0] &&
+    routeCoords[0][1] === routeCoords[routeCoords.length - 1][1]
+  ) routeCoords.pop();
+  routeCoords = routeCoords.slice(rotIdx).concat(routeCoords.slice(0, rotIdx));
+  routeCoords.push(routeCoords[0]); // close again
+
+  // ---- Manual route corrections ----
+  // The PDF trace is wrong in places where the route uses specific footpaths
+  // or roads that don't show up in the contour. Each entry replaces the
+  // traced polyline points BETWEEN two named waypoints with hand-set via
+  // points. Coords are [lon, lat]. Add more entries here as needed.
+  const CORRECTIONS = [
+    // Approach Postbridge: from Water Hill via a gate on the footpath north
+    // of Merripit Hill, down the footpath to where it meets B3212, then west
+    // ~300 m along B3212 to the SC. Never goes south of the B3212.
+    { from: "WATER HILL",  to: "POSTBRIDGE", via: [
+      [-3.914287, 50.598373], // gate, north of Merripit Hill (footpath top)
+      [-3.911050, 50.594510], // footpath meets B3212
+    ] },
+    // Depart Postbridge: leave the B3212 at the SC, head NW toward HWT.
+    { from: "POSTBRIDGE",  to: "HIGHER WHITE TOR", via: [
+      [-3.918960, 50.594630], // exit point off B3212
+    ] },
+    // Hare Tor → Nodden Gate: replace the kinked contour with three via
+    // points tracing the actual approach.
+    { from: "HARE TOR",    to: "NODDEN GATE", via: [
+      [-4.063610, 50.646410],
+      [-4.072920, 50.647480],
+      [-4.077560, 50.652510],
+    ] },
+  ];
+  const corrOps = [];
+  for (const c of CORRECTIONS) {
+    const fW = wps.find((w) => w.label === c.from);
+    const tW = wps.find((w) => w.label === c.to);
+    if (!fW || !tW) { console.warn("correction skipped — wp not found:", c); continue; }
+    let fI = -1, tI = -1, fD = Infinity, tD = Infinity;
+    for (let i = 0; i < routeCoords.length; i++) {
+      const dF = haversine([fW.lon, fW.lat], routeCoords[i]);
+      const dT = haversine([tW.lon, tW.lat], routeCoords[i]);
+      if (dF < fD) { fD = dF; fI = i; }
+      if (dT < tD) { tD = dT; tI = i; }
+    }
+    if (fI < tI) corrOps.push({ start: fI + 1, end: tI, via: c.via, label: `${c.from}→${c.to}` });
+    else console.warn("correction wraps array; skipped:", c.from, c.to);
+  }
+  // Apply highest-index-first so earlier splices don't shift later indices.
+  corrOps.sort((a, b) => b.start - a.start);
+  const correctionLog = [];
+  for (const op of corrOps) {
+    routeCoords.splice(op.start, op.end - op.start, ...op.via);
+    correctionLog.push(`${op.label}: replaced ${op.end - op.start} pts with ${op.via.length}`);
+  }
+  console.log("corrections:", correctionLog);
+  // Stash via points so we can plot them after the map is created.
+  const VIA_POINTS = CORRECTIONS.flatMap((c) => c.via);
+  const CORRECTION_STATUS = correctionLog.length
+    ? `${correctionLog.length} correction(s) applied`
+    : "no corrections applied";
+
+  // Cumulative distance along the route (metres), now measured from START.
+  const cumDist = [0];
+  for (let i = 1; i < routeCoords.length; i++) {
+    cumDist.push(cumDist[i - 1] + haversine(routeCoords[i - 1], routeCoords[i]));
+  }
+  const totalDist = cumDist[cumDist.length - 1];
+
+  // Route-E NT values (only ~6 published; others are unconstrained here).
+  const NT = {
+    "WATER HILL":      "18:00",
+    "POSTBRIDGE":      "18:20",
+    "HIGHER WHITE TOR":"18:20",
+    "HOLMING BEAM":    "18:10",
+    "WHITE BARROW":    "18:30",
+    "STANDON FARM":    "17:50",
+  };
+  // Snap each waypoint to its nearest route coord, then in route order.
+  // Because the polyline is cyclic, "nearest" of a waypoint near START could
+  // bind to either index 0 or N-1; force route-order monotonicity by walking
+  // forward from the previous waypoint's index.
+  let prevIdx = 0;
+  const wpStops = wps.map((w, wIdx) => {
+    let bestI = prevIdx, bestD = Infinity;
+    // Search forward from prevIdx (cyclic) — guarantees waypoints stay in
+    // route order even when two waypoints are equidistant from a polyline
+    // node.
+    for (let off = 0; off < routeCoords.length; off++) {
+      const i = (prevIdx + off) % routeCoords.length;
+      const d = haversine([w.lon, w.lat], routeCoords[i]);
+      if (d < bestD) { bestD = d; bestI = i; }
+      // Early-exit guard: don't search the whole loop, only ~80% of it.
+      if (off > routeCoords.length * 0.8) break;
+    }
+    prevIdx = bestI;
+    return { ...w, routeIdx: bestI, routeDist: cumDist[bestI], nt: NT[w.label.toUpperCase()] || null };
+  });
+  console.log("route distances:", wpStops.map((w) => `${w.label}=${(w.routeDist/1000).toFixed(1)}km`).join(", "));
+
+  // ---- map setup ----
+  const center = [50.62, -3.97];
+  const map = L.map("map").setView(center, 11);
+  const osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "© OpenStreetMap", maxZoom: 19,
+  }).addTo(map);
+
+  // Route line — built from the live (post-corrections) routeCoords.
+  L.polyline(routeCoords.map(([lon, lat]) => [lat, lon]), {
+    color: "#0066cc", weight: 3, opacity: 0.85,
+  }).addTo(map);
+
+  // Visible marker at each manual via-point (cyan diamond).
+  for (const [lon, lat] of VIA_POINTS) {
+    L.circleMarker([lat, lon], {
+      radius: 5, color: "#0aa", weight: 2,
+      fillColor: "#0ff", fillOpacity: 0.9,
+    }).addTo(map).bindTooltip("manual via", { direction: "right" });
+  }
+
+  // Waypoint dots.
+  wps.forEach((w, i) => {
+    if (w.lat == null) return;
+    L.circleMarker([w.lat, w.lon], {
+      radius: w.via ? 4 : 6,
+      color: "white", weight: 1.5,
+      fillColor: w.via ? "#888" : "#0a4", fillOpacity: 0.95,
+    }).addTo(map).bindTooltip(`${i + 1}. ${w.label}`, { direction: "right" });
+  });
+
+  // PDF map overlay: layered, off by default, in the layer control top-right.
+  let layerCtl = null;
+  if (imgInfo) {
+    const pdfOverlay = L.imageOverlay(imgInfo.imagePath, imgInfo.bounds, { opacity: 0.6 });
+    layerCtl = L.control.layers(
+      { "OSM": osm },
+      { "Route E PDF map": pdfOverlay }
+    ).addTo(map);
+  }
+
+  // ---- team tracking ----
+  const teamLayer = L.layerGroup().addTo(map);
+  if (layerCtl) layerCtl.addOverlay(teamLayer, "Teams");
+
+  function normalize(s) {
+    return s.toUpperCase().replace(/\s*\(VIA\)\s*$/, "").replace(/\s+/g, " ").trim();
+  }
+
+  async function refresh() {
+    const html = await (await fetch("/api/routee?_=" + Date.now())).text();
+    const doc = new DOMParser().parseFromString(html, "text/html");
+
+    // Last-updated stamp.
+    const updMatch = doc.body.textContent.match(/Last updated[^0-9]*(\d{1,2}:\d{2})/i);
+    const updated = updMatch ? updMatch[1] : null;
+
+    // Find the largest table — that's the team data.
+    const tables = [...doc.querySelectorAll("table")];
+    if (!tables.length) { document.getElementById("meta").textContent = "no table found in routee.html"; return; }
+    let table = tables[0];
+    for (const t of tables) if (t.querySelectorAll("tr").length > table.querySelectorAll("tr").length) table = t;
+
+    const rows = [...table.querySelectorAll("tr")];
+    const headers = [...rows[0].querySelectorAll("th, td")].map((c) => c.textContent.trim());
+    // Map column index → wpStops entry by name match.
+    const colToWp = headers.map((h, idx) => {
+      if (idx === 0) return null; // team-name col
+      const target = normalize(h);
+      return wpStops.find((w) => normalize(w.label) === target) || null;
+    });
+
+    const TEAM_FILTER = /barr?acuda/i;
+    const teams = [];
+    for (const row of rows.slice(1)) {
+      const cells = [...row.querySelectorAll("th, td")].map((c) => c.textContent.trim());
+      if (cells.length < 2 || !cells[0]) continue;
+      if (!TEAM_FILTER.test(cells[0])) continue;
+      teams.push({ name: cells[0], cells: cells.slice(1) });
+    }
+
+    // Use the team's reported "now" (last-updated time today) for pace calc.
+    const now = new Date();
+    document.getElementById("meta").textContent =
+      `Source updated: ${updated || "?"}    Now: ${now.toLocaleTimeString().slice(0, 5)}    ${teams.length} teams    (${CORRECTION_STATUS})`;
+
+    teamLayer.clearLayers();
+    const panel = document.getElementById("teams");
+    panel.innerHTML = "";
+
+    for (const team of teams) {
+      // Find their last reached waypoint (latest non-empty cell with a time).
+      let firstT = null, lastT = null, lastIdx = -1, lastWp = null;
+      for (let i = 0; i < team.cells.length; i++) {
+        const wp = colToWp[i + 1];
+        const t = parseHHMM(team.cells[i], now);
+        if (t && wp) {
+          if (firstT === null) firstT = t;
+          lastT = t; lastIdx = i; lastWp = wp;
+        }
+      }
+
+      const row = document.createElement("div");
+      row.className = "team";
+      let status = "—", pace = "", pos = null;
+      if (lastWp == null) {
+        row.classList.add("notstarted");
+        status = "not started";
+      } else {
+        // Pace: total distance from start waypoint up to last reached.
+        const startWp = wpStops[0];
+        const distSoFar = lastWp.routeDist - startWp.routeDist;
+        const elapsedH = Math.max((lastT - firstT) / 3600000, 1 / 60);
+        const paceKmh = distSoFar / 1000 / elapsedH;
+
+        // Extrapolate from last waypoint at that pace.
+        const sinceLast = (now - lastT) / 3600000;
+        const extrap = Math.max(0, paceKmh * sinceLast * 1000);
+        const target = Math.min(lastWp.routeDist + extrap, totalDist);
+        const i = bisect(cumDist, target);
+        const t = (target - cumDist[i]) / (cumDist[i + 1] - cumDist[i] || 1);
+        const a = routeCoords[i], b = routeCoords[i + 1] || a;
+        pos = [a[1] + t * (b[1] - a[1]), a[0] + t * (b[0] - a[0])];
+
+        const isFinished = normalize(lastWp.label) === "FINISH";
+        if (isFinished) row.classList.add("finished");
+        status = isFinished
+          ? `finished at ${team.cells[lastIdx]}`
+          : `${lastWp.label} @ ${team.cells[lastIdx]}`;
+        pace = paceKmh > 0 ? ` · ${paceKmh.toFixed(1)} km/h` : "";
+      }
+
+      row.innerHTML = `<div class="nm">${team.name}</div>
+                       <div class="wp">${status}<span class="pace">${pace}</span></div>`;
+      panel.appendChild(row);
+
+      // Stats card: covered, remaining, pace.
+      if (lastWp) {
+        const distFromStart = lastWp.routeDist - wpStops[0].routeDist;
+        const stats = document.createElement("div");
+        stats.className = "stats";
+        stats.innerHTML = `
+          <span><b>${(distFromStart/1000).toFixed(1)}</b> km covered</span>
+          <span><b>${((totalDist - lastWp.routeDist)/1000).toFixed(1)}</b> km remaining</span>
+          <span>updated <b>${lastT.toLocaleTimeString().slice(0,5)}</b></span>`;
+        panel.appendChild(stats);
+      }
+
+      if (pos) {
+        const m = L.circleMarker(pos, {
+          radius: 8, color: "white", weight: 2,
+          fillColor: "#e60", fillOpacity: 0.95,
+        }).addTo(teamLayer);
+        m.bindTooltip(team.name, {
+          direction: "right", className: "team-tt", offset: [10, 0],
+          permanent: true,
+        });
+        map.setView(pos, 12);
+
+        // ---- camp prediction ----
+        // Walk forward from the last reached waypoint. For each upcoming
+        // waypoint with a published NT, compute the team's projected
+        // arrival time at their current pace. The first one whose projected
+        // arrival exceeds its NT is where they'll be told to camp.
+        const startWp = wpStops[0];
+        const distSoFar = lastWp.routeDist - startWp.routeDist;
+        const elapsedH = Math.max((lastT - firstT) / 3600000, 1 / 60);
+        const paceKmh = distSoFar / 1000 / elapsedH;
+
+        if (paceKmh > 0) {
+          let camp = null;
+          const startIdx = wpStops.findIndex((w) => w === lastWp);
+          for (let k = startIdx + 1; k < wpStops.length; k++) {
+            const wp = wpStops[k];
+            if (!wp.nt) continue;
+            const segDist = wp.routeDist - lastWp.routeDist;
+            const segHours = segDist / 1000 / paceKmh;
+            const projArrival = new Date(lastT.getTime() + segHours * 3600000);
+            const ntDate = parseHHMM(wp.nt, lastT);
+            if (projArrival > ntDate) { camp = wp; break; }
+          }
+          // Build the prediction block (camp + Sunday restart + finish ETA).
+          const pred = document.createElement("div");
+          pred.className = "pred";
+          panel.appendChild(pred);
+
+          let etaTime = null;
+          if (camp) {
+            const tent = L.divIcon({
+              className: "",
+              html: `<div style="font-size:28px;line-height:1;text-shadow:0 0 3px white,0 0 3px white,0 0 3px white;">⛺</div>`,
+              iconSize: [32, 32], iconAnchor: [16, 28],
+            });
+            L.marker([camp.lat, camp.lon], { icon: tent })
+              .addTo(teamLayer)
+              .bindTooltip(`Camp: ${camp.label} (NT ${camp.nt})`, { direction: "right", offset: [12, -10] });
+
+            // Sunday restart at 07:00 from camp; ETA at FINISH at same pace.
+            const sunday0700 = new Date(now);
+            sunday0700.setDate(sunday0700.getDate() + 1);
+            sunday0700.setHours(7, 0, 0, 0);
+            const remainingKm = (totalDist - camp.routeDist) / 1000;
+            const hoursToFinish = remainingKm / paceKmh;
+            etaTime = new Date(sunday0700.getTime() + hoursToFinish * 3600000);
+            pred.innerHTML = `
+              <div class="row camp">
+                <span class="lbl">⛺ Camp tonight</span>
+                <span class="val">${camp.label} (NT ${camp.nt})</span>
+              </div>
+              <div class="row">
+                <span class="lbl">↑ Restart Sunday</span>
+                <span class="val">07:00 · ${remainingKm.toFixed(1)} km left</span>
+              </div>
+              <div class="row eta">
+                <span class="lbl">🏁 ETA at FINISH</span>
+                <span class="val">${etaTime.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})} Sun</span>
+              </div>`;
+          } else {
+            // No camp predicted — they'll finish today. ETA = now + remainingKm / pace.
+            const remainingKm = (totalDist - lastWp.routeDist) / 1000;
+            const hoursToFinish = remainingKm / paceKmh;
+            etaTime = new Date(lastT.getTime() + hoursToFinish * 3600000);
+            pred.innerHTML = `
+              <div class="row eta">
+                <span class="lbl">🏁 ETA at FINISH</span>
+                <span class="val">${etaTime.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})} today · ${remainingKm.toFixed(1)} km left</span>
+              </div>`;
+          }
+        }
+      }
+    }
+  }
+
+  refresh();
+  setInterval(refresh, 60_000);
+}
+main().catch((e) => {
+  document.getElementById("meta").textContent = "error: " + e.message;
+  console.error(e);
+});
+</script>
+</body>
+</html>

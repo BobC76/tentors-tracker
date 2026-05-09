@@ -8,36 +8,53 @@
     html, body, #map { height: 100%; margin: 0; }
     body { font: 13px/1.4 system-ui, sans-serif; }
     .panel {
-      position: absolute; bottom: 10px; left: 10px; z-index: 1000;
-      background: white; padding: 10px 14px;
-      border-radius: 6px; box-shadow: 0 1px 6px rgba(0,0,0,0.3);
-      max-height: 70vh; overflow: auto; min-width: 280px; max-width: 360px;
+      position: absolute; bottom: 10px; left: 10px; right: 10px; z-index: 1000;
+      background: white; padding: 12px 16px;
+      border-radius: 8px; box-shadow: 0 1px 6px rgba(0,0,0,0.3);
+      max-height: 60vh; overflow: auto;
+      max-width: 380px;
     }
-    .panel h2 { margin: 0 0 4px; font-size: 14px; }
-    .meta { font-size: 11px; color: #666; margin-bottom: 8px; }
+    .panel h2 { margin: 0 0 4px; font-size: 15px; }
+    .meta { font-size: 12px; color: #666; margin-bottom: 8px; }
     .team { padding: 4px 0; }
-    .team .nm { font-weight: 600; font-size: 13px; }
-    .team .wp { color: #666; font-size: 11px; margin-top: 2px; }
+    .team .nm { font-weight: 600; font-size: 15px; }
+    .team .wp { color: #444; font-size: 13px; margin-top: 2px; }
     .team .pace { color: #999; }
     .team.finished .nm { color: #2a8; }
     .team.notstarted .nm { color: #aaa; }
     .stats {
       display: flex; flex-wrap: wrap; gap: 8px 12px;
-      padding: 4px 0 8px; font-size: 11px; color: #555;
+      padding: 4px 0 8px; font-size: 12px; color: #555;
       border-bottom: 1px solid #eee;
     }
     .stats b { color: #222; font-weight: 600; }
     .pred {
-      padding: 8px 0 4px; font-size: 12px;
+      padding: 10px 0 4px; font-size: 14px;
       border-top: 1px dashed #ddd; margin-top: 6px;
     }
     .pred .row {
-      display: flex; justify-content: space-between; padding: 2px 0;
+      display: flex; justify-content: space-between; padding: 4px 0;
     }
     .pred .row .lbl { color: #555; }
     .pred .row .val { font-weight: 600; font-feature-settings: "tnum"; }
     .pred .camp .val { color: #c60; }
     .pred .eta .val { color: #06c; }
+    /* Mobile: pin to bottom, full-width edge-to-edge, larger text */
+    @media (max-width: 640px) {
+      body { font-size: 15px; }
+      .panel {
+        left: 0; right: 0; bottom: 0;
+        max-width: none; border-radius: 12px 12px 0 0;
+        max-height: 55vh; padding: 14px 18px 18px;
+      }
+      .panel h2 { font-size: 17px; }
+      .meta { font-size: 13px; }
+      .team .nm { font-size: 17px; }
+      .team .wp { font-size: 14px; }
+      .stats { font-size: 13px; }
+      .pred { font-size: 15px; }
+      .pred .row { padding: 5px 0; }
+    }
     .leaflet-tooltip.team-tt { background: rgba(0,0,0,0.75); color: white; border: 0; }
   </style>
 </head>
@@ -310,21 +327,52 @@ async function main() {
         const elapsedH = Math.max((lastT - firstT) / 3600000, 1 / 60);
         const paceKmh = distSoFar / 1000 / elapsedH;
 
-        // Extrapolate from last waypoint at that pace.
-        const sinceLast = (now - lastT) / 3600000;
-        const extrap = Math.max(0, paceKmh * sinceLast * 1000);
-        const target = Math.min(lastWp.routeDist + extrap, totalDist);
+        // Decide whether the team is still moving or has stopped.
+        // They stop if (a) they've finished, or (b) the next NT-bound
+        // waypoint is one they can't make at current pace — in that case
+        // they'll be told to camp where they are (lastWp), so freeze.
+        const isFinished = normalize(lastWp.label) === "FINISH";
+        let stopped = isFinished, missedNt = null;
+        if (!isFinished) {
+          const startIdx = wpStops.findIndex((w) => w === lastWp);
+          for (let k = startIdx + 1; k < wpStops.length; k++) {
+            const wp = wpStops[k];
+            if (!wp.nt) continue;
+            const segDist = wp.routeDist - lastWp.routeDist;
+            const segH = segDist / 1000 / Math.max(paceKmh, 0.01);
+            const projArr = new Date(lastT.getTime() + segH * 3600000);
+            const ntDate = parseHHMM(wp.nt, lastT);
+            if (projArr > ntDate) { stopped = true; missedNt = wp; }
+            break; // only the first upcoming NT-bound waypoint matters
+          }
+        }
+
+        let target;
+        if (stopped) {
+          target = lastWp.routeDist;
+        } else {
+          const sinceLast = (now - lastT) / 3600000;
+          const extrap = Math.max(0, paceKmh * sinceLast * 1000);
+          target = Math.min(lastWp.routeDist + extrap, totalDist);
+        }
         const i = bisect(cumDist, target);
         const t = (target - cumDist[i]) / (cumDist[i + 1] - cumDist[i] || 1);
         const a = routeCoords[i], b = routeCoords[i + 1] || a;
         pos = [a[1] + t * (b[1] - a[1]), a[0] + t * (b[0] - a[0])];
 
-        const isFinished = normalize(lastWp.label) === "FINISH";
         if (isFinished) row.classList.add("finished");
         status = isFinished
           ? `finished at ${team.cells[lastIdx]}`
-          : `${lastWp.label} @ ${team.cells[lastIdx]}`;
+          : stopped
+            ? `stopped at ${lastWp.label} (${team.cells[lastIdx]})`
+            : `${lastWp.label} @ ${team.cells[lastIdx]}`;
         pace = paceKmh > 0 ? ` · ${paceKmh.toFixed(1)} km/h` : "";
+
+        // Stash for the prediction block below.
+        team._stopped = stopped;
+        team._missedNt = missedNt;
+        team._isFinished = isFinished;
+        team._paceKmh = paceKmh;
       }
 
       row.innerHTML = `<div class="nm">${team.name}</div>
@@ -354,75 +402,58 @@ async function main() {
         });
         map.setView(pos, 12);
 
-        // ---- camp prediction ----
-        // Walk forward from the last reached waypoint. For each upcoming
-        // waypoint with a published NT, compute the team's projected
-        // arrival time at their current pace. The first one whose projected
-        // arrival exceeds its NT is where they'll be told to camp.
-        const startWp = wpStops[0];
-        const distSoFar = lastWp.routeDist - startWp.routeDist;
-        const elapsedH = Math.max((lastT - firstT) / 3600000, 1 / 60);
-        const paceKmh = distSoFar / 1000 / elapsedH;
+        // ---- prediction block ----
+        const pred = document.createElement("div");
+        pred.className = "pred";
+        panel.appendChild(pred);
+        const paceKmh = team._paceKmh;
 
-        if (paceKmh > 0) {
-          let camp = null;
-          const startIdx = wpStops.findIndex((w) => w === lastWp);
-          for (let k = startIdx + 1; k < wpStops.length; k++) {
-            const wp = wpStops[k];
-            if (!wp.nt) continue;
-            const segDist = wp.routeDist - lastWp.routeDist;
-            const segHours = segDist / 1000 / paceKmh;
-            const projArrival = new Date(lastT.getTime() + segHours * 3600000);
-            const ntDate = parseHHMM(wp.nt, lastT);
-            if (projArrival > ntDate) { camp = wp; break; }
-          }
-          // Build the prediction block (camp + Sunday restart + finish ETA).
-          const pred = document.createElement("div");
-          pred.className = "pred";
-          panel.appendChild(pred);
-
-          let etaTime = null;
-          if (camp) {
-            const tent = L.divIcon({
-              className: "",
-              html: `<div style="font-size:28px;line-height:1;text-shadow:0 0 3px white,0 0 3px white,0 0 3px white;">⛺</div>`,
-              iconSize: [32, 32], iconAnchor: [16, 28],
-            });
-            L.marker([camp.lat, camp.lon], { icon: tent })
-              .addTo(teamLayer)
-              .bindTooltip(`Camp: ${camp.label} (NT ${camp.nt})`, { direction: "right", offset: [12, -10] });
-
-            // Sunday restart at 07:00 from camp; ETA at FINISH at same pace.
-            const sunday0700 = new Date(now);
-            sunday0700.setDate(sunday0700.getDate() + 1);
-            sunday0700.setHours(7, 0, 0, 0);
-            const remainingKm = (totalDist - camp.routeDist) / 1000;
-            const hoursToFinish = remainingKm / paceKmh;
-            etaTime = new Date(sunday0700.getTime() + hoursToFinish * 3600000);
-            pred.innerHTML = `
-              <div class="row camp">
-                <span class="lbl">⛺ Camp tonight</span>
-                <span class="val">${camp.label} (NT ${camp.nt})</span>
-              </div>
-              <div class="row">
-                <span class="lbl">↑ Restart Sunday</span>
-                <span class="val">07:00 · ${remainingKm.toFixed(1)} km left</span>
-              </div>
-              <div class="row eta">
-                <span class="lbl">🏁 ETA at FINISH</span>
-                <span class="val">${etaTime.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})} Sun</span>
-              </div>`;
-          } else {
-            // No camp predicted — they'll finish today. ETA = now + remainingKm / pace.
-            const remainingKm = (totalDist - lastWp.routeDist) / 1000;
-            const hoursToFinish = remainingKm / paceKmh;
-            etaTime = new Date(lastT.getTime() + hoursToFinish * 3600000);
-            pred.innerHTML = `
-              <div class="row eta">
-                <span class="lbl">🏁 ETA at FINISH</span>
-                <span class="val">${etaTime.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})} today · ${remainingKm.toFixed(1)} km left</span>
-              </div>`;
-          }
+        if (team._isFinished) {
+          pred.innerHTML = `<div class="row eta"><span class="lbl">🏁 Finished</span><span class="val">${team.cells[lastIdx]}</span></div>`;
+        } else if (team._stopped) {
+          // They camp at lastWp; show that, plus the NT they couldn't make,
+          // plus Sunday-restart finish ETA.
+          const tent = L.divIcon({
+            className: "",
+            html: `<div style="font-size:28px;line-height:1;text-shadow:0 0 3px white,0 0 3px white,0 0 3px white;">⛺</div>`,
+            iconSize: [32, 32], iconAnchor: [16, 28],
+          });
+          L.marker([lastWp.lat, lastWp.lon], { icon: tent })
+            .addTo(teamLayer)
+            .bindTooltip(`Camp: ${lastWp.label}`, { direction: "right", offset: [12, -10] });
+          const sunday0700 = new Date(now);
+          sunday0700.setDate(sunday0700.getDate() + 1);
+          sunday0700.setHours(7, 0, 0, 0);
+          const remainingKm = (totalDist - lastWp.routeDist) / 1000;
+          const hoursToFinish = remainingKm / Math.max(paceKmh, 0.01);
+          const etaTime = new Date(sunday0700.getTime() + hoursToFinish * 3600000);
+          const missedRow = team._missedNt
+            ? `<div class="row"><span class="lbl">✕ Couldn't make</span><span class="val">${team._missedNt.label} NT ${team._missedNt.nt}</span></div>`
+            : "";
+          pred.innerHTML = `
+            <div class="row camp">
+              <span class="lbl">⛺ Camp tonight</span>
+              <span class="val">${lastWp.label}</span>
+            </div>
+            ${missedRow}
+            <div class="row">
+              <span class="lbl">↑ Restart Sunday</span>
+              <span class="val">07:00 · ${remainingKm.toFixed(1)} km left</span>
+            </div>
+            <div class="row eta">
+              <span class="lbl">🏁 ETA at FINISH</span>
+              <span class="val">${etaTime.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})} Sun</span>
+            </div>`;
+        } else if (paceKmh > 0) {
+          // Still moving and on track to make every published NT.
+          const remainingKm = (totalDist - lastWp.routeDist) / 1000;
+          const hoursToFinish = remainingKm / paceKmh;
+          const etaTime = new Date(lastT.getTime() + hoursToFinish * 3600000);
+          pred.innerHTML = `
+            <div class="row eta">
+              <span class="lbl">🏁 ETA at FINISH</span>
+              <span class="val">${etaTime.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})} · ${remainingKm.toFixed(1)} km left</span>
+            </div>`;
         }
       }
     }

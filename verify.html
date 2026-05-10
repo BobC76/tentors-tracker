@@ -102,6 +102,7 @@
   <div id="teams"></div>
 </div>
 <script src="vendor/leaflet.js"></script>
+<script src="vendor/Leaflet.ImageOverlay.Rotated.js"></script>
 <script>
 // ---- helpers ----
 function haversine(a, b) {
@@ -351,7 +352,18 @@ async function main() {
 
   // PDF map overlay: layered, off by default, in the layer control top-right.
   let layerCtl = null;
-  if (imgInfo) {
+  if (imgInfo && imgInfo.corners) {
+    // Use rotated overlay with 3 control points (handles OSGB grid rotation)
+    const c = imgInfo.corners;
+    const topLeft    = L.latLng(c.topLeft[1], c.topLeft[0]);
+    const topRight   = L.latLng(c.topRight[1], c.topRight[0]);
+    const bottomLeft = L.latLng(c.bottomLeft[1], c.bottomLeft[0]);
+    const pdfOverlay = L.imageOverlay.rotated(imgInfo.imagePath, topLeft, topRight, bottomLeft, { opacity: 0.6 });
+    layerCtl = L.control.layers(
+      { "OSM": osm },
+      { [`${CFG.label} PDF map`]: pdfOverlay }
+    ).addTo(map);
+  } else if (imgInfo) {
     const pdfOverlay = L.imageOverlay(imgInfo.imagePath, imgInfo.bounds, { opacity: 0.6 });
     layerCtl = L.control.layers(
       { "OSM": osm },

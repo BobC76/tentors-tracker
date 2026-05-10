@@ -336,13 +336,7 @@ async function main() {
     }).addTo(map);
   }
 
-  // Visible marker at each manual via-point (cyan diamond).
-  for (const [lon, lat] of VIA_POINTS) {
-    L.circleMarker([lat, lon], {
-      radius: 5, color: "#0aa", weight: 2,
-      fillColor: "#0ff", fillOpacity: 0.9,
-    }).addTo(map).bindTooltip("manual via", { direction: "right" });
-  }
+  // (Manual via-points hidden — just noise on the live map)
 
   // Waypoint markers — will be recoloured on each refresh to show visited/unvisited.
   const wpMarkers = wps.map((w, i) => {

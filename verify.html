@@ -118,10 +118,6 @@ function parseHHMM(s, base) {
   if (!m) return null;
   const d = new Date(base);
   d.setHours(+m[1], +m[2], 0, 0);
-  // If parsed time is in the future, it must be from yesterday (Saturday data viewed on Sunday morning)
-  if (d > base) d.setDate(d.getDate() - 1);
-  // If time is past midnight (< 6am) and base is afternoon, roll forward a day
-  if (+m[1] < 6 && base.getHours() > 12) d.setDate(d.getDate() + 1);
   return d;
 }
 function bisect(arr, target) {
@@ -428,18 +424,27 @@ async function main() {
       // truth, overrides any pace-based prediction.
       let firstT = null, lastT = null, lastIdx = -1, lastWp = null;
       let campedAtCell = -1;
+      let prevT = null;
+      let dayOffset = 0; // 0 = Saturday (day 1), 1 = Sunday (day 2)
       for (let i = 0; i < team.cells.length; i++) {
         const wp = colToWp[i + 1];
         const cell = team.cells[i];
         const t = parseHHMM(cell, now);
         if (t && wp) {
-          if (firstT === null) firstT = t;
-          lastT = t; lastIdx = i; lastWp = wp;
+          // Detect day rollover: if time decreases significantly (e.g. 19:40 → 06:53)
+          if (prevT && t < prevT && (prevT - t) > 4 * 3600000) dayOffset = 1;
+          // Adjust: day 1 times are yesterday, day 2 times are today
+          const adjusted = new Date(t);
+          if (dayOffset === 0) adjusted.setDate(adjusted.getDate() - 1);
+          if (firstT === null) firstT = adjusted;
+          lastT = adjusted; lastIdx = i; lastWp = wp;
+          prevT = t;
           visitedWpLabels.add(normalize(wp.label));
           if (/CAMPED/i.test(cell)) campedAtCell = i;
         }
       }
-      const isCamped = campedAtCell >= 0;
+      // Only consider them camped if the CAMPED cell is the LAST cell with data
+      const isCamped = campedAtCell >= 0 && campedAtCell === lastIdx;
 
       const row = document.createElement("div");
       row.className = "team";

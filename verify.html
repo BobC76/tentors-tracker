@@ -426,6 +426,8 @@ async function main() {
       let campedAtCell = -1;
       let prevT = null;
       let dayOffset = 0; // 0 = Saturday (day 1), 1 = Sunday (day 2)
+      let lastSatT = null, lastSatWp = null, lastSatIdx = -1;
+      let lastDayOffset = 0;
       for (let i = 0; i < team.cells.length; i++) {
         const wp = colToWp[i + 1];
         const cell = team.cells[i];
@@ -437,7 +439,10 @@ async function main() {
           const adjusted = new Date(t);
           if (dayOffset === 0) adjusted.setDate(adjusted.getDate() - 1);
           if (firstT === null) firstT = adjusted;
+          // Track last Saturday waypoint (for camp inference)
+          if (dayOffset === 0) { lastSatT = adjusted; lastSatWp = wp; lastSatIdx = i; }
           lastT = adjusted; lastIdx = i; lastWp = wp;
+          lastDayOffset = dayOffset;
           prevT = t;
           visitedWpLabels.add(normalize(wp.label));
           if (/CAMPED/i.test(cell)) campedAtCell = i;
@@ -445,6 +450,8 @@ async function main() {
       }
       // Only consider them camped if the CAMPED cell is the LAST cell with data
       const isCamped = campedAtCell >= 0 && campedAtCell === lastIdx;
+      // Infer camp: if last data is from Saturday (no Sunday check-ins yet), assume camped there
+      const inferredCamp = lastDayOffset === 0 && lastWp != null;
 
       const row = document.createElement("div");
       row.className = "team";
@@ -464,9 +471,15 @@ async function main() {
         // at current pace; or it's evening (after 19:00) — all teams camp.
         const isFinished = normalize(lastWp.label) === "FINISH";
         const isEvening = now.getHours() >= 19 || now.getHours() < 6;
-        // Sunday morning restart: if camped but now past 6am and last check-in was yesterday, they're walking
-        const isSundayRestart = isCamped && now.getHours() >= 6 && now.getHours() < 19 && lastT < now && (now - lastT) > 6 * 3600000;
-        let stopped = isFinished || (isCamped && !isSundayRestart) || isEvening, missedNt = null;
+        // Sunday morning: if last data is Saturday-only, assume camped and restarted at 6am
+        const isSundayMorning = now.getHours() >= 6 && now.getHours() < 19;
+        const needsRestart = inferredCamp && isSundayMorning;
+        // If they have Sunday check-ins, they're actively moving (extrapolate from lastT)
+        const hasDay2Data = lastDayOffset === 1;
+        let stopped = isFinished || isEvening, missedNt = null;
+        // If still on Saturday data and not yet Sunday restart time, they're camped
+        if (inferredCamp && !isSundayMorning) stopped = true;
+        if (isCamped && !needsRestart && !hasDay2Data) stopped = true;
         if (!stopped) {
           const startIdx = wpStops.findIndex((w) => w === lastWp);
           for (let k = startIdx + 1; k < wpStops.length; k++) {
@@ -486,14 +499,15 @@ async function main() {
           // Use the waypoint's actual coordinates, not the route polyline
           pos = [lastWp.lat, lastWp.lon];
           target = lastWp.routeDist;
-        } else if (isSundayRestart) {
-          // Extrapolate from camp waypoint since 6am today at yesterday's pace
+        } else if (needsRestart) {
+          // No Sunday check-ins yet: extrapolate from camp waypoint since 6am today
           const today0600 = new Date(now);
           today0600.setHours(6, 0, 0, 0);
-          const sinceLast = (now - today0600) / 3600000;
-          const extrap = Math.max(0, paceKmh * sinceLast * 1000);
+          const sinceSix = (now - today0600) / 3600000;
+          const extrap = Math.max(0, paceKmh * sinceSix * 1000);
           target = Math.min(lastWp.routeDist + extrap, totalDist);
         } else {
+          // Normal extrapolation from last check-in time
           const sinceLast = (now - lastT) / 3600000;
           const extrap = Math.max(0, paceKmh * sinceLast * 1000);
           target = Math.min(lastWp.routeDist + extrap, totalDist);
@@ -507,21 +521,27 @@ async function main() {
 
         if (isFinished) row.classList.add("finished");
         const cellTime = (team.cells[lastIdx].match(/(\d{1,2}:\d{2})/) || [])[1] || team.cells[lastIdx];
+        // Determine camp waypoint label for display
+        const campWpLabel = lastSatWp ? lastSatWp.label : lastWp.label;
         status = isFinished
           ? `finished at ${cellTime}`
-          : isSundayRestart
-            ? `🚶 walking from ${lastWp.label} (since 06:00)`
-            : isCamped || isEvening
-              ? `⛺ camped at ${lastWp.label} (${cellTime})`
-              : stopped
-                ? `stopped at ${lastWp.label} (${cellTime})`
-                : `${lastWp.label} @ ${cellTime}`;
+          : needsRestart
+            ? `🚶 walking from ${campWpLabel} (since 06:00)`
+            : hasDay2Data
+              ? `${lastWp.label} @ ${cellTime}`
+              : (isCamped || inferredCamp || isEvening)
+                ? `⛺ camped at ${lastWp.label} (${cellTime})`
+                : stopped
+                  ? `stopped at ${lastWp.label} (${cellTime})`
+                  : `${lastWp.label} @ ${cellTime}`;
         pace = paceKmh > 0 ? ` · ${paceKmh.toFixed(1)} km/h` : "";
 
         // Stash for the prediction block below.
         team._stopped = stopped;
-        team._isCamped = (isCamped || isEvening) && !isSundayRestart;
-        team._isSundayRestart = isSundayRestart;
+        team._isCamped = (isCamped || inferredCamp || isEvening) && !needsRestart && !hasDay2Data;
+        team._isSundayRestart = needsRestart;
+        team._hasDay2Data = hasDay2Data;
+        team._campWp = lastSatWp || lastWp;
         team._missedNt = missedNt;
         team._isFinished = isFinished;
         team._paceKmh = paceKmh;
@@ -562,20 +582,31 @@ async function main() {
         if (team._isFinished) {
           pred.innerHTML = `<div class="row eta"><span class="lbl">🏁 Finished</span><span class="val">${(team.cells[lastIdx].match(/(\d{1,2}:\d{2})/)||[])[1] || team.cells[lastIdx]}</span></div>`;
         } else if (team._isSundayRestart) {
-          // Sunday morning: walking from camp since 6am
+          // Sunday morning: walking from camp since 6am, no new check-ins yet
+          const campWp = team._campWp;
+          const remainingFromCamp = (totalDist - campWp.routeDist) / 1000;
           const today0600 = new Date(now);
           today0600.setHours(6, 0, 0, 0);
-          const remainingKm = (totalDist - lastWp.routeDist) / 1000;
           const sinceSixAm = (now - today0600) / 3600000;
           const coveredSinceCamp = paceKmh * sinceSixAm;
-          const stillToGo = Math.max(0, remainingKm - coveredSinceCamp);
+          const stillToGo = Math.max(0, remainingFromCamp - coveredSinceCamp);
           const hoursToFinish = stillToGo / Math.max(paceKmh, 0.01);
           const etaTime = new Date(now.getTime() + hoursToFinish * 3600000);
           pred.innerHTML = `
             <div class="row">
               <span class="lbl">🚶 Restarted</span>
-              <span class="val">06:00 from ${lastWp.label}</span>
+              <span class="val">06:00 from ${campWp.label}</span>
             </div>
+            <div class="row eta">
+              <span class="lbl">🏁 ETA at FINISH</span>
+              <span class="val">${new Date(etaTime.getTime()-1800000).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",hour12:false})} – <b>${etaTime.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",hour12:false})}</b> – ${new Date(etaTime.getTime()+1800000).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",hour12:false})}</span>
+            </div>`;
+        } else if (team._hasDay2Data) {
+          // Has Sunday check-ins — show ETA based on last known position
+          const remainingKm = (totalDist - lastWp.routeDist) / 1000;
+          const hoursToFinish = remainingKm / Math.max(paceKmh, 0.01);
+          const etaTime = new Date(lastT.getTime() + hoursToFinish * 3600000);
+          pred.innerHTML = `
             <div class="row eta">
               <span class="lbl">🏁 ETA at FINISH</span>
               <span class="val">${new Date(etaTime.getTime()-1800000).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",hour12:false})} – <b>${etaTime.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",hour12:false})}</b> – ${new Date(etaTime.getTime()+1800000).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",hour12:false})}</span>

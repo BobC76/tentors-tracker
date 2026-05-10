@@ -461,9 +461,22 @@ async function main() {
         status = "not started";
       } else {
         // Pace: total distance from start waypoint up to last reached.
+        // Subtract camp time (overnight stop) from elapsed hours.
         const startWp = wpStops[0];
         const distSoFar = lastWp.routeDist - startWp.routeDist;
-        const elapsedH = Math.max((lastT - firstT) / 3600000, 1 / 60);
+        let elapsedH;
+        if (lastDayOffset === 1 && lastSatT) {
+          // Has Sunday data: walking time = Saturday walking + Sunday walking
+          const today0600 = new Date(now); today0600.setHours(6, 0, 0, 0);
+          const satWalking = (lastSatT - firstT) / 3600000;
+          const sunWalking = (lastT - today0600) / 3600000;
+          elapsedH = Math.max(satWalking + sunWalking, 1 / 60);
+        } else if (inferredCamp) {
+          // Saturday only: walking time is just Saturday's duration
+          elapsedH = Math.max((lastT - firstT) / 3600000, 1 / 60);
+        } else {
+          elapsedH = Math.max((lastT - firstT) / 3600000, 1 / 60);
+        }
         const paceKmh = distSoFar / 1000 / elapsedH;
 
         // Decide whether the team is still moving or has stopped.

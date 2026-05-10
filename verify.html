@@ -586,6 +586,21 @@ async function main() {
         panel.appendChild(pred);
         const paceKmh = team._paceKmh;
 
+        // Show tent icon at camp location (inferred or explicit)
+        const campWp = team._campWp;
+        if (campWp && !team._isFinished) {
+          const isMobile = window.innerWidth <= 640;
+          const tentSize = isMobile ? 64 : 32;
+          const tent = L.divIcon({
+            className: "",
+            html: `<div class="tent-icon" style="font-size:${isMobile ? 56 : 28}px;">⛺</div>`,
+            iconSize: [tentSize, tentSize], iconAnchor: [tentSize / 2, tentSize - 4],
+          });
+          L.marker([campWp.lat, campWp.lon], { icon: tent })
+            .addTo(teamLayer)
+            .bindTooltip(`Camp: ${campWp.label}`, { direction: "right", offset: [12, -10] });
+        }
+
         if (team._isFinished) {
           pred.innerHTML = `<div class="row eta"><span class="lbl">🏁 Finished</span><span class="val">${(team.cells[lastIdx].match(/(\d{1,2}:\d{2})/)||[])[1] || team.cells[lastIdx]}</span></div>`;
         } else if (team._isSundayRestart) {
@@ -621,16 +636,6 @@ async function main() {
         } else if (team._stopped) {
           // They camp at lastWp; show that, plus the NT they couldn't make,
           // plus Sunday-restart finish ETA.
-          const isMobile = window.innerWidth <= 640;
-          const tentSize = isMobile ? 64 : 32;
-          const tent = L.divIcon({
-            className: "",
-            html: `<div class="tent-icon" style="font-size:${isMobile ? 56 : 28}px;">⛺</div>`,
-            iconSize: [tentSize, tentSize], iconAnchor: [tentSize / 2, tentSize - 4],
-          });
-          L.marker([lastWp.lat, lastWp.lon], { icon: tent })
-            .addTo(teamLayer)
-            .bindTooltip(`Camp: ${lastWp.label}`, { direction: "right", offset: [12, -10] });
           const today0600 = new Date(now);
           today0600.setHours(6, 0, 0, 0);
           // If it's already past 6am today, restart is today; otherwise tomorrow

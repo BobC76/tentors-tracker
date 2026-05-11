@@ -76,26 +76,49 @@
   </div>
 
   <script>
-    const AVAILABLE_YEARS = ["2026"];
     const params = new URLSearchParams(location.search);
 
-    let year = params.get("year") || AVAILABLE_YEARS[0];
+    let years = [];   // [{year, current}, ...] sorted newest first
+    let year = null;
     let config = null;
     const selected = new Set();
 
-    // Populate year selector.
     const yearSel = document.getElementById("year-sel");
-    for (const y of AVAILABLE_YEARS) {
-      const opt = document.createElement("option");
-      opt.value = y; opt.textContent = y;
-      if (y === year) opt.selected = true;
-      yearSel.appendChild(opt);
-    }
     yearSel.addEventListener("change", () => {
       year = yearSel.value;
       selected.clear();
       loadYear(year);
     });
+
+    async function init() {
+      try {
+        years = await fetch("data/years.json").then(r => {
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+          return r.json();
+        });
+      } catch (e) {
+        document.getElementById("content").innerHTML =
+          `<p class="error">Could not load years list: ${e.message}</p>`;
+        return;
+      }
+
+      // Sort newest first; default to the "current" year, or the newest available.
+      years.sort((a, b) => b.year - a.year);
+      const defaultYear = (years.find(y => y.current) ?? years[0])?.year?.toString();
+      year = params.get("year") || defaultYear;
+
+      // Populate year selector.
+      for (const entry of years) {
+        const y = entry.year.toString();
+        const opt = document.createElement("option");
+        opt.value = y;
+        opt.textContent = entry.current ? y : `${y} (archive)`;
+        if (y === year) opt.selected = true;
+        yearSel.appendChild(opt);
+      }
+
+      loadYear(year);
+    }
 
     async function loadYear(y) {
       document.getElementById("content").innerHTML = `<p class="msg">Loading…</p>`;
@@ -191,7 +214,7 @@
       location.href = `tracker.html?year=${encodeURIComponent(year)}&teams=${encodeURIComponent([...selected].join(","))}`;
     });
 
-    loadYear(year);
+    init();
   </script>
 </body>
 </html>

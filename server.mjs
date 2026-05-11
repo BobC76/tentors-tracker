@@ -10,7 +10,7 @@ const app = express();
 
 async function proxyRoute(req, res) {
   const letter = (req.params.letter || "e").toLowerCase();
-  if (!/^[a-j]$/.test(letter)) { res.status(400).send("Invalid route letter"); return; }
+  if (!/^[a-z]$/.test(letter)) { res.status(400).send("Invalid route letter"); return; }
   try {
     const r = await fetch(`https://tentors.org.uk/eventdata/route${letter}.html`, {
       headers: { "User-Agent": "tentors-tracker/0.1" },

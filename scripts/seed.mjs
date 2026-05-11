@@ -12,12 +12,10 @@
 //      Writes data/{year}/config.json     (route sections, preserving any
 //                                          existing nt_overrides/corrections/teams)
 //
-// Note: /page/ten-tors-teams lists establishments but NOT which route each
-// team is assigned to. After running this script:
-//   - Check /page/route-allocations to find route letters per establishment
-//   - Edit data/{year}/config.json to add teams to the correct route sections
-//   - Set "distance" for each route (35, 45, or 55)
-//   - Set "match" for each team (substring of the name in the eventdata table)
+//   5. Fetches /page/route-allocations → maps establishment → route letter + distance
+//      Fully populates data/{year}/config.json with teams in the correct route
+//      sections, preserving any existing nt_overrides/corrections per route.
+//      Team id = route code lowercased (e.g. "bc"); "match" field not needed.
 
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -266,6 +264,76 @@ async function seedTeams(routeLetters) {
 }
 
 // ============================================================
+// Step 5: route-allocations → fully populate config.json
+// ============================================================
+
+function parseRouteAllocations(html) {
+  // Returns [{ routeLetter, routeCode, distance, name }]
+  const tableMatch = html.match(/<table[^>]*class="[^"]*team-overview-table[^"]*"[^>]*>([\s\S]*?)<\/table>/i);
+  if (!tableMatch) { console.warn("  No team-overview-table found"); return []; }
+  const tbodyMatch = tableMatch[1].match(/<tbody>([\s\S]*?)<\/tbody>/i);
+  if (!tbodyMatch) { console.warn("  No <tbody> in route-allocations table"); return []; }
+  const rows = [];
+  const rowRe = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
+  let m;
+  while ((m = rowRe.exec(tbodyMatch[1])) !== null) {
+    const cells = extractCells(m[1]);
+    if (cells.length < 3) continue;
+    const distStr = cells[0].trim();   // e.g. "TT35"
+    const routeCode = cells[1].trim(); // e.g. "BC"
+    const name = cells[2].trim();
+    if (!distStr || !routeCode || !name) continue;
+    const distance = parseInt(distStr.replace(/^TT/i, ""), 10);
+    if (isNaN(distance)) continue;
+    const routeLetter = routeCode[0].toUpperCase();
+    rows.push({ routeLetter, routeCode, distance, name });
+  }
+  return rows;
+}
+
+async function seedAllocations() {
+  const configPath = path.join(ROOT, "data", year, "config.json");
+  let config = { year: parseInt(year, 10), routes: {} };
+  try {
+    config = JSON.parse(await fs.readFile(configPath, "utf8"));
+  } catch { /* fresh */ }
+
+  console.log(`  Fetching route-allocations...`);
+  const html = await get(url("page/route-allocations"));
+  const rows = parseRouteAllocations(html);
+  console.log(`  Found ${rows.length} team allocations`);
+
+  // Build route sections from allocations
+  const routes = {};
+  for (const { routeLetter, routeCode, distance, name } of rows) {
+    if (!routes[routeLetter]) {
+      const existing = config.routes?.[routeLetter] ?? {};
+      routes[routeLetter] = {
+        label: `Route ${routeLetter}`,
+        distance,
+        teams: [],
+        nt_overrides: existing.nt_overrides ?? {},
+        corrections: existing.corrections ?? [],
+      };
+    }
+    routes[routeLetter].teams.push({ id: routeCode.toLowerCase(), name });
+  }
+
+  // Preserve any route sections not covered by allocations (e.g. manual entries)
+  for (const [letter, data] of Object.entries(config.routes ?? {})) {
+    if (!routes[letter]) {
+      console.log(`  Preserving existing route section ${letter}`);
+      routes[letter] = data;
+    }
+  }
+
+  const updated = { year: parseInt(year, 10), routes };
+  await fs.writeFile(configPath, JSON.stringify(updated, null, 2));
+  const teamCount = Object.values(routes).reduce((s, r) => s + r.teams.length, 0);
+  console.log(`  Wrote ${configPath} (${Object.keys(routes).length} routes, ${teamCount} teams)`);
+}
+
+// ============================================================
 // Main
 // ============================================================
 
@@ -288,20 +356,21 @@ async function main() {
   const routeLetters = parseResultRoutes(resultsHtml);
   console.log(`  Routes on results page: ${routeLetters.join(", ")}`);
 
-  // 4. Teams → config.json + teams-raw.json
+  // 4. Teams → teams-raw.json + config.json skeleton
   console.log("\nStep 4: Fetching teams...");
   await seedTeams(routeLetters);
+
+  // 5. Route allocations → fully populate config.json
+  console.log("\nStep 5: Fetching route allocations...");
+  await seedAllocations();
 
   console.log(`
 === Done ===
 
-Next steps for data/${year}/config.json:
-  1. Check ${baseUrl}/page/route-allocations to find which
-     establishment is on which route letter.
-  2. For each route, add team entries from data/${year}/teams-raw.json:
-       { "id": "<slug>", "name": "<name>", "match": "<substring>" }
-  3. Set "distance" for each route (35, 45, or 55).
-  4. Add any known "nt_overrides" for controls with non-standard night times.
+data/${year}/config.json has been fully populated.
+If any establishment names differ from what eventdata uses, add a "match"
+field to that team entry with the substring eventdata uses instead.
+Add "nt_overrides" for controls with non-standard night times if needed.
 `);
 }
 

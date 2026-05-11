@@ -363,7 +363,7 @@ async function main() {
       const matchedRows = rows.slice(1).filter(row => {
         const cells = [...row.querySelectorAll("th, td")];
         if (!cells.length) return false;
-        return cells[0].textContent.toLowerCase().includes(team.match.toLowerCase());
+        return cells[0].textContent.toLowerCase().includes((team.match ?? team.name).toLowerCase());
       });
 
       if (!matchedRows.length) {

@@ -22,32 +22,47 @@
       font-size: 14px; padding: 4px 8px; border-radius: 6px;
       border: 1.5px solid #ccc; background: white;
     }
-    .route-group { margin-bottom: 20px; }
-    .route-label {
-      font-size: 12px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.06em; color: #888; margin-bottom: 8px;
+
+    /* Search box */
+    .search-wrap { position: relative; margin-bottom: 8px; }
+    .search-wrap input {
+      width: 100%; font-size: 15px; padding: 10px 12px;
+      border: 1.5px solid #ccc; border-radius: 10px; outline: none;
     }
-    .team-item {
-      display: flex; align-items: center; gap: 12px;
-      padding: 12px 14px; border-radius: 10px;
-      border: 1.5px solid #e0e0e0; margin-bottom: 6px;
-      cursor: pointer; user-select: none;
-      transition: border-color 0.1s, background 0.1s;
+    .search-wrap input:focus { border-color: #0066cc; }
+
+    /* Autocomplete dropdown */
+    .dropdown {
+      position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+      background: white; border: 1.5px solid #ccc; border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 10;
+      max-height: 260px; overflow-y: auto;
     }
-    .team-item:hover { background: #f5f5f5; }
-    .team-item.selected { border-color: #0066cc; background: #ebf2ff; }
-    .team-item input[type=checkbox] {
-      accent-color: #0066cc; width: 18px; height: 18px;
-      flex-shrink: 0; cursor: pointer;
+    .dropdown-item {
+      padding: 10px 14px; cursor: pointer;
     }
-    .team-name { font-weight: 600; font-size: 15px; }
-    .team-meta { font-size: 13px; color: #888; margin-left: auto; }
-    .sel-all {
-      font-size: 13px; color: #0066cc; cursor: pointer;
-      margin-bottom: 14px; display: inline-block;
-      text-decoration: underline; text-underline-offset: 2px;
+    .dropdown-item:first-child { border-radius: 8px 8px 0 0; }
+    .dropdown-item:last-child { border-radius: 0 0 8px 8px; }
+    .dropdown-item:hover, .dropdown-item.active { background: #ebf2ff; }
+    .dropdown-item .di-name { font-weight: 600; }
+    .dropdown-item .di-meta { font-size: 12px; color: #888; }
+    .dropdown-empty { padding: 10px 14px; color: #888; font-size: 14px; }
+
+    /* Selected chips */
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; min-height: 0; }
+    .chip {
+      display: flex; align-items: center; gap: 6px;
+      background: #ebf2ff; border: 1.5px solid #0066cc;
+      border-radius: 20px; padding: 4px 10px 4px 12px;
+      font-size: 13px; font-weight: 600; color: #0044aa;
     }
-    .actions { margin-top: 28px; }
+    .chip-remove {
+      cursor: pointer; font-size: 16px; line-height: 1;
+      color: #0066cc; border: none; background: none; padding: 0;
+    }
+    .chip-remove:hover { color: #c00; }
+
+    .actions { margin-top: 8px; }
     .btn-track {
       display: block; width: 100%; padding: 15px;
       background: #0066cc; color: white;
@@ -62,7 +77,7 @@
 </head>
 <body>
   <h1>Ten Tors Tracker</h1>
-  <p class="subtitle">Select a team to follow on the map during the event.</p>
+  <p class="subtitle">Search for a team to follow on the map during the event.</p>
 
   <div class="year-bar">
     <label for="year-sel">Year:</label>
@@ -72,16 +87,16 @@
   <div id="content"><p class="msg">Loading…</p></div>
 
   <div class="actions">
-    <button class="btn-track" id="btn-track" disabled>Track selected team</button>
+    <button class="btn-track" id="btn-track" disabled>Select a team above</button>
   </div>
 
   <script>
     const params = new URLSearchParams(location.search);
 
-    let years = [];   // [{year, current}, ...] sorted newest first
+    let years = [];
     let year = null;
-    let config = null;
-    const selected = new Set();
+    let allTeams = [];           // [{id, name, routeLetter, routeLabel, distance}, ...]
+    const selected = new Map();  // id → team object
 
     const yearSel = document.getElementById("year-sel");
     yearSel.addEventListener("change", () => {
@@ -102,12 +117,10 @@
         return;
       }
 
-      // Sort newest first; default to the "current" year, or the newest available.
       years.sort((a, b) => b.year - a.year);
       const defaultYear = (years.find(y => y.current) ?? years[0])?.year?.toString();
       year = params.get("year") || defaultYear;
 
-      // Populate year selector.
       for (const entry of years) {
         const y = entry.year.toString();
         const opt = document.createElement("option");
@@ -124,81 +137,129 @@
       document.getElementById("content").innerHTML = `<p class="msg">Loading…</p>`;
       updateBtn();
       try {
-        config = await fetch(`data/${y}/config.json`).then(r => {
+        const config = await fetch(`data/${y}/config.json`).then(r => {
           if (!r.ok) throw new Error(`HTTP ${r.status}`);
           return r.json();
         });
+        allTeams = [];
+        for (const [letter, route] of Object.entries(config.routes)) {
+          for (const team of route.teams) {
+            allTeams.push({ ...team, routeLetter: letter, routeLabel: route.label, distance: route.distance });
+          }
+        }
         render();
       } catch (e) {
-        document.getElementById("content").innerHTML = `<p class="error">Could not load ${y} data: ${e.message}</p>`;
+        document.getElementById("content").innerHTML =
+          `<p class="error">Could not load ${y} data: ${e.message}</p>`;
       }
     }
 
+    // ── Autocomplete ──────────────────────────────────────────
+    let activeIdx = -1;
+
     function render() {
-      const routes = config.routes;
-      const content = document.getElementById("content");
-
-      // Flatten all teams across routes.
-      const allTeams = [];
-      for (const [letter, route] of Object.entries(routes)) {
-        for (const team of route.teams) {
-          allTeams.push({ ...team, routeLetter: letter, routeLabel: route.label, distance: route.distance });
-        }
-      }
-
       if (!allTeams.length) {
-        content.innerHTML = `<p class="msg">No teams registered for ${year} yet.</p>`;
+        document.getElementById("content").innerHTML =
+          `<p class="msg">No teams registered for ${year} yet.</p>`;
         return;
       }
 
-      let html = "";
-      if (allTeams.length > 1) {
-        html += `<span class="sel-all" id="sel-all">Select all</span>`;
-      }
+      document.getElementById("content").innerHTML = `
+        <div class="search-wrap">
+          <input id="team-search" type="text" placeholder="Type a team name…" autocomplete="off" />
+          <div class="dropdown" id="dropdown" hidden></div>
+        </div>
+        <div class="chips" id="chips"></div>`;
 
-      // Group by route letter.
-      const byRoute = {};
-      for (const t of allTeams) {
-        (byRoute[t.routeLetter] = byRoute[t.routeLetter] || []).push(t);
-      }
+      renderChips();
 
-      for (const [letter, teams] of Object.entries(byRoute)) {
-        const r = routes[letter];
-        const distLabel = r.distance ? ` · ${r.distance} miles` : "";
-        html += `<div class="route-group"><div class="route-label">${r.label}${distLabel}</div>`;
-        for (const t of teams) {
-          const isSel = selected.has(t.id);
-          html += `
-            <label class="team-item${isSel ? " selected" : ""}" data-id="${t.id}">
-              <input type="checkbox" value="${t.id}"${isSel ? " checked" : ""}>
-              <span class="team-name">${t.name}</span>
-            </label>`;
-        }
-        html += `</div>`;
-      }
-
-      content.innerHTML = html;
-
-      // Checkbox change events.
-      content.querySelectorAll(".team-item").forEach(el => {
-        const cb = el.querySelector("input");
-        cb.addEventListener("change", () => {
-          if (cb.checked) { selected.add(el.dataset.id); el.classList.add("selected"); }
-          else { selected.delete(el.dataset.id); el.classList.remove("selected"); }
-          updateBtn();
-        });
-      });
-
-      const selAllEl = document.getElementById("sel-all");
-      if (selAllEl) {
-        selAllEl.addEventListener("click", () => {
-          allTeams.forEach(t => selected.add(t.id));
-          render();
-          updateBtn();
-        });
-      }
-
+      const input = document.getElementById("team-search");
+      input.addEventListener("input", onInput);
+      input.addEventListener("keydown", onKey);
+      input.addEventListener("blur", () => setTimeout(hideDropdown, 150));
       updateBtn();
+    }
+
+    function onInput() {
+      const q = document.getElementById("team-search").value.trim().toLowerCase();
+      activeIdx = -1;
+      if (!q) { hideDropdown(); return; }
+      const matches = allTeams.filter(t =>
+        !selected.has(t.id) &&
+        (t.name.toLowerCase().includes(q) || t.id.includes(q))
+      );
+      showDropdown(matches);
+    }
+
+    function showDropdown(matches) {
+      const dd = document.getElementById("dropdown");
+      if (!matches.length) {
+        dd.innerHTML = `<div class="dropdown-empty">No matches</div>`;
+      } else {
+        dd.innerHTML = matches.map((t, i) => `
+          <div class="dropdown-item" data-id="${t.id}" data-idx="${i}">
+            <div class="di-name">${t.name}</div>
+            <div class="di-meta">${t.routeLabel}${t.distance ? ` · ${t.distance} miles` : ""}</div>
+          </div>`).join("");
+        dd.querySelectorAll(".dropdown-item").forEach(el => {
+          el.addEventListener("mousedown", () => selectTeam(el.dataset.id));
+        });
+      }
+      dd.hidden = false;
+    }
+
+    function hideDropdown() {
+      const dd = document.getElementById("dropdown");
+      if (dd) { dd.hidden = true; activeIdx = -1; }
+    }
+
+    function onKey(e) {
+      const dd = document.getElementById("dropdown");
+      if (!dd || dd.hidden) return;
+      const items = dd.querySelectorAll(".dropdown-item");
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        activeIdx = Math.min(activeIdx + 1, items.length - 1);
+        items.forEach((el, i) => el.classList.toggle("active", i === activeIdx));
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        activeIdx = Math.max(activeIdx - 1, 0);
+        items.forEach((el, i) => el.classList.toggle("active", i === activeIdx));
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        if (activeIdx >= 0 && items[activeIdx]) selectTeam(items[activeIdx].dataset.id);
+      } else if (e.key === "Escape") {
+        hideDropdown();
+      }
+    }
+
+    function selectTeam(id) {
+      const team = allTeams.find(t => t.id === id);
+      if (!team) return;
+      selected.set(id, team);
+      document.getElementById("team-search").value = "";
+      hideDropdown();
+      renderChips();
+      updateBtn();
+    }
+
+    function deselectTeam(id) {
+      selected.delete(id);
+      renderChips();
+      updateBtn();
+    }
+
+    function renderChips() {
+      const chips = document.getElementById("chips");
+      if (!chips) return;
+      chips.innerHTML = [...selected.values()].map(t => `
+        <div class="chip">
+          <span>${t.name}</span>
+          <button class="chip-remove" data-id="${t.id}" title="Remove">&times;</button>
+        </div>`).join("");
+      chips.querySelectorAll(".chip-remove").forEach(btn => {
+        btn.addEventListener("click", () => deselectTeam(btn.dataset.id));
+      });
     }
 
     function updateBtn() {
@@ -211,7 +272,7 @@
 
     document.getElementById("btn-track").addEventListener("click", () => {
       if (!selected.size) return;
-      location.href = `tracker.html?year=${encodeURIComponent(year)}&teams=${encodeURIComponent([...selected].join(","))}`;
+      location.href = `tracker.html?year=${encodeURIComponent(year)}&teams=${encodeURIComponent([...selected.keys()].join(","))}`;
     });
 
     init();

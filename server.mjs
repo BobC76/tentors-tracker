@@ -1,5 +1,5 @@
 // Minimal static + proxy server.
-// Serves the project root and proxies /routee.html → tentors.org.uk to bypass CORS.
+// Serves the project root and proxies /api/route/:letter → tentors.org.uk to bypass CORS.
 
 import express from "express";
 import path from "node:path";
@@ -31,4 +31,4 @@ app.use((_req, res, next) => {
 app.use(express.static(__dirname));
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`http://localhost:${port}/verify.html`));
+app.listen(port, () => console.log(`http://localhost:${port}/`));

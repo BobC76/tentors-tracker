@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ten Tors Tracker</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font: 15px/1.5 system-ui, sans-serif;
+      max-width: 480px; margin: 0 auto; padding: 32px 16px 48px;
+      color: #1a1a1a;
+    }
+    h1 { font-size: 24px; margin: 0 0 4px; }
+    .subtitle { color: #666; font-size: 14px; margin-bottom: 28px; }
+    .year-bar {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 24px; font-size: 14px;
+    }
+    .year-bar label { font-weight: 600; color: #555; }
+    .year-bar select {
+      font-size: 14px; padding: 4px 8px; border-radius: 6px;
+      border: 1.5px solid #ccc; background: white;
+    }
+    .route-group { margin-bottom: 20px; }
+    .route-label {
+      font-size: 12px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: #888; margin-bottom: 8px;
+    }
+    .team-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px; border-radius: 10px;
+      border: 1.5px solid #e0e0e0; margin-bottom: 6px;
+      cursor: pointer; user-select: none;
+      transition: border-color 0.1s, background 0.1s;
+    }
+    .team-item:hover { background: #f5f5f5; }
+    .team-item.selected { border-color: #0066cc; background: #ebf2ff; }
+    .team-item input[type=checkbox] {
+      accent-color: #0066cc; width: 18px; height: 18px;
+      flex-shrink: 0; cursor: pointer;
+    }
+    .team-name { font-weight: 600; font-size: 15px; }
+    .team-meta { font-size: 13px; color: #888; margin-left: auto; }
+    .sel-all {
+      font-size: 13px; color: #0066cc; cursor: pointer;
+      margin-bottom: 14px; display: inline-block;
+      text-decoration: underline; text-underline-offset: 2px;
+    }
+    .actions { margin-top: 28px; }
+    .btn-track {
+      display: block; width: 100%; padding: 15px;
+      background: #0066cc; color: white;
+      font: 600 16px system-ui; border: 0;
+      border-radius: 12px; cursor: pointer;
+    }
+    .btn-track:disabled { background: #ccc; cursor: default; }
+    .btn-track:not(:disabled):hover { background: #004fa3; }
+    .msg { color: #888; font-size: 14px; padding: 20px 0; }
+    .error { color: #c00; font-size: 14px; padding: 20px 0; }
+  </style>
+</head>
+<body>
+  <h1>Ten Tors Tracker</h1>
+  <p class="subtitle">Select a team to follow on the map during the event.</p>
+
+  <div class="year-bar">
+    <label for="year-sel">Year:</label>
+    <select id="year-sel"></select>
+  </div>
+
+  <div id="content"><p class="msg">Loading…</p></div>
+
+  <div class="actions">
+    <button class="btn-track" id="btn-track" disabled>Track selected team</button>
+  </div>
+
+  <script>
+    const AVAILABLE_YEARS = ["2026"];
+    const params = new URLSearchParams(location.search);
+
+    let year = params.get("year") || AVAILABLE_YEARS[0];
+    let config = null;
+    const selected = new Set();
+
+    // Populate year selector.
+    const yearSel = document.getElementById("year-sel");
+    for (const y of AVAILABLE_YEARS) {
+      const opt = document.createElement("option");
+      opt.value = y; opt.textContent = y;
+      if (y === year) opt.selected = true;
+      yearSel.appendChild(opt);
+    }
+    yearSel.addEventListener("change", () => {
+      year = yearSel.value;
+      selected.clear();
+      loadYear(year);
+    });
+
+    async function loadYear(y) {
+      document.getElementById("content").innerHTML = `<p class="msg">Loading…</p>`;
+      updateBtn();
+      try {
+        config = await fetch(`data/${y}/config.json`).then(r => {
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+          return r.json();
+        });
+        render();
+      } catch (e) {
+        document.getElementById("content").innerHTML = `<p class="error">Could not load ${y} data: ${e.message}</p>`;
+      }
+    }
+
+    function render() {
+      const routes = config.routes;
+      const content = document.getElementById("content");
+
+      // Flatten all teams across routes.
+      const allTeams = [];
+      for (const [letter, route] of Object.entries(routes)) {
+        for (const team of route.teams) {
+          allTeams.push({ ...team, routeLetter: letter, routeLabel: route.label, distance: route.distance });
+        }
+      }
+
+      if (!allTeams.length) {
+        content.innerHTML = `<p class="msg">No teams registered for ${year} yet.</p>`;
+        return;
+      }
+
+      let html = "";
+      if (allTeams.length > 1) {
+        html += `<span class="sel-all" id="sel-all">Select all</span>`;
+      }
+
+      // Group by route letter.
+      const byRoute = {};
+      for (const t of allTeams) {
+        (byRoute[t.routeLetter] = byRoute[t.routeLetter] || []).push(t);
+      }
+
+      for (const [letter, teams] of Object.entries(byRoute)) {
+        const r = routes[letter];
+        const distLabel = r.distance ? ` · ${r.distance} miles` : "";
+        html += `<div class="route-group"><div class="route-label">${r.label}${distLabel}</div>`;
+        for (const t of teams) {
+          const isSel = selected.has(t.id);
+          html += `
+            <label class="team-item${isSel ? " selected" : ""}" data-id="${t.id}">
+              <input type="checkbox" value="${t.id}"${isSel ? " checked" : ""}>
+              <span class="team-name">${t.name}</span>
+            </label>`;
+        }
+        html += `</div>`;
+      }
+
+      content.innerHTML = html;
+
+      // Checkbox change events.
+      content.querySelectorAll(".team-item").forEach(el => {
+        const cb = el.querySelector("input");
+        cb.addEventListener("change", () => {
+          if (cb.checked) { selected.add(el.dataset.id); el.classList.add("selected"); }
+          else { selected.delete(el.dataset.id); el.classList.remove("selected"); }
+          updateBtn();
+        });
+      });
+
+      const selAllEl = document.getElementById("sel-all");
+      if (selAllEl) {
+        selAllEl.addEventListener("click", () => {
+          allTeams.forEach(t => selected.add(t.id));
+          render();
+          updateBtn();
+        });
+      }
+
+      updateBtn();
+    }
+
+    function updateBtn() {
+      const btn = document.getElementById("btn-track");
+      btn.disabled = selected.size === 0;
+      if (selected.size === 0) btn.textContent = "Select a team above";
+      else if (selected.size === 1) btn.textContent = "Track this team →";
+      else btn.textContent = `Track ${selected.size} teams →`;
+    }
+
+    document.getElementById("btn-track").addEventListener("click", () => {
+      if (!selected.size) return;
+      location.href = `tracker.html?year=${encodeURIComponent(year)}&teams=${encodeURIComponent([...selected].join(","))}`;
+    });
+
+    loadYear(year);
+  </script>
+</body>
+</html>

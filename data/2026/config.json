@@ -1,0 +1,37 @@
+{
+  "year": 2026,
+  "routes": {
+    "B": {
+      "label": "Route B",
+      "distance": 35,
+      "teams": [
+        { "id": "long-ashton", "name": "Long Ashton", "match": "Long Ashton" }
+      ],
+      "nt_overrides": {},
+      "corrections": []
+    },
+    "D": {
+      "label": "Route D",
+      "distance": 35,
+      "teams": [
+        { "id": "horizon", "name": "Horizon", "match": "Horizon" }
+      ],
+      "nt_overrides": {},
+      "corrections": []
+    },
+    "E": {
+      "label": "Route E",
+      "distance": 35,
+      "teams": [
+        { "id": "barracudas", "name": "Barracudas", "match": "Barracuda" }
+      ],
+      "nt_overrides": {
+        "WATER HILL":       "18:00",
+        "HIGHER WHITE TOR": "18:20",
+        "HOLMING BEAM":     "18:10",
+        "STANDON FARM":     "17:50"
+      },
+      "corrections": []
+    }
+  }
+}

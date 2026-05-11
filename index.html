@@ -73,6 +73,12 @@
     .btn-track:not(:disabled):hover { background: #004fa3; }
     .msg { color: #888; font-size: 14px; padding: 20px 0; }
     .error { color: #c00; font-size: 14px; padding: 20px 0; }
+    .attribution {
+      margin-top: 32px; padding-top: 16px; border-top: 1px solid #e0e0e0;
+      font-size: 12px; color: #999; line-height: 1.8;
+    }
+    .attribution a { color: #aaa; text-decoration: none; }
+    .attribution a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -89,6 +95,12 @@
   <div class="actions">
     <button class="btn-track" id="btn-track" disabled>Select a team above</button>
   </div>
+
+  <footer class="attribution">
+    <div>Route data &copy; <a href="https://tentors.org.uk" target="_blank">Ten Tors</a></div>
+    <div>Map &copy; <a href="https://openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors</div>
+    <div><a href="https://github.com/BobC76/tentors-tracker" target="_blank">View source on GitHub</a></div>
+  </footer>
 
   <script>
     const params = new URLSearchParams(location.search);
@@ -145,6 +157,14 @@
         for (const [letter, route] of Object.entries(config.routes)) {
           for (const team of route.teams) {
             allTeams.push({ ...team, routeLetter: letter, routeLabel: route.label, distance: route.distance });
+          }
+        }
+        // Pre-select teams from URL params (e.g. returning from tracker).
+        if (y === year) {
+          const preselect = (params.get("teams") || "").split(",").map(s => s.trim()).filter(Boolean);
+          for (const id of preselect) {
+            const team = allTeams.find(t => t.id === id);
+            if (team && !selected.has(id)) selected.set(id, team);
           }
         }
         render();

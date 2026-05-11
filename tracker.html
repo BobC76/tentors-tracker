@@ -15,9 +15,7 @@
       max-height: 60vh; overflow: auto;
       max-width: 400px;
     }
-    .panel-nav {
-      font-size: 12px; margin-bottom: 6px;
-    }
+    .panel-nav { font-size: 12px; margin-bottom: 6px; }
     .panel-nav a { color: #0066cc; text-decoration: none; }
     .panel-nav a:hover { text-decoration: underline; }
     .panel h2 { margin: 0 0 3px; font-size: 15px; }
@@ -26,28 +24,28 @@
     /* Team card */
     .team-card { border-top: 1px solid #eee; padding: 6px 0 2px; margin-top: 4px; }
     .team-card:first-of-type { border-top: 0; margin-top: 0; }
-    .team-header {
-      display: flex; align-items: center; gap: 6px;
-      margin-bottom: 2px;
+    .team-header { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
+
+    /* Team name is the toggle button */
+    .nm {
+      flex: 1; font-weight: 600; font-size: 15px; text-align: left;
+      background: none; border: none; padding: 0; cursor: pointer; color: inherit;
+      font-family: inherit; line-height: inherit;
     }
-    .team-header .nm { font-weight: 600; font-size: 15px; flex: 1; }
-    .src-link {
-      font-size: 11px; color: #0066cc; text-decoration: none;
-      white-space: nowrap; flex-shrink: 0;
-    }
-    .src-link:hover { text-decoration: underline; }
-    .toggle-btn {
-      font-size: 11px; color: #555; background: #f0f0f0;
-      border: 1px solid #ccc; border-radius: 4px;
-      padding: 1px 6px; cursor: pointer; flex-shrink: 0;
-    }
-    .toggle-btn:hover { background: #e0e0e0; }
+    .nm:hover { color: #0066cc; }
+    .nm::after { content: " ▼"; font-size: 9px; color: #aaa; vertical-align: middle; }
+    .nm.collapsed::after { content: " ▶"; }
 
     .route-badge {
       display: inline-block; font-size: 11px; font-weight: 700;
       padding: 1px 6px; border-radius: 4px; margin-left: 4px;
       vertical-align: middle; color: white;
     }
+    .src-link {
+      font-size: 11px; color: #0066cc; text-decoration: none; white-space: nowrap; flex-shrink: 0;
+    }
+    .src-link:hover { text-decoration: underline; }
+
     .team-body .wp { color: #444; font-size: 13px; margin-top: 2px; }
     .team-body .pace { color: #999; }
     .team-card.finished .nm { color: #2a8; }
@@ -57,12 +55,8 @@
       padding: 4px 0 6px; font-size: 12px; color: #555;
     }
     .stats b { color: #222; font-weight: 600; }
-    .pred {
-      padding: 8px 0 2px; font-size: 14px;
-    }
-    .pred .row {
-      display: flex; justify-content: space-between; padding: 3px 0;
-    }
+    .pred { padding: 8px 0 2px; font-size: 14px; }
+    .pred .row { display: flex; justify-content: space-between; padding: 3px 0; }
     .pred .row .lbl { color: #555; }
     .pred .row .val { font-weight: 600; font-feature-settings: "tnum"; }
     .pred .camp .val { color: #c60; }
@@ -70,15 +64,14 @@
     @media (max-width: 640px) {
       body { font-size: 12px; }
       .panel {
-        left: 0; right: 0; bottom: 0;
-        max-width: none; border-radius: 10px 10px 0 0;
-        max-height: 32vh; padding: 6px 10px 8px;
-        overflow: hidden;
+        left: 0; right: 0; bottom: 0; max-width: none;
+        border-radius: 10px 10px 0 0; max-height: 32vh;
+        padding: 6px 10px 8px; overflow: hidden;
       }
       .panel h2 { font-size: 14px; margin: 0 0 2px; }
       .meta { font-size: 10px; margin-bottom: 4px; }
+      .nm { font-size: 14px; }
       .team-body .wp { font-size: 12px; margin-top: 1px; }
-      .team-header .nm { font-size: 14px; }
       .stats { font-size: 11px; gap: 2px 8px; padding: 2px 0 4px; }
       .pred { font-size: 12px; padding: 4px 0 2px; }
       .pred .row { padding: 2px 0; }
@@ -100,7 +93,7 @@
 <body>
 <div id="map"></div>
 <div class="panel">
-  <div class="panel-nav"><a href="index.html">← Change teams</a></div>
+  <div class="panel-nav"><a id="back-link" href="index.html">← Change teams</a></div>
   <h2 id="title">Ten Tors Tracker</h2>
   <div class="meta" id="meta">loading…</div>
   <div id="teams"></div>
@@ -138,7 +131,6 @@ function normalizeWp(s) {
   return s.toUpperCase().replace(/\s*\(VIA\)\s*$/, "").replace(/\s+/g, " ").trim();
 }
 
-// Distinct colours for up to 6 simultaneous routes.
 const ROUTE_PALETTE = ["#0066cc", "#e05c00", "#2a8a2a", "#8800cc", "#cc0044", "#007799"];
 
 // ---- parse URL params ----
@@ -148,14 +140,16 @@ const TEAM_IDS = (params.get("teams") || "").split(",").map(s => s.trim()).filte
 
 // ---- main ----
 async function main() {
-  // Load year config.
+  // Update back link to carry year + teams so selection is remembered.
+  document.getElementById("back-link").href =
+    `index.html?year=${encodeURIComponent(YEAR)}&teams=${encodeURIComponent(TEAM_IDS.join(","))}`;
+
   const config = await fetch(`data/${YEAR}/config.json`).then(r => {
     if (!r.ok) throw new Error(`Config not found for ${YEAR}`);
     return r.json();
   });
 
-  // Resolve which teams to track and their routes.
-  const teamsToTrack = []; // { id, name, match, routeLetter, routeLabel, routeDist, ntOverrides }
+  const teamsToTrack = [];
   for (const [letter, route] of Object.entries(config.routes)) {
     for (const team of route.teams) {
       if (!TEAM_IDS.length || TEAM_IDS.includes(team.id)) {
@@ -175,22 +169,16 @@ async function main() {
     return;
   }
 
-  // Page title.
   const teamNames = teamsToTrack.map(t => t.name).join(", ");
   document.getElementById("title").textContent = `Ten Tors ${YEAR} Tracker`;
   document.title = `Ten Tors ${YEAR} — ${teamNames}`;
 
-  // Load master waypoints for all routes.
   const allRoutesWp = await fetch("routes.json").then(r => r.json());
-
-  // Unique route letters among selected teams, preserving order.
   const routeLetters = [...new Set(teamsToTrack.map(t => t.routeLetter))];
 
-  // Assign a colour per route.
   const routeColor = {};
   routeLetters.forEach((letter, i) => { routeColor[letter] = ROUTE_PALETTE[i % ROUTE_PALETTE.length]; });
 
-  // Build per-route data: straight-line polyline + cumulative distances.
   const routeData = {};
   for (const letter of routeLetters) {
     const rawWps = allRoutesWp[letter]?.waypoints;
@@ -213,7 +201,6 @@ async function main() {
     }
     const totalDist = cumDist[cumDist.length - 1];
     const wpStops = wps.map((w, i) => ({ ...w, routeDist: cumDist[i] }));
-
     routeData[letter] = { wps, wpStops, coords, cumDist, totalDist };
   }
 
@@ -232,7 +219,7 @@ async function main() {
   const map = L.map("map", { maxBounds, maxBoundsViscosity: 1.0, minZoom: 10 }).fitBounds(routeBounds);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: '© OpenStreetMap · Data: <a href="https://tentors.org.uk" target="_blank">Ten Tors</a>',
+    attribution: '© <a href="https://openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors · Route data © <a href="https://tentors.org.uk" target="_blank">Ten Tors</a>',
     maxZoom: 19,
   }).addTo(map);
 
@@ -278,8 +265,7 @@ async function main() {
     routeWpMarkers[letter] = wpStops.map((w, i) => {
       if (w.lat == null) return null;
       return L.circleMarker([w.lat, w.lon], {
-        radius: 7, color: "white", weight: 2,
-        fillColor: "#999", fillOpacity: 0.5,
+        radius: 7, color: "white", weight: 2, fillColor: "#999", fillOpacity: 0.5,
       }).addTo(map).bindTooltip(`${i + 1}. ${w.label}`, { direction: "right" });
     });
   }
@@ -288,7 +274,7 @@ async function main() {
 
   // ---- toggle support ----
   const hiddenTeams = new Set();
-  const currentTeamMarkers = {}; // id → [leaflet layers]
+  const currentTeamMarkers = {};
 
   function toggleTeam(id) {
     const wasHidden = hiddenTeams.has(id);
@@ -301,11 +287,11 @@ async function main() {
     }
     const card = document.querySelector(`.team-card[data-id="${id}"]`);
     if (card) {
-      card.querySelector(".team-body").hidden = !wasHidden;
-      card.querySelector(".toggle-btn").textContent = wasHidden ? "Hide" : "Show";
+      card.querySelector(".team-body").hidden = hiddenTeams.has(id);
+      card.querySelector(".nm").classList.toggle("collapsed", hiddenTeams.has(id));
     }
   }
-  window._toggleTeam = toggleTeam; // expose for inline onclick
+  window._toggleTeam = toggleTeam;
 
   // ---- refresh ----
   async function refresh() {
@@ -330,7 +316,6 @@ async function main() {
     }
 
     teamLayer.clearLayers();
-    // Clear tracked markers (they were removed with clearLayers).
     for (const id of Object.keys(currentTeamMarkers)) delete currentTeamMarkers[id];
 
     const panel = document.getElementById("teams");
@@ -352,10 +337,9 @@ async function main() {
 
       const sourceUrl = `https://tentors.org.uk/eventdata/route${letter.toLowerCase()}.html`;
       const routeBadge = routeLetters.length > 1
-        ? `<span class="route-badge" style="background:${color}">${letter}</span>`
+        ? `<span class="route-badge" style="background:${color}">Route ${letter}</span>`
         : "";
 
-      // Build card shell.
       const card = document.createElement("div");
       card.className = "team-card";
       card.dataset.id = team.id;
@@ -364,28 +348,23 @@ async function main() {
       body.className = "team-body";
       body.hidden = isHidden;
 
-      // Early-exit cases: no doc, no table, not found — still render card header.
-      const appendCard = (nmHtml, bodyHtml) => {
-        card.innerHTML = `
-          <div class="team-header">
-            <span class="nm">${nmHtml}${routeBadge}</span>
-            <a class="src-link" href="${sourceUrl}" target="_blank">source ↗</a>
-            <button class="toggle-btn" onclick="window._toggleTeam('${team.id}')">${isHidden ? "Show" : "Hide"}</button>
-          </div>`;
-        body.innerHTML = bodyHtml;
-        card.appendChild(body);
-        panel.appendChild(card);
-      };
+      const buildHeader = (nameHtml) => `
+        <div class="team-header">
+          <button class="nm${isHidden ? " collapsed" : ""}" onclick="window._toggleTeam('${team.id}')">${nameHtml}${routeBadge}</button>
+          <a class="src-link" href="${sourceUrl}" target="_blank">source ↗</a>
+        </div>`;
 
       if (!doc) {
-        appendCard(team.name, `<div class="wp">data unavailable</div>`);
-        continue;
+        card.innerHTML = buildHeader(team.name);
+        body.innerHTML = `<div class="wp">data unavailable</div>`;
+        card.appendChild(body); panel.appendChild(card); continue;
       }
 
       const tables = [...doc.querySelectorAll("table")];
       if (!tables.length) {
-        appendCard(team.name, `<div class="wp">no table found</div>`);
-        continue;
+        card.innerHTML = buildHeader(team.name);
+        body.innerHTML = `<div class="wp">no table found</div>`;
+        card.appendChild(body); panel.appendChild(card); continue;
       }
       const table = tables.reduce((a, b) =>
         b.querySelectorAll("tr").length > a.querySelectorAll("tr").length ? b : a
@@ -406,8 +385,9 @@ async function main() {
       });
 
       if (!matchedRows.length) {
-        appendCard(team.name, `<div class="wp not-found">Not yet in live data</div>`);
-        continue;
+        card.innerHTML = buildHeader(team.name);
+        body.innerHTML = `<div class="wp not-found">Not yet in live data</div>`;
+        card.appendChild(body); panel.appendChild(card); continue;
       }
 
       const allCells = [...matchedRows[0].querySelectorAll("th, td")].map(c => c.textContent.trim());
@@ -528,17 +508,9 @@ async function main() {
         team._cellTime = cellTime;
       }
 
-      // Build card header + body.
-      card.innerHTML = `
-        <div class="team-header">
-          <span class="nm">${teamName}${routeBadge}</span>
-          <a class="src-link" href="${sourceUrl}" target="_blank">source ↗</a>
-          <button class="toggle-btn" onclick="window._toggleTeam('${team.id}')">${isHidden ? "Show" : "Hide"}</button>
-        </div>`;
-
+      card.innerHTML = buildHeader(teamName);
       body.innerHTML = `<div class="wp">${status}<span class="pace">${pace}</span></div>`;
 
-      // Stats row.
       if (lastWp) {
         const distFromStart = lastWp.routeDist - wpStops[0].routeDist;
         const stats = document.createElement("div");
@@ -553,14 +525,12 @@ async function main() {
       card.appendChild(body);
       panel.appendChild(card);
 
-      // Map markers — skip if hidden.
       if (pos && !isHidden) {
         zoomPoints.push(L.latLng(pos[0], pos[1]));
         currentTeamMarkers[team.id] = [];
 
         const m = L.circleMarker(pos, {
-          radius: 9, color: "white", weight: 2,
-          fillColor: color, fillOpacity: 0.95,
+          radius: 9, color: "white", weight: 2, fillColor: color, fillOpacity: 0.95,
         }).addTo(teamLayer);
         m.bindTooltip(teamName, {
           direction: "right", className: "team-tt", offset: [10, 0], permanent: true,
@@ -577,14 +547,13 @@ async function main() {
               html: `<div class="tent-icon" style="font-size:${isMobile ? 56 : 28}px;">⛺</div>`,
               iconSize: [sz, sz], iconAnchor: [sz / 2, sz - 4],
             }),
-          }).addTo(teamLayer).bindTooltip(`Camp: ${campWp.label}`, { direction: "right", offset: [12, -10] });
+          }).addTo(teamLayer)
+            .bindTooltip(`Camp: ${campWp.label}`, { direction: "right", offset: [12, -10] });
           currentTeamMarkers[team.id].push(tent);
         }
 
-        // Prediction block.
         const pred = document.createElement("div");
         pred.className = "pred";
-
         const paceKmh = team._paceKmh;
         const lastWpLocal = team._lastWp;
         const lastTLocal = team._lastT;
@@ -629,7 +598,6 @@ async function main() {
       }
     }
 
-    // Update meta bar.
     const now2 = new Date();
     document.getElementById("meta").innerHTML =
       `<a href="https://tentors.org.uk" target="_blank" style="color:#4af">tentors.org.uk</a>` +
@@ -637,7 +605,6 @@ async function main() {
       ` · now ${now2.toLocaleTimeString().slice(0, 5)}` +
       ` · ${teamsToTrack.length} team${teamsToTrack.length !== 1 ? "s" : ""}`;
 
-    // Recolour waypoint markers.
     for (const letter of routeLetters) {
       const { wpStops } = routeData[letter];
       const markers = routeWpMarkers[letter];
@@ -647,11 +614,8 @@ async function main() {
         if (!markers[i]) return;
         const v = visited.has(normalizeWp(w.label));
         markers[i].setStyle({
-          fillColor: v ? color : "#ccc",
-          fillOpacity: v ? 0.9 : 0.4,
-          color: v ? "white" : "#999",
-          weight: v ? 2 : 1.5,
-          radius: v ? 7 : 5,
+          fillColor: v ? color : "#ccc", fillOpacity: v ? 0.9 : 0.4,
+          color: v ? "white" : "#999", weight: v ? 2 : 1.5, radius: v ? 7 : 5,
         });
       });
     }
@@ -681,7 +645,7 @@ async function main() {
   }
 
   refresh();
-  setInterval(refresh, 60_000);
+  setInterval(refresh, 30_000); // 30s to match test data cadence
 
   let bootVersion = null;
   async function checkVersion() {

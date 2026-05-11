@@ -34,8 +34,9 @@ if (!year) {
   console.error("Usage: node scripts/seed.mjs <year> [--base-url <url>]");
   process.exit(1);
 }
+const baseUrlIdx = args.indexOf("--base-url");
 const baseUrl = (args.find((a) => a.startsWith("--base-url="))?.split("=")[1]
-  ?? args[args.indexOf("--base-url") + 1]
+  ?? (baseUrlIdx !== -1 ? args[baseUrlIdx + 1] : null)
   ?? "https://www.tentors.org.uk").replace(/\/$/, "");
 
 const currentYear = new Date().getFullYear().toString();

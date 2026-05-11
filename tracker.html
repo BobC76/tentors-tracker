@@ -22,18 +22,36 @@
     .panel-nav a:hover { text-decoration: underline; }
     .panel h2 { margin: 0 0 3px; font-size: 15px; }
     .meta { font-size: 12px; color: #666; margin-bottom: 8px; }
-    .team { padding: 6px 0; border-top: 1px solid #eee; margin-top: 4px; }
-    .team:first-child { border-top: 0; margin-top: 0; }
-    .team .nm { font-weight: 600; font-size: 15px; }
-    .team .route-badge {
+
+    /* Team card */
+    .team-card { border-top: 1px solid #eee; padding: 6px 0 2px; margin-top: 4px; }
+    .team-card:first-of-type { border-top: 0; margin-top: 0; }
+    .team-header {
+      display: flex; align-items: center; gap: 6px;
+      margin-bottom: 2px;
+    }
+    .team-header .nm { font-weight: 600; font-size: 15px; flex: 1; }
+    .src-link {
+      font-size: 11px; color: #0066cc; text-decoration: none;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .src-link:hover { text-decoration: underline; }
+    .toggle-btn {
+      font-size: 11px; color: #555; background: #f0f0f0;
+      border: 1px solid #ccc; border-radius: 4px;
+      padding: 1px 6px; cursor: pointer; flex-shrink: 0;
+    }
+    .toggle-btn:hover { background: #e0e0e0; }
+
+    .route-badge {
       display: inline-block; font-size: 11px; font-weight: 700;
-      padding: 1px 6px; border-radius: 4px; margin-left: 6px;
+      padding: 1px 6px; border-radius: 4px; margin-left: 4px;
       vertical-align: middle; color: white;
     }
-    .team .wp { color: #444; font-size: 13px; margin-top: 2px; }
-    .team .pace { color: #999; }
-    .team.finished .nm { color: #2a8; }
-    .team.notstarted .nm { color: #aaa; }
+    .team-body .wp { color: #444; font-size: 13px; margin-top: 2px; }
+    .team-body .pace { color: #999; }
+    .team-card.finished .nm { color: #2a8; }
+    .team-card.notstarted .nm { color: #aaa; }
     .stats {
       display: flex; flex-wrap: wrap; gap: 6px 12px;
       padding: 4px 0 6px; font-size: 12px; color: #555;
@@ -59,9 +77,8 @@
       }
       .panel h2 { font-size: 14px; margin: 0 0 2px; }
       .meta { font-size: 10px; margin-bottom: 4px; }
-      .team { padding: 3px 0; }
-      .team .nm { font-size: 14px; }
-      .team .wp { font-size: 12px; margin-top: 1px; }
+      .team-body .wp { font-size: 12px; margin-top: 1px; }
+      .team-header .nm { font-size: 14px; }
       .stats { font-size: 11px; gap: 2px 8px; padding: 2px 0 4px; }
       .pred { font-size: 12px; padding: 4px 0 2px; }
       .pred .row { padding: 2px 0; }
@@ -179,36 +196,28 @@ async function main() {
     const rawWps = allRoutesWp[letter]?.waypoints;
     if (!rawWps) throw new Error(`No waypoints for route ${letter}`);
 
-    // Merge NT overrides from all teams on this route.
     const ntOverrides = {};
     for (const t of teamsToTrack.filter(t => t.routeLetter === letter)) {
       Object.assign(ntOverrides, t.ntOverrides);
     }
 
-    // Annotate waypoints with NT values.
     const wps = rawWps.map(w => ({
       ...w,
       nt: ntOverrides[w.label.toUpperCase()] || w.nt || null,
     }));
 
-    // Straight-line: coords are just the waypoints in order.
-    const coords = wps.map(w => [w.lon, w.lat]); // [lon, lat]
-
-    // Cumulative distance (metres) along straight-line segments.
+    const coords = wps.map(w => [w.lon, w.lat]);
     const cumDist = [0];
     for (let i = 1; i < coords.length; i++) {
       cumDist.push(cumDist[i - 1] + haversine(coords[i - 1], coords[i]));
     }
     const totalDist = cumDist[cumDist.length - 1];
-
-    // Enrich waypoints with their distance from start.
     const wpStops = wps.map((w, i) => ({ ...w, routeDist: cumDist[i] }));
 
     routeData[letter] = { wps, wpStops, coords, cumDist, totalDist };
   }
 
   // ---- map setup ----
-  // Compute combined bounds across all routes.
   let latMin = Infinity, latMax = -Infinity, lonMin = Infinity, lonMax = -Infinity;
   for (const { coords } of Object.values(routeData)) {
     for (const [lon, lat] of coords) {
@@ -227,7 +236,6 @@ async function main() {
     maxZoom: 19,
   }).addTo(map);
 
-  // Recenter button.
   const RecenterCtl = L.Control.extend({
     options: { position: "topleft" },
     onAdd() {
@@ -241,19 +249,16 @@ async function main() {
   });
   map.addControl(new RecenterCtl());
 
-  // Draw each route polyline and direction arrows.
-  const routeWpMarkers = {}; // { letter: [L.circleMarker, ...] }
+  const routeWpMarkers = {};
 
   for (const letter of routeLetters) {
     const { wps, wpStops, coords } = routeData[letter];
     const color = routeColor[letter];
 
-    // Route polyline.
     L.polyline(coords.map(([lon, lat]) => [lat, lon]), {
       color, weight: 3, opacity: 0.85,
     }).addTo(map);
 
-    // Direction arrows at midpoints between consecutive waypoints.
     for (let i = 0; i < wps.length - 1; i++) {
       const a = wps[i], b = wps[i + 1];
       const midLat = (a.lat + b.lat) / 2, midLon = (a.lon + b.lon) / 2;
@@ -270,7 +275,6 @@ async function main() {
       }).addTo(map);
     }
 
-    // Waypoint markers (coloured on refresh).
     routeWpMarkers[letter] = wpStops.map((w, i) => {
       if (w.lat == null) return null;
       return L.circleMarker([w.lat, w.lon], {
@@ -280,12 +284,31 @@ async function main() {
     });
   }
 
-  // Team layer — cleared on each refresh.
   const teamLayer = L.layerGroup().addTo(map);
+
+  // ---- toggle support ----
+  const hiddenTeams = new Set();
+  const currentTeamMarkers = {}; // id → [leaflet layers]
+
+  function toggleTeam(id) {
+    const wasHidden = hiddenTeams.has(id);
+    if (wasHidden) {
+      hiddenTeams.delete(id);
+      (currentTeamMarkers[id] || []).forEach(m => teamLayer.addLayer(m));
+    } else {
+      hiddenTeams.add(id);
+      (currentTeamMarkers[id] || []).forEach(m => teamLayer.removeLayer(m));
+    }
+    const card = document.querySelector(`.team-card[data-id="${id}"]`);
+    if (card) {
+      card.querySelector(".team-body").hidden = !wasHidden;
+      card.querySelector(".toggle-btn").textContent = wasHidden ? "Hide" : "Show";
+    }
+  }
+  window._toggleTeam = toggleTeam; // expose for inline onclick
 
   // ---- refresh ----
   async function refresh() {
-    // Fetch route HTML for each unique route letter in parallel.
     const routeHtmlFetches = {};
     for (const letter of routeLetters) {
       routeHtmlFetches[letter] = fetch(`/api/route/${letter.toLowerCase()}?_=${Date.now()}`)
@@ -307,14 +330,15 @@ async function main() {
     }
 
     teamLayer.clearLayers();
+    // Clear tracked markers (they were removed with clearLayers).
+    for (const id of Object.keys(currentTeamMarkers)) delete currentTeamMarkers[id];
+
     const panel = document.getElementById("teams");
     panel.innerHTML = "";
 
-    // Track visited waypoints per route for marker colouring.
     const visitedByRoute = {};
     for (const letter of routeLetters) visitedByRoute[letter] = new Set();
 
-    // Per-team zoom points.
     const zoomPoints = [];
 
     for (const team of teamsToTrack) {
@@ -324,26 +348,43 @@ async function main() {
       const { wpStops, coords, cumDist, totalDist } = rd;
       const color = routeColor[letter];
       const visited = visitedByRoute[letter];
+      const isHidden = hiddenTeams.has(team.id);
 
-      const teamDiv = document.createElement("div");
-      teamDiv.className = "team";
-
-      // Badge showing route if more than one route in view.
+      const sourceUrl = `https://tentors.org.uk/eventdata/route${letter.toLowerCase()}.html`;
       const routeBadge = routeLetters.length > 1
         ? `<span class="route-badge" style="background:${color}">${letter}</span>`
         : "";
 
+      // Build card shell.
+      const card = document.createElement("div");
+      card.className = "team-card";
+      card.dataset.id = team.id;
+
+      const body = document.createElement("div");
+      body.className = "team-body";
+      body.hidden = isHidden;
+
+      // Early-exit cases: no doc, no table, not found — still render card header.
+      const appendCard = (nmHtml, bodyHtml) => {
+        card.innerHTML = `
+          <div class="team-header">
+            <span class="nm">${nmHtml}${routeBadge}</span>
+            <a class="src-link" href="${sourceUrl}" target="_blank">source ↗</a>
+            <button class="toggle-btn" onclick="window._toggleTeam('${team.id}')">${isHidden ? "Show" : "Hide"}</button>
+          </div>`;
+        body.innerHTML = bodyHtml;
+        card.appendChild(body);
+        panel.appendChild(card);
+      };
+
       if (!doc) {
-        teamDiv.innerHTML = `<div class="nm">${team.name}${routeBadge}</div><div class="wp">data unavailable</div>`;
-        panel.appendChild(teamDiv);
+        appendCard(team.name, `<div class="wp">data unavailable</div>`);
         continue;
       }
 
-      // Find the largest table in the page.
       const tables = [...doc.querySelectorAll("table")];
       if (!tables.length) {
-        teamDiv.innerHTML = `<div class="nm">${team.name}${routeBadge}</div><div class="wp">no table found</div>`;
-        panel.appendChild(teamDiv);
+        appendCard(team.name, `<div class="wp">no table found</div>`);
         continue;
       }
       const table = tables.reduce((a, b) =>
@@ -352,14 +393,12 @@ async function main() {
       const rows = [...table.querySelectorAll("tr")];
       const headers = [...rows[0].querySelectorAll("th, td")].map(c => c.textContent.trim());
 
-      // Map column index → wpStops entry.
       const colToWp = headers.map((h, idx) => {
         if (idx === 0) return null;
         const target = normalizeWp(h);
         return wpStops.find(w => normalizeWp(w.label) === target) || null;
       });
 
-      // Find the row(s) for this team.
       const matchedRows = rows.slice(1).filter(row => {
         const cells = [...row.querySelectorAll("th, td")];
         if (!cells.length) return false;
@@ -367,30 +406,24 @@ async function main() {
       });
 
       if (!matchedRows.length) {
-        teamDiv.innerHTML = `<div class="nm">${team.name}${routeBadge}</div>
-          <div class="wp not-found">Not yet in live data</div>`;
-        panel.appendChild(teamDiv);
+        appendCard(team.name, `<div class="wp not-found">Not yet in live data</div>`);
         continue;
       }
 
-      // Use the first matching row.
       const allCells = [...matchedRows[0].querySelectorAll("th, td")].map(c => c.textContent.trim());
       const teamName = allCells[0];
-      // dataCells: checkpoint columns only (drop team name at index 0).
       const dataCells = allCells.slice(1);
 
-      // Walk columns to find waypoint check-ins.
       let firstT = null, lastT = null, lastIdx = -1, lastWp = null;
       let campedAtCell = -1, prevT = null, dayOffset = 0;
       let lastSatT = null, lastSatWp = null, lastDayOffset = 0;
 
       for (let i = 0; i < dataCells.length; i++) {
-        const wp = colToWp[i + 1]; // colToWp[0]=null (team name), so [i+1] for i=0 = colToWp[1] ✓
+        const wp = colToWp[i + 1];
         if (!wp) continue;
         const cell = dataCells[i];
         const t = parseHHMM(cell, now);
         if (!t) continue;
-        // Detect day-1 → day-2 rollover (e.g. 19:30 → 06:50).
         if (prevT && t < prevT && (prevT - t) > 4 * 3600000) dayOffset = 1;
         const adjusted = new Date(t);
         if (dayOffset === 0) adjusted.setDate(adjusted.getDate() - 1);
@@ -409,7 +442,7 @@ async function main() {
       let status = "—", pace = "", pos = null;
 
       if (lastWp == null) {
-        teamDiv.classList.add("notstarted");
+        card.classList.add("notstarted");
         status = "not started";
       } else {
         const startWp = wpStops[0];
@@ -469,7 +502,7 @@ async function main() {
           pos = [a[1] + t * (b[1] - a[1]), a[0] + t * (b[0] - a[0])];
         }
 
-        if (isFinished) teamDiv.classList.add("finished");
+        if (isFinished) card.classList.add("finished");
 
         const cellTime = (dataCells[lastIdx]?.match(/(\d{1,2}:\d{2})/) || [])[1] || "";
         const campWpLabel = lastSatWp ? lastSatWp.label : lastWp.label;
@@ -487,7 +520,6 @@ async function main() {
                   : `${lastWp.label} @ ${cellTime}`;
         pace = paceKmh > 0 ? ` · ${paceKmh.toFixed(1)} km/h` : "";
 
-        // Store for prediction block.
         team._stopped = stopped; team._isFinished = isFinished;
         team._isCamped = (isCamped || inferredCamp || isEvening) && !needsRestart && !hasDay2Data;
         team._isSundayRestart = needsRestart; team._hasDay2Data = hasDay2Data;
@@ -496,10 +528,15 @@ async function main() {
         team._cellTime = cellTime;
       }
 
-      teamDiv.innerHTML = `
-        <div class="nm">${teamName}${routeBadge}</div>
-        <div class="wp">${status}<span class="pace">${pace}</span></div>`;
-      panel.appendChild(teamDiv);
+      // Build card header + body.
+      card.innerHTML = `
+        <div class="team-header">
+          <span class="nm">${teamName}${routeBadge}</span>
+          <a class="src-link" href="${sourceUrl}" target="_blank">source ↗</a>
+          <button class="toggle-btn" onclick="window._toggleTeam('${team.id}')">${isHidden ? "Show" : "Hide"}</button>
+        </div>`;
+
+      body.innerHTML = `<div class="wp">${status}<span class="pace">${pace}</span></div>`;
 
       // Stats row.
       if (lastWp) {
@@ -510,12 +547,16 @@ async function main() {
           <span><b>${(distFromStart / 1000).toFixed(1)}</b> km covered</span>
           <span><b>${((totalDist - lastWp.routeDist) / 1000).toFixed(1)}</b> km remaining</span>
           <span>updated <b>${lastT.toLocaleTimeString().slice(0, 5)}</b></span>`;
-        panel.appendChild(stats);
+        body.appendChild(stats);
       }
 
-      // Map marker + tent icon + prediction block.
-      if (pos) {
+      card.appendChild(body);
+      panel.appendChild(card);
+
+      // Map markers — skip if hidden.
+      if (pos && !isHidden) {
         zoomPoints.push(L.latLng(pos[0], pos[1]));
+        currentTeamMarkers[team.id] = [];
 
         const m = L.circleMarker(pos, {
           radius: 9, color: "white", weight: 2,
@@ -524,25 +565,25 @@ async function main() {
         m.bindTooltip(teamName, {
           direction: "right", className: "team-tt", offset: [10, 0], permanent: true,
         });
+        currentTeamMarkers[team.id].push(m);
 
-        // Tent icon at camp location.
         const campWp = team._campWp;
         if (campWp && !team._isFinished) {
           const isMobile = window.innerWidth <= 640;
           const sz = isMobile ? 64 : 32;
-          L.marker([campWp.lat, campWp.lon], {
+          const tent = L.marker([campWp.lat, campWp.lon], {
             icon: L.divIcon({
               className: "",
               html: `<div class="tent-icon" style="font-size:${isMobile ? 56 : 28}px;">⛺</div>`,
               iconSize: [sz, sz], iconAnchor: [sz / 2, sz - 4],
             }),
           }).addTo(teamLayer).bindTooltip(`Camp: ${campWp.label}`, { direction: "right", offset: [12, -10] });
+          currentTeamMarkers[team.id].push(tent);
         }
 
         // Prediction block.
         const pred = document.createElement("div");
         pred.className = "pred";
-        panel.appendChild(pred);
 
         const paceKmh = team._paceKmh;
         const lastWpLocal = team._lastWp;
@@ -583,6 +624,8 @@ async function main() {
           pred.innerHTML = `
             <div class="row eta"><span class="lbl">🏁 ETA at FINISH</span><span class="val">${fmt(eta, -30)} – <b>${fmt(eta)}</b> – ${fmt(eta, 30)} · ${remaining.toFixed(1)} km left</span></div>`;
         }
+
+        body.appendChild(pred);
       }
     }
 
@@ -613,8 +656,6 @@ async function main() {
       });
     }
 
-    // Auto-zoom to include team positions + next unvisited waypoints.
-    // Only zoom on first load, not on every refresh.
     if (zoomPoints.length && !refresh._zoomed) {
       refresh._zoomed = true;
       for (const letter of routeLetters) {
@@ -642,7 +683,6 @@ async function main() {
   refresh();
   setInterval(refresh, 60_000);
 
-  // Auto-reload on deploy.
   let bootVersion = null;
   async function checkVersion() {
     try {

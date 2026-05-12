@@ -1,0 +1,48 @@
+name: Seed year data
+
+on:
+  workflow_dispatch:
+    inputs:
+      year:
+        description: 'Year to seed (e.g. 2026)'
+        required: true
+        default: '2026'
+      apply_gpx:
+        description: 'Apply GPX route geometry (post-event only)'
+        type: boolean
+        default: false
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Run seed script
+        run: |
+          FLAGS=""
+          if [ "${{ inputs.apply_gpx }}" = "true" ]; then
+            FLAGS="--apply-gpx"
+          fi
+          node scripts/seed.mjs ${{ inputs.year }} $FLAGS
+
+      - name: Commit updated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add routes.json "data/${{ inputs.year }}/"
+          if git diff --cached --quiet; then
+            echo "Nothing changed — data is already up to date."
+          else
+            git commit -m "Seed ${{ inputs.year }} data (apply-gpx: ${{ inputs.apply_gpx }})"
+            git push
+          fi

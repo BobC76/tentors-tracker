@@ -99,6 +99,10 @@
   <div class="panel-nav"><a id="back-link" href="index.html">← Change teams</a></div>
   <h2 id="title">Ten Tors Tracker</h2>
   <div class="meta" id="meta">loading…</div>
+  <div id="quiet-bar" hidden style="margin:6px 0 4px;display:flex;align-items:center;gap:8px;font-size:12px;color:#888;">
+    <span>Event not active — updates once daily</span>
+    <button id="btn-refresh-now" style="font-size:12px;padding:2px 8px;border:1px solid #ccc;border-radius:5px;background:white;cursor:pointer;">Refresh now</button>
+  </div>
   <div id="teams"></div>
 </div>
 <script src="vendor/leaflet.js"></script>
@@ -147,10 +151,15 @@ async function main() {
   document.getElementById("back-link").href =
     `index.html?year=${encodeURIComponent(YEAR)}&teams=${encodeURIComponent(TEAM_IDS.join(","))}`;
 
-  const config = await fetch(`data/${YEAR}/config.json`).then(r => {
-    if (!r.ok) throw new Error(`Config not found for ${YEAR}`);
-    return r.json();
-  });
+  const [config, years] = await Promise.all([
+    fetch(`data/${YEAR}/config.json`).then(r => {
+      if (!r.ok) throw new Error(`Config not found for ${YEAR}`);
+      return r.json();
+    }),
+    fetch("data/years.json").then(r => r.ok ? r.json() : []),
+  ]);
+  const yearMeta = years.find(y => y.year?.toString() === YEAR);
+  const eventActive = yearMeta?.event_active ?? true;
 
   const teamsToTrack = [];
   for (const [letter, route] of Object.entries(config.routes)) {
@@ -670,8 +679,15 @@ async function main() {
     return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false });
   }
 
+  const POLL_MS = eventActive ? 30_000 : 24 * 60 * 60 * 1000;
+  const quietBar = document.getElementById("quiet-bar");
+  if (!eventActive) {
+    quietBar.hidden = false;
+    document.getElementById("btn-refresh-now").addEventListener("click", refresh);
+  }
+
   refresh();
-  setInterval(refresh, 30_000); // 30s to match test data cadence
+  setInterval(refresh, POLL_MS);
 
   let bootVersion = null;
   async function checkVersion() {

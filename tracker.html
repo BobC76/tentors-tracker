@@ -426,7 +426,7 @@ async function main() {
       }
 
       const allCells = [...matchedRows[0].querySelectorAll("th, td")].map(c => c.textContent.trim());
-      const teamName = allCells[0];
+      const teamName = allCells[0].replace(/\s*\b(KMZ|GPX|KML)\b\s*/gi, " ").trim();
       const dataCells = allCells.slice(1);
 
       let firstT = null, lastT = null, lastIdx = -1, lastWp = null;

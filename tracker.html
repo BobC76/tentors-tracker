@@ -214,8 +214,13 @@ async function main() {
   const allRoutesWp = await fetch("routes.json").then(r => r.json());
   const routeLetters = [...new Set(teamsToTrack.map(t => t.routeLetter))];
 
+  const teamColor = {};
+  teamsToTrack.forEach((team, i) => { teamColor[team.id] = ROUTE_PALETTE[i % ROUTE_PALETTE.length]; });
   const routeColor = {};
-  routeLetters.forEach((letter, i) => { routeColor[letter] = ROUTE_PALETTE[i % ROUTE_PALETTE.length]; });
+  routeLetters.forEach(letter => {
+    const first = teamsToTrack.find(t => t.routeLetter === letter);
+    routeColor[letter] = first ? teamColor[first.id] : ROUTE_PALETTE[0];
+  });
 
   const routeData = {};
   for (const letter of routeLetters) {
@@ -395,7 +400,7 @@ async function main() {
       const doc = routeDocs[letter];
       const rd = routeData[letter];
       const { wpStops, coords, cumDist, totalDist } = rd;
-      const color = routeColor[letter];
+      const color = teamColor[team.id];
       const visited = visitedByRoute[letter];
       const isHidden = hiddenTeams.has(team.id);
 

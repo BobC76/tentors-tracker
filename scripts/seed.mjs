@@ -392,9 +392,14 @@ async function applyGpxRoutes() {
 
   function parseGpxTrack(text) {
     const pts = [];
-    const re = /<trkpt\s[^>]*lat="([^"]+)"[^>]*lon="([^"]+)"/gi;
+    const re = /<trkpt\s[^>]*lat="([^"]+)"[^>]*lon="([^"]+)"[^>]*>([\s\S]*?)<\/trkpt>/gi;
     let m;
-    while ((m = re.exec(text)) !== null) pts.push({ lat: parseFloat(m[1]), lon: parseFloat(m[2]) });
+    while ((m = re.exec(text)) !== null) {
+      const pt = { lat: parseFloat(m[1]), lon: parseFloat(m[2]) };
+      const ele = m[3].match(/<ele>([^<]+)<\/ele>/);
+      if (ele) pt.ele = parseFloat(ele[1]);
+      pts.push(pt);
+    }
     return pts;
   }
 

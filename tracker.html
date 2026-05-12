@@ -53,6 +53,8 @@
     .team-body .pace { color: #999; }
     .team-card.finished .nm { color: #2a8; }
     .team-card.notstarted .nm { color: #aaa; }
+    .team-card.dnf .nm { color: #c55; }
+    .row.dnf-row .lbl { color: #c55; }
     .stats {
       display: flex; flex-wrap: wrap; gap: 6px 12px;
       padding: 4px 0 6px; font-size: 12px; color: #555;
@@ -367,6 +369,9 @@ async function main() {
     }
 
     const now = new Date();
+    const { sun: _eventSun } = tenTorsEventDates(parseInt(YEAR));
+    const sundayDeadline = new Date(_eventSun); sundayDeadline.setHours(17, 0, 0, 0);
+    const pastDeadline = now > sundayDeadline;
     let lastUpdated = null;
     for (const doc of Object.values(routeDocs)) {
       if (!doc) continue;
@@ -455,6 +460,7 @@ async function main() {
         .replace(/\s*\([^)]*\)\s*/g, " ")
         .trim();
       const dataCells = allCells.slice(1);
+      const isDnf = allCells.some(c => /DID\s+NOT\s+FINISH/i.test(c));
 
       let firstT = null, lastT = null, lastIdx = -1, lastWp = null;
       let campedAtCell = -1, prevT = null, dayOffset = 0;
@@ -544,25 +550,35 @@ async function main() {
           pos = [a[1] + t * (b[1] - a[1]), a[0] + t * (b[0] - a[0])];
         }
 
+        const impliedDnf = pastDeadline && !isFinished;
+        const teamDnf = isDnf || impliedDnf;
+
+        const atFinish = !isFinished && !teamDnf && target >= totalDist;
+
         if (isFinished) card.classList.add("finished");
+        if (teamDnf) card.classList.add("dnf");
 
         const cellTime = (dataCells[lastIdx]?.match(/(\d{1,2}:\d{2})/) || [])[1] || "";
         const campWpLabel = lastSatWp ? lastSatWp.label : lastWp.label;
 
-        status = isFinished
-          ? `finished at ${cellTime}`
-          : needsRestart
-            ? `🚶 walking from ${campWpLabel} (since 06:00)`
-            : hasDay2Data
-              ? `${lastWp.label} @ ${cellTime}`
-              : (isCamped || inferredCamp || isEvening)
-                ? `⛺ camped at ${lastWp.label} (${cellTime})`
-                : stopped
-                  ? `stopped at ${lastWp.label} (${cellTime})`
-                  : `${lastWp.label} @ ${cellTime}`;
-        pace = paceKmh > 0 ? ` · ${paceKmh.toFixed(1)} km/h` : "";
+        status = teamDnf
+          ? `✕ Did not finish`
+          : isFinished
+            ? `finished at ${cellTime}`
+            : atFinish
+              ? `⏱️ At finish — awaiting confirmation`
+              : needsRestart
+                ? `🚶 walking from ${campWpLabel} (since 06:00)`
+                : hasDay2Data
+                  ? `${lastWp.label} @ ${cellTime}`
+                  : (isCamped || inferredCamp || isEvening)
+                    ? `⛺ camped at ${lastWp.label} (${cellTime})`
+                    : stopped
+                      ? `stopped at ${lastWp.label} (${cellTime})`
+                      : `${lastWp.label} @ ${cellTime}`;
+        pace = (paceKmh > 0 && !teamDnf && !atFinish) ? ` · ${paceKmh.toFixed(1)} km/h` : "";
 
-        team._stopped = stopped; team._isFinished = isFinished;
+        team._stopped = stopped; team._isFinished = isFinished; team._isDnf = teamDnf; team._atFinish = atFinish;
         team._isCamped = (isCamped || inferredCamp || isEvening) && !needsRestart && !hasDay2Data;
         team._isSundayRestart = needsRestart; team._hasDay2Data = hasDay2Data;
         team._campWp = lastSatWp || lastWp; team._missedNt = missedNt;
@@ -621,7 +637,11 @@ async function main() {
         const lastWpLocal = team._lastWp;
         const lastTLocal = team._lastT;
 
-        if (team._isFinished) {
+        if (team._isDnf) {
+          pred.innerHTML = `<div class="row dnf-row"><span class="lbl">✕ Did not finish</span><span class="val">${team._cellTime ? `last seen ${team._cellTime}` : ""}</span></div>`;
+        } else if (team._atFinish) {
+          pred.innerHTML = `<div class="row eta"><span class="lbl">⏱️ Approaching finish</span><span class="val">awaiting confirmation</span></div>`;
+        } else if (team._isFinished) {
           pred.innerHTML = `<div class="row eta"><span class="lbl">🏁 Finished</span><span class="val">${team._cellTime}</span></div>`;
         } else if (team._isSundayRestart) {
           const remaining = (totalDist - campWp.routeDist) / 1000;

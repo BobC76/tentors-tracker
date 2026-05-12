@@ -115,7 +115,7 @@
         },
         {
           "id": "to",
-          "name": "Sir Thomas Rich\u2019s School"
+          "name": "Sir Thomas Rich’s School"
         },
         {
           "id": "ta",
@@ -132,10 +132,6 @@
         {
           "id": "tf",
           "name": "Thomas Hall School"
-        },
-        {
-          "id": "tt",
-          "name": "Test Team"
         }
       ],
       "nt_overrides": {},
@@ -715,7 +711,7 @@
         },
         {
           "id": "ig",
-          "name": "Churcher\u2019s College"
+          "name": "Churcher’s College"
         },
         {
           "id": "il",

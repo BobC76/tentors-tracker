@@ -1,0 +1,1318 @@
+[
+  {
+    "code": "1516",
+    "name": "1032 Yeovil Squadron RAFAC",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 1
+  },
+  {
+    "code": "1406",
+    "name": "1387 (Liskeard) Sqn ATC",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1053",
+    "name": "197 (Devonport) Sqn ATC",
+    "teams35": 0,
+    "teams45": 1,
+    "teams55": 1
+  },
+  {
+    "code": "1705",
+    "name": "20th Torbay Scouts",
+    "teams35": 2,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1560",
+    "name": "2377 (Plympton) Sqn ATC",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1229",
+    "name": "28th Kingswood Scout Group",
+    "teams35": 0,
+    "teams45": 0,
+    "teams55": 1
+  },
+  {
+    "code": "1984",
+    "name": "2nd Nailsea Scouts",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1959",
+    "name": "2nd Polish Scout Troop",
+    "teams35": 0,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1324",
+    "name": "41F (Taunton) Sqn RAFAC",
+    "teams35": 2,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1981",
+    "name": "Ashton Park School",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1272",
+    "name": "Aude Sapere Expedition Society",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 1
+  },
+  {
+    "code": "1264",
+    "name": "Axe District Scouts",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 1
+  },
+  {
+    "code": "1269",
+    "name": "Barracuda Explorer Scouts",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1025",
+    "name": "Bedminster Down School",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1061",
+    "name": "Beechen Cliff School",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 1
+  },
+  {
+    "code": "1168",
+    "name": "Bicton College",
+    "teams35": 0,
+    "teams45": 1,
+    "teams55": 1
+  },
+  {
+    "code": "1455",
+    "name": "Bideford College",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1569",
+    "name": "Bishop Wordsworths School",
+    "teams35": 1,
+    "teams45": 2,
+    "teams55": 0
+  },
+  {
+    "code": "1270",
+    "name": "Blackdown Hikers",
+    "teams35": 2,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1416",
+    "name": "Blackdown Scout District",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1587",
+    "name": "Blaise High School",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1548",
+    "name": "Blue School Wells",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1245",
+    "name": "Blundells School CCF",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1613",
+    "name": "Bodmin College",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1397",
+    "name": "Bovey Tracey Scouts",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1308",
+    "name": "Brabazon Explorer Scouts",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 1
+  },
+  {
+    "code": "1158",
+    "name": "Bristol & Gloucester ATC",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1975",
+    "name": "Bristol Grammar School",
+    "teams35": 1,
+    "teams45": 2,
+    "teams55": 0
+  },
+  {
+    "code": "1304",
+    "name": "Bristol Scouts",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1595",
+    "name": "Britannia Explorer Unit",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 1
+  },
+  {
+    "code": "1114",
+    "name": "Bryanston School",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1994",
+    "name": "Budmouth Academy CCF",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1306",
+    "name": "Cabot Scouts",
+    "teams35": 2,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1628",
+    "name": "Callywith College",
+    "teams35": 0,
+    "teams45": 1,
+    "teams55": 1
+  },
+  {
+    "code": "1472",
+    "name": "Camborne Science & Int Academy",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1638",
+    "name": "Canford CCF",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1976",
+    "name": "Chew Valley School",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1886",
+    "name": "Chulmleigh College",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1594",
+    "name": "Churcher’s College",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1559",
+    "name": "Clifton College",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1234",
+    "name": "Clyst Vale Community College",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1500",
+    "name": "Collegiate School",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1637",
+    "name": "Colyton Grammar School",
+    "teams35": 2,
+    "teams45": 0,
+    "teams55": 1
+  },
+  {
+    "code": "1176",
+    "name": "Cornwall ACF",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1513",
+    "name": "Cots Edge Explorer Scouts",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1010",
+    "name": "Cotswold Edge Scouts - Zeus",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1181",
+    "name": "Cullompton Community College",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1484",
+    "name": "Culm Valley Walkers",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1020",
+    "name": "Dartmoor Plodders",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 1
+  },
+  {
+    "code": "1515",
+    "name": "Dawlish College",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1396",
+    "name": "Dawlish Scouts",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1115",
+    "name": "Deg Karn Explorers Carrick",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 1
+  },
+  {
+    "code": "1803",
+    "name": "Devon & Somerset RAF Air Cadets",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1169",
+    "name": "Devon ACF",
+    "teams35": 0,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1937",
+    "name": "Devonport High School for Boys",
+    "teams35": 0,
+    "teams45": 2,
+    "teams55": 0
+  },
+  {
+    "code": "1119",
+    "name": "Devonport High School for Girls",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1544",
+    "name": "Dorset ACF",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1531",
+    "name": "Downend District Scouts",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1630",
+    "name": "Duchy college",
+    "teams35": 0,
+    "teams45": 1,
+    "teams55": 1
+  },
+  {
+    "code": "1049",
+    "name": "East Devon Explorer Scouts",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 1
+  },
+  {
+    "code": "1035",
+    "name": "Erme and Yealm Valley HWC",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1182",
+    "name": "Exeter & District Scouts",
+    "teams35": 2,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1603",
+    "name": "Exeter College",
+    "teams35": 0,
+    "teams45": 2,
+    "teams55": 1
+  },
+  {
+    "code": "1086",
+    "name": "Exeter Explorer Sea Scouts",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1190",
+    "name": "Exeter School",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 1
+  },
+  {
+    "code": "1554",
+    "name": "Exmouth Community College",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1584",
+    "name": "Five Acres High School",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1885",
+    "name": "Fowey River Academy",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1949",
+    "name": "Gloucestershire ACF",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1170",
+    "name": "Godolphin CCF",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1434",
+    "name": "Gordano District Scouts",
+    "teams35": 0,
+    "teams45": 1,
+    "teams55": 2
+  },
+  {
+    "code": "1307",
+    "name": "Gordano Horizon Explorers",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1374",
+    "name": "Gordon's School CCF",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1642",
+    "name": "Great Torrington School",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1940",
+    "name": "Greenshaw Learning Trust",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1788",
+    "name": "Haldon Hill Walkers",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1159",
+    "name": "Haven Banks OEC",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 2
+  },
+  {
+    "code": "1220",
+    "name": "Hele's School CCF",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1586",
+    "name": "Henley Bank High School",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1266",
+    "name": "Horizons Youth Centre",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1160",
+    "name": "Ilfracombe Academy, The",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1398",
+    "name": "Ipplepen Scouts",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1604",
+    "name": "Isca Academy",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 1
+  },
+  {
+    "code": "1219",
+    "name": "Ivybridge Community College",
+    "teams35": 2,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1178",
+    "name": "John of Gaunt School, The",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1317",
+    "name": "Kilkenny Explorer Scouts",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1428",
+    "name": "King Edward VI, Totnes",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1929",
+    "name": "King Edward's School, Bath",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1962",
+    "name": "King's Bruton CCF",
+    "teams35": 2,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1311",
+    "name": "King's College Taunton CCF",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1293",
+    "name": "King's School, The",
+    "teams35": 2,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1979",
+    "name": "Kingsbridge Community College",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 1
+  },
+  {
+    "code": "1599",
+    "name": "Kingsley Devon",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1056",
+    "name": "Kingswood Explorer Scouts",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1012",
+    "name": "Kingswood School",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1089",
+    "name": "Launceston College",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1965",
+    "name": "Leweston School Sherborne",
+    "teams35": 0,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1399",
+    "name": "Liverton Scouts",
+    "teams35": 0,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1566",
+    "name": "Long Ashton Scouts",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1982",
+    "name": "Matravers CCF",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1464",
+    "name": "Maynard School, The",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1446",
+    "name": "Menheniot Explorer Scouts",
+    "teams35": 0,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1556",
+    "name": "Mid Devon Explorer Scouts",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1189",
+    "name": "Mid Devon Youth",
+    "teams35": 2,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1533",
+    "name": "Millfield School",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1944",
+    "name": "Milton Abbey CCF",
+    "teams35": 0,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1465",
+    "name": "Monkton Wood Academy",
+    "teams35": 2,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1313",
+    "name": "Mount Kelly",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 1
+  },
+  {
+    "code": "1088",
+    "name": "National Trust Dartmoor, The",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 1
+  },
+  {
+    "code": "1512",
+    "name": "Newton Abbot College",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1557",
+    "name": "North Dartmoor Explorer Scouts",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1188",
+    "name": "North Somerset Explorers",
+    "teams35": 1,
+    "teams45": 2,
+    "teams55": 0
+  },
+  {
+    "code": "1359",
+    "name": "Norton Hill School",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1045",
+    "name": "Oak Academy",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1143",
+    "name": "Okehampton College",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1090",
+    "name": "Okement Ramblers",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1357",
+    "name": "Park Community School, The",
+    "teams35": 2,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1956",
+    "name": "Penair School CCF",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1384",
+    "name": "Penrice Academy",
+    "teams35": 2,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1377",
+    "name": "Penryn College",
+    "teams35": 2,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1893",
+    "name": "Perthyans",
+    "teams35": 2,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1463",
+    "name": "Plymouth College",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1073",
+    "name": "Plymouth Explorer Scouts",
+    "teams35": 2,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1239",
+    "name": "Polar Explorer Scouts",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1552",
+    "name": "Portsmouth Grammar School CCF",
+    "teams35": 0,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1216",
+    "name": "QE",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 2
+  },
+  {
+    "code": "1621",
+    "name": "QEH Bristol",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1501",
+    "name": "Queen's College Taunton",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1346",
+    "name": "Radstock Youth",
+    "teams35": 1,
+    "teams45": 2,
+    "teams55": 0
+  },
+  {
+    "code": "1731",
+    "name": "River Teign Sea Scouts",
+    "teams35": 0,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1251",
+    "name": "Royal High School Bath",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1629",
+    "name": "Salthouse Explorer Scouts",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1978",
+    "name": "Sea Cadet Corps SouthWestArea",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 1
+  },
+  {
+    "code": "1447",
+    "name": "Sea Moor Explore",
+    "teams35": 0,
+    "teams45": 1,
+    "teams55": 1
+  },
+  {
+    "code": "1259",
+    "name": "Shebbear College",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 1
+  },
+  {
+    "code": "1261",
+    "name": "Sheldon School",
+    "teams35": 2,
+    "teams45": 0,
+    "teams55": 1
+  },
+  {
+    "code": "1265",
+    "name": "Sherborne CCF",
+    "teams35": 2,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1401",
+    "name": "Sherborne Schools Group",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1977",
+    "name": "Sidmouth College",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1766",
+    "name": "Sir Thomas Rich’s School",
+    "teams35": 0,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1930",
+    "name": "Somerset Army Cadets",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1370",
+    "name": "South Dartmoor CC",
+    "teams35": 0,
+    "teams45": 0,
+    "teams55": 1
+  },
+  {
+    "code": "1292",
+    "name": "Spaniorum Explorer Scouts",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1132",
+    "name": "St Bartholomew's School CCF",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1070",
+    "name": "St James School",
+    "teams35": 2,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1215",
+    "name": "St Joseph's School",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1939",
+    "name": "St Lukes C of E School",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1226",
+    "name": "St Peters School",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1601",
+    "name": "Stonar Explorer Scouts",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1945",
+    "name": "Stover School",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1941",
+    "name": "Stride Cornwall",
+    "teams35": 0,
+    "teams45": 2,
+    "teams55": 1
+  },
+  {
+    "code": "2004",
+    "name": "Stroud High School",
+    "teams35": 0,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1135",
+    "name": "Sturminster Newton Expedition",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1165",
+    "name": "Taunton School",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1065",
+    "name": "Tavistock & Dist Youth Forum",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 1
+  },
+  {
+    "code": "1018",
+    "name": "Tavistock College",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "2005",
+    "name": "Taw Explorers",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1988",
+    "name": "Teign school",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1130",
+    "name": "Teign Valley Ramblers",
+    "teams35": 2,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1395",
+    "name": "Teignbridge Explorers",
+    "teams35": 0,
+    "teams45": 0,
+    "teams55": 1
+  },
+  {
+    "code": "1155",
+    "name": "Teignmouth Community School",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1635",
+    "name": "The Castle School Taunton",
+    "teams35": 2,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1062",
+    "name": "The Gryphon School",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1906",
+    "name": "Thomas Hall School",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1897",
+    "name": "Tiverton High School",
+    "teams35": 2,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1423",
+    "name": "Torpoint Community College",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1942",
+    "name": "Torquay Academy",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 1
+  },
+  {
+    "code": "1617",
+    "name": "Torquay Academy CCF",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1343",
+    "name": "Torquay Boys' Grammar School",
+    "teams35": 2,
+    "teams45": 0,
+    "teams55": 1
+  },
+  {
+    "code": "1575",
+    "name": "Torquay Girls' Grammar School",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1974",
+    "name": "Totnes Independent School",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1636",
+    "name": "Trinity School",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1901",
+    "name": "Truro School",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1339",
+    "name": "Uffculme School",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1351",
+    "name": "Wadebridge School",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1707",
+    "name": "Warminster School",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1592",
+    "name": "Wellington School",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 1
+  },
+  {
+    "code": "1991",
+    "name": "West Devon Explorer Scouts",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1889",
+    "name": "West Exe School",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1371",
+    "name": "Westbuckland School",
+    "teams35": 2,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1550",
+    "name": "Weston College",
+    "teams35": 0,
+    "teams45": 1,
+    "teams55": 1
+  },
+  {
+    "code": "1545",
+    "name": "Wiltshire ACF",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 1
+  },
+  {
+    "code": "1350",
+    "name": "Woodroffe School",
+    "teams35": 0,
+    "teams45": 2,
+    "teams55": 0
+  },
+  {
+    "code": "1072",
+    "name": "Wycliffe College CCF",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1583",
+    "name": "Yate Academy",
+    "teams35": 1,
+    "teams45": 1,
+    "teams55": 0
+  },
+  {
+    "code": "1212",
+    "name": "Yeo Troggs Explorer Scouts",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1326",
+    "name": "Yeo Vale Explorer Scouts",
+    "teams35": 1,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
+    "code": "1208",
+    "name": "Yeti Explorer Scouts",
+    "teams35": 2,
+    "teams45": 0,
+    "teams55": 0
+  }
+]

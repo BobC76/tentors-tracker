@@ -1,0 +1,1822 @@
+{
+  "year": 2026,
+  "routes": {
+    "K": {
+      "label": "Route K",
+      "distance": 35,
+      "teams": [
+        {
+          "id": "ka",
+          "name": "1032 Yeovil Squadron RAFAC"
+        },
+        {
+          "id": "kk",
+          "name": "20th Torbay Scouts A"
+        },
+        {
+          "id": "kh",
+          "name": "Bodmin College B"
+        },
+        {
+          "id": "kc",
+          "name": "Cabot Scouts A"
+        },
+        {
+          "id": "kb",
+          "name": "Chew Valley School A"
+        },
+        {
+          "id": "kj",
+          "name": "Clyst Vale Community College B"
+        },
+        {
+          "id": "kn",
+          "name": "Cullompton Community College A"
+        },
+        {
+          "id": "ke",
+          "name": "Deg Karn Explorers Carrick"
+        },
+        {
+          "id": "km",
+          "name": "Ilfracombe Academy, The"
+        },
+        {
+          "id": "kp",
+          "name": "Mid Devon Explorer Scouts"
+        },
+        {
+          "id": "ki",
+          "name": "Oak Academy"
+        },
+        {
+          "id": "kl",
+          "name": "QE"
+        },
+        {
+          "id": "kg",
+          "name": "QEH Bristol"
+        },
+        {
+          "id": "ko",
+          "name": "St James School B"
+        },
+        {
+          "id": "kd",
+          "name": "Yeo Troggs Explorer Scouts"
+        }
+      ],
+      "nt_overrides": {},
+      "corrections": []
+    },
+    "T": {
+      "label": "Route T",
+      "distance": 45,
+      "teams": [
+        {
+          "id": "tb",
+          "name": "1032 Yeovil Squadron RAFAC"
+        },
+        {
+          "id": "tp",
+          "name": "Ashton Park School"
+        },
+        {
+          "id": "ti",
+          "name": "Bodmin College"
+        },
+        {
+          "id": "tj",
+          "name": "Clyst Vale Community College"
+        },
+        {
+          "id": "tg",
+          "name": "Cots Edge Explorer Scouts"
+        },
+        {
+          "id": "tm",
+          "name": "Culm Valley Walkers"
+        },
+        {
+          "id": "tk",
+          "name": "Exmouth Community College"
+        },
+        {
+          "id": "tc",
+          "name": "Gordano District Scouts"
+        },
+        {
+          "id": "te",
+          "name": "Greenshaw Learning Trust"
+        },
+        {
+          "id": "th",
+          "name": "QEH Bristol"
+        },
+        {
+          "id": "to",
+          "name": "Sir Thomas Rich\u2019s School"
+        },
+        {
+          "id": "ta",
+          "name": "St Peters School"
+        },
+        {
+          "id": "tl",
+          "name": "Stover School"
+        },
+        {
+          "id": "tn",
+          "name": "Taw Explorers"
+        },
+        {
+          "id": "tf",
+          "name": "Thomas Hall School"
+        },
+        {
+          "id": "tt",
+          "name": "Test Team"
+        }
+      ],
+      "nt_overrides": {},
+      "corrections": []
+    },
+    "Y": {
+      "label": "Route Y",
+      "distance": 55,
+      "teams": [
+        {
+          "id": "ya",
+          "name": "1032 Yeovil Squadron RAFAC"
+        },
+        {
+          "id": "yi",
+          "name": "197 (Devonport) Sqn ATC"
+        },
+        {
+          "id": "yg",
+          "name": "Axe District Scouts"
+        },
+        {
+          "id": "yd",
+          "name": "Brabazon Explorer Scouts"
+        },
+        {
+          "id": "yj",
+          "name": "Britannia Explorer Unit"
+        },
+        {
+          "id": "yk",
+          "name": "Callywith College"
+        },
+        {
+          "id": "yf",
+          "name": "Deg Karn Explorers Carrick"
+        },
+        {
+          "id": "yc",
+          "name": "Mount Kelly"
+        },
+        {
+          "id": "yh",
+          "name": "Sheldon School"
+        },
+        {
+          "id": "ye",
+          "name": "Tavistock & Dist Youth Forum"
+        },
+        {
+          "id": "yl",
+          "name": "Teignbridge Explorers"
+        },
+        {
+          "id": "ym",
+          "name": "Torquay Academy"
+        },
+        {
+          "id": "yn",
+          "name": "Torquay Boys' Grammar School"
+        },
+        {
+          "id": "yb",
+          "name": "Wiltshire ACF"
+        }
+      ],
+      "nt_overrides": {},
+      "corrections": []
+    },
+    "A": {
+      "label": "Route A",
+      "distance": 35,
+      "teams": [
+        {
+          "id": "ak",
+          "name": "1387 (Liskeard) Sqn ATC"
+        },
+        {
+          "id": "aq",
+          "name": "Ashton Park School A"
+        },
+        {
+          "id": "ac",
+          "name": "Clifton College"
+        },
+        {
+          "id": "ad",
+          "name": "Cotswold Edge Scouts - Zeus"
+        },
+        {
+          "id": "an",
+          "name": "Greenshaw Learning Trust"
+        },
+        {
+          "id": "am",
+          "name": "Hele's School CCF B"
+        },
+        {
+          "id": "aj",
+          "name": "King Edward's School, Bath"
+        },
+        {
+          "id": "ab",
+          "name": "King's Bruton CCF B"
+        },
+        {
+          "id": "ae",
+          "name": "King's College Taunton CCF A"
+        },
+        {
+          "id": "ag",
+          "name": "Okement Ramblers B"
+        },
+        {
+          "id": "af",
+          "name": "Park Community School, The B"
+        },
+        {
+          "id": "ah",
+          "name": "St Joseph's School"
+        },
+        {
+          "id": "aa",
+          "name": "Tavistock College A"
+        },
+        {
+          "id": "ao",
+          "name": "Teignmouth Community School A"
+        },
+        {
+          "id": "ai",
+          "name": "Tiverton High School A"
+        },
+        {
+          "id": "al",
+          "name": "Torquay Academy"
+        },
+        {
+          "id": "ap",
+          "name": "Truro School B"
+        }
+      ],
+      "nt_overrides": {},
+      "corrections": []
+    },
+    "W": {
+      "label": "Route W",
+      "distance": 45,
+      "teams": [
+        {
+          "id": "wh",
+          "name": "197 (Devonport) Sqn ATC"
+        },
+        {
+          "id": "we",
+          "name": "Brabazon Explorer Scouts"
+        },
+        {
+          "id": "wk",
+          "name": "Budmouth Academy CCF"
+        },
+        {
+          "id": "wn",
+          "name": "Collegiate School"
+        },
+        {
+          "id": "wg",
+          "name": "King's College Taunton CCF"
+        },
+        {
+          "id": "wl",
+          "name": "Millfield School"
+        },
+        {
+          "id": "wd",
+          "name": "Mount Kelly"
+        },
+        {
+          "id": "wj",
+          "name": "Newton Abbot College"
+        },
+        {
+          "id": "wb",
+          "name": "North Somerset Explorers A"
+        },
+        {
+          "id": "wi",
+          "name": "River Teign Sea Scouts"
+        },
+        {
+          "id": "wo",
+          "name": "Sidmouth College"
+        },
+        {
+          "id": "wf",
+          "name": "Tavistock & Dist Youth Forum"
+        },
+        {
+          "id": "wm",
+          "name": "Torquay Girls' Grammar School"
+        },
+        {
+          "id": "wc",
+          "name": "Weston College"
+        },
+        {
+          "id": "wa",
+          "name": "Wiltshire ACF"
+        }
+      ],
+      "nt_overrides": {},
+      "corrections": []
+    },
+    "C": {
+      "label": "Route C",
+      "distance": 35,
+      "teams": [
+        {
+          "id": "cm",
+          "name": "20th Torbay Scouts B"
+        },
+        {
+          "id": "ci",
+          "name": "41F (Taunton) Sqn RAFAC A"
+        },
+        {
+          "id": "co",
+          "name": "Ashton Park School B"
+        },
+        {
+          "id": "ca",
+          "name": "Blundells School CCF A"
+        },
+        {
+          "id": "cj",
+          "name": "Bristol & Gloucester ATC A"
+        },
+        {
+          "id": "cg",
+          "name": "Britannia Explorer Unit"
+        },
+        {
+          "id": "cc",
+          "name": "Cabot Scouts B"
+        },
+        {
+          "id": "ch",
+          "name": "Ivybridge Community College A"
+        },
+        {
+          "id": "ce",
+          "name": "John of Gaunt School, The A"
+        },
+        {
+          "id": "cb",
+          "name": "Kilkenny Explorer Scouts"
+        },
+        {
+          "id": "cd",
+          "name": "Kingswood School A"
+        },
+        {
+          "id": "cn",
+          "name": "Sherborne CCF A"
+        },
+        {
+          "id": "cf",
+          "name": "Stonar Explorer Scouts A"
+        },
+        {
+          "id": "ck",
+          "name": "Stover School"
+        },
+        {
+          "id": "cp",
+          "name": "Totnes Independent School"
+        },
+        {
+          "id": "cl",
+          "name": "Uffculme School A"
+        }
+      ],
+      "nt_overrides": {},
+      "corrections": []
+    },
+    "D": {
+      "label": "Route D",
+      "distance": 35,
+      "teams": [
+        {
+          "id": "dg",
+          "name": "2377 (Plympton) Sqn ATC"
+        },
+        {
+          "id": "dk",
+          "name": "Aude Sapere Expedition Society"
+        },
+        {
+          "id": "dp",
+          "name": "Cullompton Community College B"
+        },
+        {
+          "id": "de",
+          "name": "Dorset ACF"
+        },
+        {
+          "id": "di",
+          "name": "Downend District Scouts"
+        },
+        {
+          "id": "dd",
+          "name": "Gordano Horizon Explorers"
+        },
+        {
+          "id": "dn",
+          "name": "Haven Banks OEC"
+        },
+        {
+          "id": "dj",
+          "name": "Ipplepen Scouts"
+        },
+        {
+          "id": "do",
+          "name": "Perthyans B"
+        },
+        {
+          "id": "dh",
+          "name": "Sheldon School A"
+        },
+        {
+          "id": "dc",
+          "name": "Somerset Army Cadets B"
+        },
+        {
+          "id": "df",
+          "name": "St Lukes C of E School"
+        },
+        {
+          "id": "da",
+          "name": "St Peters School A"
+        },
+        {
+          "id": "db",
+          "name": "Taunton School A"
+        },
+        {
+          "id": "dm",
+          "name": "Taw Explorers"
+        },
+        {
+          "id": "dl",
+          "name": "Truro School A"
+        }
+      ],
+      "nt_overrides": {},
+      "corrections": []
+    },
+    "Z": {
+      "label": "Route Z",
+      "distance": 55,
+      "teams": [
+        {
+          "id": "zi",
+          "name": "28th Kingswood Scout Group"
+        },
+        {
+          "id": "zl",
+          "name": "Bicton College"
+        },
+        {
+          "id": "za",
+          "name": "Colyton Grammar School"
+        },
+        {
+          "id": "zb",
+          "name": "Dartmoor Plodders"
+        },
+        {
+          "id": "zm",
+          "name": "Exeter College"
+        },
+        {
+          "id": "ze",
+          "name": "Exeter School"
+        },
+        {
+          "id": "zc",
+          "name": "Gordano District Scouts A"
+        },
+        {
+          "id": "zj",
+          "name": "Haven Banks OEC B"
+        },
+        {
+          "id": "zf",
+          "name": "Kingsbridge Community College"
+        },
+        {
+          "id": "zh",
+          "name": "National Trust Dartmoor, The"
+        },
+        {
+          "id": "zk",
+          "name": "QE B"
+        },
+        {
+          "id": "zd",
+          "name": "Sea Cadet Corps SouthWestArea"
+        }
+      ],
+      "nt_overrides": {},
+      "corrections": []
+    },
+    "G": {
+      "label": "Route G",
+      "distance": 35,
+      "teams": [
+        {
+          "id": "gc",
+          "name": "2nd Nailsea Scouts"
+        },
+        {
+          "id": "gm",
+          "name": "Bishop Wordsworths School"
+        },
+        {
+          "id": "gg",
+          "name": "Cornwall ACF"
+        },
+        {
+          "id": "ga",
+          "name": "Dartmoor Plodders"
+        },
+        {
+          "id": "ge",
+          "name": "Henley Bank High School"
+        },
+        {
+          "id": "gk",
+          "name": "Horizons Youth Centre A"
+        },
+        {
+          "id": "gb",
+          "name": "Isca Academy"
+        },
+        {
+          "id": "gf",
+          "name": "King's College Taunton CCF B"
+        },
+        {
+          "id": "gj",
+          "name": "Kingsbridge Community College"
+        },
+        {
+          "id": "gp",
+          "name": "Kingsley Devon A"
+        },
+        {
+          "id": "gl",
+          "name": "Launceston College"
+        },
+        {
+          "id": "gi",
+          "name": "Mid Devon Youth A"
+        },
+        {
+          "id": "go",
+          "name": "National Trust Dartmoor, The"
+        },
+        {
+          "id": "gh",
+          "name": "Penrice Academy A"
+        },
+        {
+          "id": "gn",
+          "name": "Queen's College Taunton B"
+        },
+        {
+          "id": "gd",
+          "name": "Spaniorum Explorer Scouts"
+        }
+      ],
+      "nt_overrides": {},
+      "corrections": []
+    },
+    "P": {
+      "label": "Route P",
+      "distance": 45,
+      "teams": [
+        {
+          "id": "pl",
+          "name": "2nd Polish Scout Troop"
+        },
+        {
+          "id": "pa",
+          "name": "Blundells School CCF"
+        },
+        {
+          "id": "pk",
+          "name": "Bristol & Gloucester ATC"
+        },
+        {
+          "id": "pd",
+          "name": "Bristol Scouts"
+        },
+        {
+          "id": "pc",
+          "name": "Chew Valley School"
+        },
+        {
+          "id": "pg",
+          "name": "John of Gaunt School, The"
+        },
+        {
+          "id": "pj",
+          "name": "Liverton Scouts"
+        },
+        {
+          "id": "pi",
+          "name": "Menheniot Explorer Scouts"
+        },
+        {
+          "id": "po",
+          "name": "Sherborne Schools Group"
+        },
+        {
+          "id": "ph",
+          "name": "Stonar Explorer Scouts"
+        },
+        {
+          "id": "pn",
+          "name": "Stride Cornwall B"
+        },
+        {
+          "id": "pb",
+          "name": "Taunton School"
+        },
+        {
+          "id": "pp",
+          "name": "Totnes Independent School"
+        },
+        {
+          "id": "pm",
+          "name": "Truro School"
+        },
+        {
+          "id": "pe",
+          "name": "Woodroffe School B"
+        },
+        {
+          "id": "pf",
+          "name": "Yate Academy"
+        }
+      ],
+      "nt_overrides": {},
+      "corrections": []
+    },
+    "I": {
+      "label": "Route I",
+      "distance": 35,
+      "teams": [
+        {
+          "id": "im",
+          "name": "41F (Taunton) Sqn RAFAC B"
+        },
+        {
+          "id": "ia",
+          "name": "Blundells School CCF B"
+        },
+        {
+          "id": "in",
+          "name": "Bristol & Gloucester ATC B"
+        },
+        {
+          "id": "id",
+          "name": "Chew Valley School B"
+        },
+        {
+          "id": "ig",
+          "name": "Churcher\u2019s College"
+        },
+        {
+          "id": "il",
+          "name": "Ivybridge Community College B"
+        },
+        {
+          "id": "ij",
+          "name": "John of Gaunt School, The B"
+        },
+        {
+          "id": "ie",
+          "name": "King's Bruton CCF A"
+        },
+        {
+          "id": "ih",
+          "name": "Kingswood School B"
+        },
+        {
+          "id": "ip",
+          "name": "Millfield School B"
+        },
+        {
+          "id": "ib",
+          "name": "Okehampton College B"
+        },
+        {
+          "id": "ik",
+          "name": "Plymouth College A"
+        },
+        {
+          "id": "if",
+          "name": "Polar Explorer Scouts"
+        },
+        {
+          "id": "ic",
+          "name": "Taunton School B"
+        },
+        {
+          "id": "io",
+          "name": "Torquay Boys' Grammar School A"
+        },
+        {
+          "id": "ii",
+          "name": "Yate Academy"
+        }
+      ],
+      "nt_overrides": {},
+      "corrections": []
+    },
+    "X": {
+      "label": "Route X",
+      "distance": 55,
+      "teams": [
+        {
+          "id": "xh",
+          "name": "Aude Sapere Expedition Society"
+        },
+        {
+          "id": "xe",
+          "name": "Beechen Cliff School"
+        },
+        {
+          "id": "xf",
+          "name": "Duchy college"
+        },
+        {
+          "id": "xm",
+          "name": "East Devon Explorer Scouts"
+        },
+        {
+          "id": "xb",
+          "name": "Gordano District Scouts B"
+        },
+        {
+          "id": "xk",
+          "name": "Haven Banks OEC A"
+        },
+        {
+          "id": "xd",
+          "name": "Isca Academy"
+        },
+        {
+          "id": "xl",
+          "name": "QE A"
+        },
+        {
+          "id": "xa",
+          "name": "Sea Moor Explore"
+        },
+        {
+          "id": "xi",
+          "name": "Shebbear College"
+        },
+        {
+          "id": "xn",
+          "name": "South Dartmoor CC"
+        },
+        {
+          "id": "xj",
+          "name": "Stride Cornwall"
+        },
+        {
+          "id": "xg",
+          "name": "Wellington School"
+        },
+        {
+          "id": "xc",
+          "name": "Weston College"
+        }
+      ],
+      "nt_overrides": {},
+      "corrections": []
+    },
+    "N": {
+      "label": "Route N",
+      "distance": 35,
+      "teams": [
+        {
+          "id": "nf",
+          "name": "Axe District Scouts"
+        },
+        {
+          "id": "nl",
+          "name": "Collegiate School A"
+        },
+        {
+          "id": "nj",
+          "name": "Erme and Yealm Valley HWC"
+        },
+        {
+          "id": "nh",
+          "name": "Horizons Youth Centre B"
+        },
+        {
+          "id": "nd",
+          "name": "King Edward VI, Totnes A"
+        },
+        {
+          "id": "nn",
+          "name": "Kingsley Devon B"
+        },
+        {
+          "id": "np",
+          "name": "Kingswood Explorer Scouts"
+        },
+        {
+          "id": "nc",
+          "name": "Monkton Wood Academy A"
+        },
+        {
+          "id": "ni",
+          "name": "Norton Hill School A"
+        },
+        {
+          "id": "ng",
+          "name": "Penryn College A"
+        },
+        {
+          "id": "ne",
+          "name": "Plymouth Explorer Scouts B"
+        },
+        {
+          "id": "nk",
+          "name": "Shebbear College"
+        },
+        {
+          "id": "nm",
+          "name": "Sidmouth College A"
+        },
+        {
+          "id": "nb",
+          "name": "Tavistock College B"
+        },
+        {
+          "id": "no",
+          "name": "Uffculme School B"
+        },
+        {
+          "id": "na",
+          "name": "Westbuckland School B"
+        }
+      ],
+      "nt_overrides": {},
+      "corrections": []
+    },
+    "V": {
+      "label": "Route V",
+      "distance": 45,
+      "teams": [
+        {
+          "id": "vf",
+          "name": "Axe District Scouts"
+        },
+        {
+          "id": "vk",
+          "name": "Bishop Wordsworths School A"
+        },
+        {
+          "id": "vj",
+          "name": "Bovey Tracey Scouts"
+        },
+        {
+          "id": "vi",
+          "name": "Camborne Science & Int Academy"
+        },
+        {
+          "id": "vb",
+          "name": "Dartmoor Plodders"
+        },
+        {
+          "id": "ve",
+          "name": "Devon & Somerset RAF Air Cadets"
+        },
+        {
+          "id": "vm",
+          "name": "Devonport High School for Boys B"
+        },
+        {
+          "id": "vd",
+          "name": "Duchy college"
+        },
+        {
+          "id": "vg",
+          "name": "Haldon Hill Walkers"
+        },
+        {
+          "id": "vo",
+          "name": "Leweston School Sherborne"
+        },
+        {
+          "id": "vn",
+          "name": "Maynard School, The"
+        },
+        {
+          "id": "vh",
+          "name": "Plymouth College"
+        },
+        {
+          "id": "vl",
+          "name": "Queen's College Taunton"
+        },
+        {
+          "id": "va",
+          "name": "Sea Moor Explore"
+        },
+        {
+          "id": "vc",
+          "name": "Stroud High School"
+        }
+      ],
+      "nt_overrides": {},
+      "corrections": []
+    },
+    "U": {
+      "label": "Route U",
+      "distance": 45,
+      "teams": [
+        {
+          "id": "uh",
+          "name": "Barracuda Explorer Scouts"
+        },
+        {
+          "id": "uk",
+          "name": "Bideford College"
+        },
+        {
+          "id": "ub",
+          "name": "Bristol Grammar School B"
+        },
+        {
+          "id": "uj",
+          "name": "Callywith College"
+        },
+        {
+          "id": "un",
+          "name": "Canford CCF"
+        },
+        {
+          "id": "ud",
+          "name": "Devon ACF"
+        },
+        {
+          "id": "up",
+          "name": "Fowey River Academy"
+        },
+        {
+          "id": "ul",
+          "name": "Ipplepen Scouts"
+        },
+        {
+          "id": "uf",
+          "name": "King Edward VI, Totnes"
+        },
+        {
+          "id": "ua",
+          "name": "Okehampton College"
+        },
+        {
+          "id": "ue",
+          "name": "Radstock Youth B"
+        },
+        {
+          "id": "uo",
+          "name": "Shebbear College"
+        },
+        {
+          "id": "uc",
+          "name": "Somerset Army Cadets"
+        },
+        {
+          "id": "um",
+          "name": "Torquay Academy CCF"
+        },
+        {
+          "id": "ui",
+          "name": "Wellington School"
+        },
+        {
+          "id": "ug",
+          "name": "Woodroffe School A"
+        }
+      ],
+      "nt_overrides": {},
+      "corrections": []
+    },
+    "M": {
+      "label": "Route M",
+      "distance": 35,
+      "teams": [
+        {
+          "id": "mf",
+          "name": "Barracuda Explorer Scouts A"
+        },
+        {
+          "id": "mm",
+          "name": "Blackdown Scout District B"
+        },
+        {
+          "id": "md",
+          "name": "Blue School Wells A"
+        },
+        {
+          "id": "mk",
+          "name": "Canford CCF A"
+        },
+        {
+          "id": "mo",
+          "name": "Dawlish College"
+        },
+        {
+          "id": "mj",
+          "name": "Exeter & District Scouts B"
+        },
+        {
+          "id": "ml",
+          "name": "Fowey River Academy A"
+        },
+        {
+          "id": "mn",
+          "name": "Gloucestershire ACF"
+        },
+        {
+          "id": "mh",
+          "name": "King's School, The A"
+        },
+        {
+          "id": "mi",
+          "name": "Mid Devon Youth B"
+        },
+        {
+          "id": "ma",
+          "name": "Okehampton College A"
+        },
+        {
+          "id": "mg",
+          "name": "Penrice Academy B"
+        },
+        {
+          "id": "mc",
+          "name": "Radstock Youth"
+        },
+        {
+          "id": "mp",
+          "name": "Sherborne Schools Group B"
+        },
+        {
+          "id": "me",
+          "name": "Teign Valley Ramblers B"
+        },
+        {
+          "id": "mb",
+          "name": "Wycliffe College CCF"
+        }
+      ],
+      "nt_overrides": {},
+      "corrections": []
+    },
+    "E": {
+      "label": "Route E",
+      "distance": 35,
+      "teams": [
+        {
+          "id": "ef",
+          "name": "Barracuda Explorer Scouts B"
+        },
+        {
+          "id": "eb",
+          "name": "Blue School Wells B"
+        },
+        {
+          "id": "ei",
+          "name": "Bodmin College A"
+        },
+        {
+          "id": "ej",
+          "name": "Canford CCF B"
+        },
+        {
+          "id": "el",
+          "name": "Chulmleigh College B"
+        },
+        {
+          "id": "en",
+          "name": "Clyst Vale Community College A"
+        },
+        {
+          "id": "ek",
+          "name": "Collegiate School B"
+        },
+        {
+          "id": "eo",
+          "name": "Fowey River Academy B"
+        },
+        {
+          "id": "ed",
+          "name": "King Edward VI, Totnes B"
+        },
+        {
+          "id": "eg",
+          "name": "King's School, The B"
+        },
+        {
+          "id": "ea",
+          "name": "Monkton Wood Academy B"
+        },
+        {
+          "id": "em",
+          "name": "Sidmouth College B"
+        },
+        {
+          "id": "ep",
+          "name": "The Gryphon School"
+        },
+        {
+          "id": "eh",
+          "name": "Torquay Academy CCF"
+        },
+        {
+          "id": "ee",
+          "name": "West Exe School A"
+        }
+      ],
+      "nt_overrides": {
+        "WATER HILL": "18:00",
+        "HIGHER WHITE TOR": "18:20",
+        "HOLMING BEAM": "18:10",
+        "STANDON FARM": "17:50"
+      },
+      "corrections": []
+    },
+    "L": {
+      "label": "Route L",
+      "distance": 35,
+      "teams": [
+        {
+          "id": "lh",
+          "name": "Bedminster Down School"
+        },
+        {
+          "id": "lk",
+          "name": "Bideford College A"
+        },
+        {
+          "id": "lm",
+          "name": "Blackdown Scout District A"
+        },
+        {
+          "id": "lb",
+          "name": "Bristol Grammar School"
+        },
+        {
+          "id": "la",
+          "name": "Colyton Grammar School B"
+        },
+        {
+          "id": "ln",
+          "name": "Devonport High School for Girls B"
+        },
+        {
+          "id": "lf",
+          "name": "Five Acres High School"
+        },
+        {
+          "id": "lo",
+          "name": "Perthyans A"
+        },
+        {
+          "id": "ld",
+          "name": "Somerset Army Cadets A"
+        },
+        {
+          "id": "lp",
+          "name": "St James School A"
+        },
+        {
+          "id": "lc",
+          "name": "Warminster School"
+        },
+        {
+          "id": "lj",
+          "name": "Wellington School"
+        },
+        {
+          "id": "le",
+          "name": "West Devon Explorer Scouts"
+        },
+        {
+          "id": "li",
+          "name": "West Exe School B"
+        },
+        {
+          "id": "ll",
+          "name": "Yeti Explorer Scouts B"
+        }
+      ],
+      "nt_overrides": {},
+      "corrections": []
+    },
+    "F": {
+      "label": "Route F",
+      "distance": 35,
+      "teams": [
+        {
+          "id": "fb",
+          "name": "Beechen Cliff School"
+        },
+        {
+          "id": "fk",
+          "name": "Bovey Tracey Scouts"
+        },
+        {
+          "id": "fi",
+          "name": "Camborne Science & Int Academy"
+        },
+        {
+          "id": "fd",
+          "name": "Devon & Somerset RAF Air Cadets"
+        },
+        {
+          "id": "fj",
+          "name": "Exeter & District Scouts A"
+        },
+        {
+          "id": "fm",
+          "name": "Exmouth Community College B"
+        },
+        {
+          "id": "fg",
+          "name": "Great Torrington School"
+        },
+        {
+          "id": "fe",
+          "name": "Haldon Hill Walkers"
+        },
+        {
+          "id": "fl",
+          "name": "Norton Hill School B"
+        },
+        {
+          "id": "ff",
+          "name": "Penryn College B"
+        },
+        {
+          "id": "fn",
+          "name": "Sturminster Newton Expedition B"
+        },
+        {
+          "id": "fc",
+          "name": "Teign Valley Ramblers A"
+        },
+        {
+          "id": "fo",
+          "name": "Torpoint Community College"
+        },
+        {
+          "id": "fp",
+          "name": "Trinity School"
+        },
+        {
+          "id": "fh",
+          "name": "Wadebridge School"
+        },
+        {
+          "id": "fa",
+          "name": "Yeo Vale Explorer Scouts"
+        }
+      ],
+      "nt_overrides": {},
+      "corrections": []
+    },
+    "Q": {
+      "label": "Route Q",
+      "distance": 45,
+      "teams": [
+        {
+          "id": "qc",
+          "name": "Beechen Cliff School"
+        },
+        {
+          "id": "ql",
+          "name": "Bicton College"
+        },
+        {
+          "id": "qi",
+          "name": "Blackdown Scout District"
+        },
+        {
+          "id": "qe",
+          "name": "Blue School Wells"
+        },
+        {
+          "id": "qa",
+          "name": "Bristol Grammar School A"
+        },
+        {
+          "id": "qp",
+          "name": "Dawlish College"
+        },
+        {
+          "id": "qo",
+          "name": "East Devon Explorer Scouts"
+        },
+        {
+          "id": "qn",
+          "name": "Exeter College B"
+        },
+        {
+          "id": "qm",
+          "name": "Mid Devon Explorer Scouts"
+        },
+        {
+          "id": "qf",
+          "name": "Milton Abbey CCF"
+        },
+        {
+          "id": "qh",
+          "name": "Norton Hill School"
+        },
+        {
+          "id": "qd",
+          "name": "Radstock Youth A"
+        },
+        {
+          "id": "qj",
+          "name": "The Gryphon School"
+        },
+        {
+          "id": "qk",
+          "name": "Torpoint Community College"
+        },
+        {
+          "id": "qb",
+          "name": "West Devon Explorer Scouts"
+        },
+        {
+          "id": "qg",
+          "name": "West Exe School"
+        }
+      ],
+      "nt_overrides": {},
+      "corrections": []
+    },
+    "H": {
+      "label": "Route H",
+      "distance": 35,
+      "teams": [
+        {
+          "id": "hj",
+          "name": "Bideford College B"
+        },
+        {
+          "id": "hi",
+          "name": "Blackdown Hikers B"
+        },
+        {
+          "id": "hc",
+          "name": "Brabazon Explorer Scouts"
+        },
+        {
+          "id": "hm",
+          "name": "Budmouth Academy CCF B"
+        },
+        {
+          "id": "ho",
+          "name": "Culm Valley Walkers"
+        },
+        {
+          "id": "hk",
+          "name": "Dawlish Scouts"
+        },
+        {
+          "id": "hg",
+          "name": "Exeter School"
+        },
+        {
+          "id": "hf",
+          "name": "Godolphin CCF"
+        },
+        {
+          "id": "hn",
+          "name": "Maynard School, The B"
+        },
+        {
+          "id": "hl",
+          "name": "Newton Abbot College B"
+        },
+        {
+          "id": "hb",
+          "name": "North Somerset Explorers"
+        },
+        {
+          "id": "he",
+          "name": "Plymouth Explorer Scouts A"
+        },
+        {
+          "id": "hp",
+          "name": "Sturminster Newton Expedition A"
+        },
+        {
+          "id": "hd",
+          "name": "Tavistock & Dist Youth Forum"
+        },
+        {
+          "id": "hh",
+          "name": "Tiverton High School B"
+        },
+        {
+          "id": "ha",
+          "name": "Westbuckland School A"
+        }
+      ],
+      "nt_overrides": {},
+      "corrections": []
+    },
+    "R": {
+      "label": "Route R",
+      "distance": 45,
+      "teams": [
+        {
+          "id": "rh",
+          "name": "Bishop Wordsworths School B"
+        },
+        {
+          "id": "ro",
+          "name": "Cullompton Community College"
+        },
+        {
+          "id": "re",
+          "name": "Dorset ACF"
+        },
+        {
+          "id": "rp",
+          "name": "Exeter College A"
+        },
+        {
+          "id": "rf",
+          "name": "Exeter School"
+        },
+        {
+          "id": "rg",
+          "name": "Horizons Youth Centre"
+        },
+        {
+          "id": "rn",
+          "name": "Ilfracombe Academy, The"
+        },
+        {
+          "id": "rd",
+          "name": "Isca Academy"
+        },
+        {
+          "id": "ri",
+          "name": "Kingsley Devon"
+        },
+        {
+          "id": "rl",
+          "name": "Kingswood Explorer Scouts"
+        },
+        {
+          "id": "rc",
+          "name": "North Somerset Explorers B"
+        },
+        {
+          "id": "rk",
+          "name": "Stride Cornwall A"
+        },
+        {
+          "id": "rm",
+          "name": "Sturminster Newton Expedition"
+        },
+        {
+          "id": "rb",
+          "name": "Tavistock College"
+        },
+        {
+          "id": "rj",
+          "name": "Uffculme School"
+        },
+        {
+          "id": "ra",
+          "name": "Westbuckland School"
+        }
+      ],
+      "nt_overrides": {},
+      "corrections": []
+    },
+    "B": {
+      "label": "Route B",
+      "distance": 35,
+      "teams": [
+        {
+          "id": "bi",
+          "name": "Blackdown Hikers A"
+        },
+        {
+          "id": "bl",
+          "name": "Budmouth Academy CCF A"
+        },
+        {
+          "id": "bp",
+          "name": "Chulmleigh College A"
+        },
+        {
+          "id": "be",
+          "name": "Cots Edge Explorer Scouts"
+        },
+        {
+          "id": "bj",
+          "name": "Exeter Explorer Sea Scouts"
+        },
+        {
+          "id": "bc",
+          "name": "Long Ashton Scouts"
+        },
+        {
+          "id": "bo",
+          "name": "Maynard School, The A"
+        },
+        {
+          "id": "bm",
+          "name": "Millfield School A"
+        },
+        {
+          "id": "bb",
+          "name": "Mount Kelly"
+        },
+        {
+          "id": "bk",
+          "name": "Newton Abbot College A"
+        },
+        {
+          "id": "bh",
+          "name": "Sheldon School B"
+        },
+        {
+          "id": "bq",
+          "name": "Sherborne Schools Group A"
+        },
+        {
+          "id": "bg",
+          "name": "The Castle School Taunton B"
+        },
+        {
+          "id": "bd",
+          "name": "Thomas Hall School B"
+        },
+        {
+          "id": "bn",
+          "name": "Torquay Girls' Grammar School B"
+        },
+        {
+          "id": "ba",
+          "name": "Wiltshire ACF"
+        }
+      ],
+      "nt_overrides": {},
+      "corrections": []
+    },
+    "J": {
+      "label": "Route J",
+      "distance": 35,
+      "teams": [
+        {
+          "id": "jm",
+          "name": "Blaise High School"
+        },
+        {
+          "id": "jd",
+          "name": "Bristol Scouts"
+        },
+        {
+          "id": "ja",
+          "name": "Colyton Grammar School A"
+        },
+        {
+          "id": "jo",
+          "name": "Exmouth Community College A"
+        },
+        {
+          "id": "jc",
+          "name": "Gordon's School CCF"
+        },
+        {
+          "id": "jk",
+          "name": "Hele's School CCF A"
+        },
+        {
+          "id": "jh",
+          "name": "Okement Ramblers A"
+        },
+        {
+          "id": "jg",
+          "name": "Park Community School, The A"
+        },
+        {
+          "id": "jf",
+          "name": "Sea Cadet Corps SouthWestArea"
+        },
+        {
+          "id": "jb",
+          "name": "St Peters School B"
+        },
+        {
+          "id": "ji",
+          "name": "Stonar Explorer Scouts B"
+        },
+        {
+          "id": "jj",
+          "name": "The Castle School Taunton A"
+        },
+        {
+          "id": "je",
+          "name": "Thomas Hall School A"
+        },
+        {
+          "id": "jl",
+          "name": "Torquay Girls' Grammar School A"
+        },
+        {
+          "id": "jp",
+          "name": "Yeti Explorer Scouts A"
+        }
+      ],
+      "nt_overrides": {},
+      "corrections": []
+    },
+    "O": {
+      "label": "Route O",
+      "distance": 35,
+      "teams": [
+        {
+          "id": "oe",
+          "name": "Bryanston School"
+        },
+        {
+          "id": "om",
+          "name": "Devonport High School for Girls A"
+        },
+        {
+          "id": "oo",
+          "name": "East Devon Explorer Scouts"
+        },
+        {
+          "id": "oa",
+          "name": "Matravers CCF"
+        },
+        {
+          "id": "op",
+          "name": "North Dartmoor Explorer Scouts"
+        },
+        {
+          "id": "og",
+          "name": "Penair School CCF"
+        },
+        {
+          "id": "of",
+          "name": "Plymouth College B"
+        },
+        {
+          "id": "oi",
+          "name": "Queen's College Taunton A"
+        },
+        {
+          "id": "od",
+          "name": "Royal High School Bath"
+        },
+        {
+          "id": "ob",
+          "name": "Salthouse Explorer Scouts"
+        },
+        {
+          "id": "on",
+          "name": "Sherborne CCF B"
+        },
+        {
+          "id": "ol",
+          "name": "St Bartholomew's School CCF"
+        },
+        {
+          "id": "oc",
+          "name": "Teign school"
+        },
+        {
+          "id": "ok",
+          "name": "Teignmouth Community School B"
+        },
+        {
+          "id": "oj",
+          "name": "Torquay Boys' Grammar School B"
+        }
+      ],
+      "nt_overrides": {},
+      "corrections": []
+    },
+    "S": {
+      "label": "Route S",
+      "distance": 45,
+      "teams": [
+        {
+          "id": "sh",
+          "name": "Bryanston School"
+        },
+        {
+          "id": "sn",
+          "name": "Chulmleigh College"
+        },
+        {
+          "id": "sl",
+          "name": "Devonport High School for Boys A"
+        },
+        {
+          "id": "sp",
+          "name": "Devonport High School for Girls"
+        },
+        {
+          "id": "si",
+          "name": "Godolphin CCF"
+        },
+        {
+          "id": "sm",
+          "name": "Hele's School CCF"
+        },
+        {
+          "id": "sk",
+          "name": "King Edward's School, Bath"
+        },
+        {
+          "id": "sf",
+          "name": "Kingswood School"
+        },
+        {
+          "id": "sa",
+          "name": "Matravers CCF"
+        },
+        {
+          "id": "sj",
+          "name": "Okement Ramblers"
+        },
+        {
+          "id": "sc",
+          "name": "Portsmouth Grammar School CCF"
+        },
+        {
+          "id": "se",
+          "name": "Royal High School Bath"
+        },
+        {
+          "id": "sg",
+          "name": "Sea Cadet Corps SouthWestArea"
+        },
+        {
+          "id": "sd",
+          "name": "Teign school"
+        },
+        {
+          "id": "so",
+          "name": "Teignmouth Community School"
+        }
+      ],
+      "nt_overrides": {},
+      "corrections": []
+    }
+  }
+}

@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ten Tors Tracker</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font: 15px/1.5 system-ui, sans-serif;
+      max-width: 480px; margin: 0 auto; padding: 32px 16px 48px;
+      color: #1a1a1a;
+    }
+    h1 { font-size: 24px; margin: 0 0 4px; }
+    .subtitle { color: #666; font-size: 14px; margin-bottom: 28px; }
+    .year-bar {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 24px; font-size: 14px;
+    }
+    .year-bar label { font-weight: 600; color: #555; }
+    .year-bar select {
+      font-size: 14px; padding: 4px 8px; border-radius: 6px;
+      border: 1.5px solid #ccc; background: white;
+    }
+
+    /* Search box */
+    .search-wrap { position: relative; margin-bottom: 8px; }
+    .search-wrap input {
+      width: 100%; font-size: 15px; padding: 10px 12px;
+      border: 1.5px solid #ccc; border-radius: 10px; outline: none;
+    }
+    .search-wrap input:focus { border-color: #0066cc; }
+
+    /* Autocomplete dropdown */
+    .dropdown {
+      position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+      background: white; border: 1.5px solid #ccc; border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 10;
+      max-height: 260px; overflow-y: auto;
+    }
+    .dropdown-item {
+      padding: 10px 14px; cursor: pointer;
+    }
+    .dropdown-item:first-child { border-radius: 8px 8px 0 0; }
+    .dropdown-item:last-child { border-radius: 0 0 8px 8px; }
+    .dropdown-item:hover, .dropdown-item.active { background: #ebf2ff; }
+    .dropdown-item .di-name { font-weight: 600; }
+    .dropdown-item .di-meta { font-size: 12px; color: #888; }
+    .dropdown-empty { padding: 10px 14px; color: #888; font-size: 14px; }
+
+    /* Selected chips */
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; min-height: 0; }
+    .chip {
+      display: flex; align-items: center; gap: 6px;
+      background: #ebf2ff; border: 1.5px solid #0066cc;
+      border-radius: 20px; padding: 4px 10px 4px 12px;
+      font-size: 13px; font-weight: 600; color: #0044aa;
+    }
+    .chip-remove {
+      cursor: pointer; font-size: 16px; line-height: 1;
+      color: #0066cc; border: none; background: none; padding: 0;
+    }
+    .chip-remove:hover { color: #c00; }
+
+    .actions { margin-top: 8px; }
+    .btn-track {
+      display: block; width: 100%; padding: 15px;
+      background: #0066cc; color: white;
+      font: 600 16px system-ui; border: 0;
+      border-radius: 12px; cursor: pointer;
+    }
+    .btn-track:disabled { background: #ccc; cursor: default; }
+    .btn-track:not(:disabled):hover { background: #004fa3; }
+    .msg { color: #888; font-size: 14px; padding: 20px 0; }
+    .error { color: #c00; font-size: 14px; padding: 20px 0; }
+    .attribution {
+      margin-top: 32px; padding-top: 16px; border-top: 1px solid #e0e0e0;
+      font-size: 12px; color: #999; line-height: 1.8;
+    }
+    .attribution a { color: #aaa; text-decoration: none; }
+    .attribution a:hover { text-decoration: underline; }
+    details.guide {
+      margin-top: 28px; border-top: 1px solid #e8e8e8; padding-top: 14px;
+    }
+    details.guide summary {
+      font-size: 13px; font-weight: 600; color: #555; cursor: pointer;
+      list-style: none; display: flex; align-items: center; gap: 6px;
+    }
+    details.guide summary::-webkit-details-marker { display: none; }
+    details.guide summary::before { content: "▶"; font-size: 9px; color: #aaa; }
+    details[open].guide summary::before { content: "▼"; }
+    details.guide summary:hover { color: #0066cc; }
+    .guide-body { margin-top: 12px; font-size: 13px; color: #555; line-height: 1.7; }
+    .guide-body h3 { font-size: 12px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.05em; color: #888; margin: 14px 0 4px; }
+    .guide-body p { margin: 0 0 8px; }
+    .guide-body ul { margin: 0 0 8px; padding-left: 18px; }
+    .guide-body li { margin-bottom: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Ten Tors Tracker</h1>
+  <p class="subtitle">Search for a team to follow on the map during the event.</p>
+
+  <div class="year-bar">
+    <label for="year-sel">Year:</label>
+    <select id="year-sel"></select>
+  </div>
+
+  <div id="content"><p class="msg">Loading…</p></div>
+
+  <div class="actions">
+    <button class="btn-track" id="btn-track" disabled>Select a team above</button>
+  </div>
+
+  <details class="guide">
+    <summary>How to use</summary>
+    <div class="guide-body">
+      <h3>Finding a team</h3>
+      <p>Type any part of a team name or route code (e.g. "TA") into the search box. Select from the dropdown — you can add multiple teams to track at once.</p>
+
+      <h3>On the map</h3>
+      <ul>
+        <li>Each team's estimated position is shown as a coloured dot with their name.</li>
+        <li>A ⛺ tent marker shows where the team camped on Saturday night.</li>
+        <li>Visited checkpoints are shown in colour; unvisited ones are grey.</li>
+        <li>Direction arrows show which way the route runs.</li>
+        <li>Use ⌂ Recenter to zoom back to the full route.</li>
+      </ul>
+
+      <h3>Position and timing</h3>
+      <ul>
+        <li>Checkpoint times come from the <a href="https://tentors.org.uk" target="_blank">Ten Tors</a> live results page, updated roughly every minute.</li>
+        <li>Position between checkpoints is estimated from the team's recorded pace — treat it as a guide, not a GPS fix.</li>
+        <li>ETA at finish shows a –30 min / best / +30 min range based on current pace.</li>
+        <li>Click a team name on the tracker panel to hide or show that team's data and route.</li>
+        <li>Use <em>source times ↗</em> to open the raw checkpoint data for that route.</li>
+      </ul>
+
+      <h3>This tracker updates every 30 seconds.</h3>
+    </div>
+  </details>
+
+  <footer class="attribution">
+    <div>Route data &copy; <a href="https://tentors.org.uk" target="_blank">Ten Tors</a></div>
+    <div>Map &copy; <a href="https://openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors</div>
+    <div><a href="https://github.com/BobC76/tentors-tracker" target="_blank">View source on GitHub</a></div>
+  </footer>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+
+    let years = [];
+    let year = null;
+    let allTeams = [];           // [{id, name, routeLetter, routeLabel, distance}, ...]
+    const selected = new Map();  // id → team object
+
+    const yearSel = document.getElementById("year-sel");
+    yearSel.addEventListener("change", () => {
+      year = yearSel.value;
+      selected.clear();
+      loadYear(year);
+    });
+
+    async function init() {
+      try {
+        years = await fetch("data/years.json").then(r => {
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+          return r.json();
+        });
+      } catch (e) {
+        document.getElementById("content").innerHTML =
+          `<p class="error">Could not load years list: ${e.message}</p>`;
+        return;
+      }
+
+      years.sort((a, b) => b.year - a.year);
+      const defaultYear = (years.find(y => y.current) ?? years[0])?.year?.toString();
+      year = params.get("year") || defaultYear;
+
+      for (const entry of years) {
+        const y = entry.year.toString();
+        const opt = document.createElement("option");
+        opt.value = y;
+        opt.textContent = entry.current ? y : `${y} (archive)`;
+        if (y === year) opt.selected = true;
+        yearSel.appendChild(opt);
+      }
+
+      loadYear(year);
+    }
+
+    async function loadYear(y) {
+      document.getElementById("content").innerHTML = `<p class="msg">Loading…</p>`;
+      updateBtn();
+      try {
+        const config = await fetch(`data/${y}/config.json`).then(r => {
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+          return r.json();
+        });
+        allTeams = [];
+        for (const [letter, route] of Object.entries(config.routes)) {
+          for (const team of route.teams) {
+            allTeams.push({ ...team, routeLetter: letter, routeLabel: route.label, distance: route.distance });
+          }
+        }
+        // Pre-select teams from URL params (e.g. returning from tracker).
+        if (y === year) {
+          const preselect = (params.get("teams") || "").split(",").map(s => s.trim()).filter(Boolean);
+          for (const id of preselect) {
+            const team = allTeams.find(t => t.id === id);
+            if (team && !selected.has(id)) selected.set(id, team);
+          }
+        }
+        render();
+      } catch (e) {
+        document.getElementById("content").innerHTML =
+          `<p class="error">Could not load ${y} data: ${e.message}</p>`;
+      }
+    }
+
+    // ── Autocomplete ──────────────────────────────────────────
+    let activeIdx = -1;
+
+    function render() {
+      if (!allTeams.length) {
+        document.getElementById("content").innerHTML =
+          `<p class="msg">No teams registered for ${year} yet.</p>`;
+        return;
+      }
+
+      document.getElementById("content").innerHTML = `
+        <div class="search-wrap">
+          <input id="team-search" type="text" placeholder="Type a team name…" autocomplete="off" />
+          <div class="dropdown" id="dropdown" hidden></div>
+        </div>
+        <div class="chips" id="chips"></div>`;
+
+      renderChips();
+
+      const input = document.getElementById("team-search");
+      input.addEventListener("input", onInput);
+      input.addEventListener("keydown", onKey);
+      input.addEventListener("blur", () => setTimeout(hideDropdown, 150));
+      updateBtn();
+    }
+
+    function onInput() {
+      const q = document.getElementById("team-search").value.trim().toLowerCase();
+      activeIdx = -1;
+      if (!q) { hideDropdown(); return; }
+      const matches = allTeams.filter(t =>
+        !selected.has(t.id) &&
+        (t.name.toLowerCase().includes(q) || t.id.includes(q))
+      );
+      showDropdown(matches);
+    }
+
+    function showDropdown(matches) {
+      const dd = document.getElementById("dropdown");
+      if (!matches.length) {
+        dd.innerHTML = `<div class="dropdown-empty">No matches</div>`;
+      } else {
+        dd.innerHTML = matches.map((t, i) => `
+          <div class="dropdown-item" data-id="${t.id}" data-idx="${i}">
+            <div class="di-name">${t.name}</div>
+            <div class="di-meta">${t.routeLabel}${t.distance ? ` · ${t.distance} miles` : ""}</div>
+          </div>`).join("");
+        dd.querySelectorAll(".dropdown-item").forEach(el => {
+          el.addEventListener("mousedown", () => selectTeam(el.dataset.id));
+        });
+      }
+      dd.hidden = false;
+    }
+
+    function hideDropdown() {
+      const dd = document.getElementById("dropdown");
+      if (dd) { dd.hidden = true; activeIdx = -1; }
+    }
+
+    function onKey(e) {
+      const dd = document.getElementById("dropdown");
+      if (!dd || dd.hidden) return;
+      const items = dd.querySelectorAll(".dropdown-item");
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        activeIdx = Math.min(activeIdx + 1, items.length - 1);
+        items.forEach((el, i) => el.classList.toggle("active", i === activeIdx));
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        activeIdx = Math.max(activeIdx - 1, 0);
+        items.forEach((el, i) => el.classList.toggle("active", i === activeIdx));
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        if (activeIdx >= 0 && items[activeIdx]) selectTeam(items[activeIdx].dataset.id);
+      } else if (e.key === "Escape") {
+        hideDropdown();
+      }
+    }
+
+    function selectTeam(id) {
+      const team = allTeams.find(t => t.id === id);
+      if (!team) return;
+      selected.set(id, team);
+      document.getElementById("team-search").value = "";
+      hideDropdown();
+      renderChips();
+      updateBtn();
+    }
+
+    function deselectTeam(id) {
+      selected.delete(id);
+      renderChips();
+      updateBtn();
+    }
+
+    function renderChips() {
+      const chips = document.getElementById("chips");
+      if (!chips) return;
+      chips.innerHTML = [...selected.values()].map(t => `
+        <div class="chip">
+          <span>${t.name}</span>
+          <button class="chip-remove" data-id="${t.id}" title="Remove">&times;</button>
+        </div>`).join("");
+      chips.querySelectorAll(".chip-remove").forEach(btn => {
+        btn.addEventListener("click", () => deselectTeam(btn.dataset.id));
+      });
+    }
+
+    function updateBtn() {
+      const btn = document.getElementById("btn-track");
+      btn.disabled = selected.size === 0;
+      if (selected.size === 0) btn.textContent = "Select a team above";
+      else if (selected.size === 1) btn.textContent = "Track this team →";
+      else btn.textContent = `Track ${selected.size} teams →`;
+    }
+
+    document.getElementById("btn-track").addEventListener("click", () => {
+      if (!selected.size) return;
+      location.href = `tracker.html?year=${encodeURIComponent(year)}&teams=${encodeURIComponent([...selected.keys()].join(","))}`;
+    });
+
+    init();
+  </script>
+</body>
+</html>

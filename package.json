@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "geocode": "node scripts/geocode.mjs",
+    "seed": "node scripts/seed.mjs",
     "start": "node server.mjs"
   },
   "engines": {

@@ -1,11 +1,11 @@
 // Vercel serverless function: proxies tentors.org.uk route HTML (CORS workaround).
-// Accepts /api/route/[letter] where letter is a-j.
+// Accepts /api/route/[letter] where letter is a-z.
 
 export const config = { runtime: "nodejs" };
 
 export default async function handler(req, res) {
   const letter = (req.query.letter || "e").toLowerCase();
-  if (!/^[a-j]$/.test(letter)) {
+  if (!/^[a-z]$/.test(letter)) {
     res.status(400).type("text/plain").send("Invalid route letter");
     return;
   }

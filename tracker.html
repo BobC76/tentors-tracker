@@ -1,0 +1,689 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ten Tors Tracker</title>
+  <link rel="stylesheet" href="vendor/leaflet.css" />
+  <style>
+    html, body, #map { height: 100%; margin: 0; }
+    body { font: 13px/1.4 system-ui, sans-serif; }
+    .panel {
+      position: absolute; bottom: 10px; left: 10px; right: 10px; z-index: 1000;
+      background: white; padding: 10px 14px 12px;
+      border-radius: 8px; box-shadow: 0 1px 6px rgba(0,0,0,0.3);
+      max-height: 60vh; overflow: auto;
+      max-width: 400px;
+    }
+    .panel-nav { font-size: 12px; margin-bottom: 6px; }
+    .panel-nav a { color: #0066cc; text-decoration: none; }
+    .panel-nav a:hover { text-decoration: underline; }
+    .panel h2 { margin: 0 0 3px; font-size: 15px; }
+    .meta { font-size: 12px; color: #666; margin-bottom: 8px; }
+
+    /* Team card */
+    .team-card { border-top: 1px solid #eee; padding: 6px 0 2px; margin-top: 4px; }
+    .team-card:first-of-type { border-top: 0; margin-top: 0; }
+    .team-header { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
+
+    /* Team name is the toggle button */
+    .nm {
+      flex: 1; font-weight: 600; font-size: 15px; text-align: left;
+      background: #f0f4ff; border: 1.5px solid #c8d8f0; border-radius: 7px;
+      padding: 4px 8px; cursor: pointer; color: #1a1a1a;
+      font-family: inherit; line-height: inherit;
+      transition: background 0.1s, border-color 0.1s;
+    }
+    .nm:hover { background: #ddeaff; border-color: #0066cc; color: #0044aa; }
+    .nm::after { content: " ▼"; font-size: 9px; color: #88a; vertical-align: middle; }
+    .nm.collapsed { background: #f5f5f5; border-color: #ddd; color: #888; }
+    .nm.collapsed::after { content: " ▶"; }
+
+    .route-badge {
+      display: inline-block; font-size: 11px; font-weight: 700;
+      padding: 1px 6px; border-radius: 4px; margin-left: 4px;
+      vertical-align: middle; color: white;
+    }
+    .src-link {
+      font-size: 11px; color: #0066cc; text-decoration: none; white-space: nowrap; flex-shrink: 0;
+    }
+    .src-link:hover { text-decoration: underline; }
+
+    .team-body .wp { color: #444; font-size: 13px; margin-top: 2px; }
+    .team-body .pace { color: #999; }
+    .team-card.finished .nm { color: #2a8; }
+    .team-card.notstarted .nm { color: #aaa; }
+    .stats {
+      display: flex; flex-wrap: wrap; gap: 6px 12px;
+      padding: 4px 0 6px; font-size: 12px; color: #555;
+    }
+    .stats b { color: #222; font-weight: 600; }
+    .pred { padding: 8px 0 2px; font-size: 14px; }
+    .pred .row { display: flex; justify-content: space-between; padding: 3px 0; }
+    .pred .row .lbl { color: #555; }
+    .pred .row .val { font-weight: 600; font-feature-settings: "tnum"; }
+    .pred .camp .val { color: #c60; }
+    .pred .eta .val { color: #06c; }
+    @media (max-width: 640px) {
+      body { font-size: 12px; }
+      .panel {
+        left: 0; right: 0; bottom: 0; max-width: none;
+        border-radius: 10px 10px 0 0; max-height: 32vh;
+        padding: 6px 10px 8px; overflow: hidden;
+      }
+      .panel h2 { font-size: 14px; margin: 0 0 2px; }
+      .meta { font-size: 10px; margin-bottom: 4px; }
+      .nm { font-size: 14px; }
+      .team-body .wp { font-size: 12px; margin-top: 1px; }
+      .stats { font-size: 11px; gap: 2px 8px; padding: 2px 0 4px; }
+      .pred { font-size: 12px; padding: 4px 0 2px; }
+      .pred .row { padding: 2px 0; }
+      .leaflet-top.leaflet-left { top: 10px; left: 10px; }
+      .leaflet-control-zoom a,
+      .leaflet-top.leaflet-left button {
+        width: 44px !important; height: 44px !important;
+        font-size: 22px !important; line-height: 44px !important;
+        padding: 0 !important;
+      }
+      .tent-icon { font-size: 40px !important; }
+      .leaflet-tooltip.team-tt { font-size: 14px !important; padding: 3px 6px !important; }
+    }
+    .leaflet-tooltip.team-tt { background: rgba(0,0,0,0.75); color: white; border: 0; }
+    .tent-icon { line-height: 1; text-shadow: 0 0 3px white, 0 0 3px white, 0 0 3px white; }
+    .not-found { font-size: 13px; color: #999; padding: 6px 0; }
+  </style>
+</head>
+<body>
+<div id="map"></div>
+<div class="panel">
+  <div class="panel-nav"><a id="back-link" href="index.html">← Change teams</a></div>
+  <h2 id="title">Ten Tors Tracker</h2>
+  <div class="meta" id="meta">loading…</div>
+  <div id="teams"></div>
+</div>
+<script src="vendor/leaflet.js"></script>
+<script>
+// ---- helpers ----
+function haversine(a, b) {
+  const R = 6371000;
+  const φ1 = a[1] * Math.PI / 180, φ2 = b[1] * Math.PI / 180;
+  const dφ = (b[1] - a[1]) * Math.PI / 180;
+  const dλ = (b[0] - a[0]) * Math.PI / 180;
+  const x = Math.sin(dφ / 2) ** 2 + Math.cos(φ1) * Math.cos(φ2) * Math.sin(dλ / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(x));
+}
+
+function parseHHMM(s, base) {
+  const m = s && s.match(/(\d{1,2}):(\d{2})/);
+  if (!m) return null;
+  const d = new Date(base);
+  d.setHours(+m[1], +m[2], 0, 0);
+  return d;
+}
+
+function bisect(arr, target) {
+  let lo = 0, hi = arr.length - 1;
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1;
+    if (arr[mid] < target) lo = mid + 1; else hi = mid;
+  }
+  return Math.max(0, lo - 1);
+}
+
+function normalizeWp(s) {
+  return s.toUpperCase().replace(/\s*\(VIA\)\s*$/, "").replace(/\s+/g, " ").trim();
+}
+
+const ROUTE_PALETTE = ["#0066cc", "#e05c00", "#2a8a2a", "#8800cc", "#cc0044", "#007799"];
+
+// ---- parse URL params ----
+const params = new URLSearchParams(location.search);
+const YEAR = params.get("year") || "2026";
+const TEAM_IDS = (params.get("teams") || "").split(",").map(s => s.trim()).filter(Boolean);
+
+// ---- main ----
+async function main() {
+  // Update back link to carry year + teams so selection is remembered.
+  document.getElementById("back-link").href =
+    `index.html?year=${encodeURIComponent(YEAR)}&teams=${encodeURIComponent(TEAM_IDS.join(","))}`;
+
+  const config = await fetch(`data/${YEAR}/config.json`).then(r => {
+    if (!r.ok) throw new Error(`Config not found for ${YEAR}`);
+    return r.json();
+  });
+
+  const teamsToTrack = [];
+  for (const [letter, route] of Object.entries(config.routes)) {
+    for (const team of route.teams) {
+      if (!TEAM_IDS.length || TEAM_IDS.includes(team.id)) {
+        teamsToTrack.push({
+          ...team,
+          routeLetter: letter,
+          routeLabel: route.label,
+          routeDistance: route.distance,
+          ntOverrides: route.nt_overrides || {},
+        });
+      }
+    }
+  }
+
+  if (!teamsToTrack.length) {
+    document.getElementById("meta").textContent = "No matching teams found. Go back and select again.";
+    return;
+  }
+
+  const teamNames = teamsToTrack.map(t => t.name).join(", ");
+  document.getElementById("title").textContent = `Ten Tors ${YEAR} Tracker`;
+  document.title = `Ten Tors ${YEAR} — ${teamNames}`;
+
+  const allRoutesWp = await fetch("routes.json").then(r => r.json());
+  const routeLetters = [...new Set(teamsToTrack.map(t => t.routeLetter))];
+
+  const routeColor = {};
+  routeLetters.forEach((letter, i) => { routeColor[letter] = ROUTE_PALETTE[i % ROUTE_PALETTE.length]; });
+
+  const routeData = {};
+  for (const letter of routeLetters) {
+    const rawWps = allRoutesWp[letter]?.waypoints;
+    if (!rawWps) throw new Error(`No waypoints for route ${letter}`);
+
+    const ntOverrides = {};
+    for (const t of teamsToTrack.filter(t => t.routeLetter === letter)) {
+      Object.assign(ntOverrides, t.ntOverrides);
+    }
+
+    const wps = rawWps.map(w => ({
+      ...w,
+      nt: ntOverrides[w.label.toUpperCase()] || w.nt || null,
+    }));
+
+    const coords = wps.map(w => [w.lon, w.lat]);
+    const cumDist = [0];
+    for (let i = 1; i < coords.length; i++) {
+      cumDist.push(cumDist[i - 1] + haversine(coords[i - 1], coords[i]));
+    }
+    const totalDist = cumDist[cumDist.length - 1];
+    const wpStops = wps.map((w, i) => ({ ...w, routeDist: cumDist[i] }));
+    routeData[letter] = { wps, wpStops, coords, cumDist, totalDist };
+  }
+
+  // ---- map setup ----
+  let latMin = Infinity, latMax = -Infinity, lonMin = Infinity, lonMax = -Infinity;
+  for (const { coords } of Object.values(routeData)) {
+    for (const [lon, lat] of coords) {
+      if (lat < latMin) latMin = lat; if (lat > latMax) latMax = lat;
+      if (lon < lonMin) lonMin = lon; if (lon > lonMax) lonMax = lon;
+    }
+  }
+  const pad = 0.02;
+  const routeBounds = L.latLngBounds([latMin - pad, lonMin - pad], [latMax + pad, lonMax + pad]);
+  const maxBounds = L.latLngBounds([latMin - 0.08, lonMin - 0.08], [latMax + 0.08, lonMax + 0.08]);
+
+  const map = L.map("map", { maxBounds, maxBoundsViscosity: 1.0, minZoom: 10 }).fitBounds(routeBounds);
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: '© <a href="https://openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors · Route data © <a href="https://tentors.org.uk" target="_blank">Ten Tors</a>',
+    maxZoom: 19,
+  }).addTo(map);
+
+  const RecenterCtl = L.Control.extend({
+    options: { position: "topleft" },
+    onAdd() {
+      const btn = L.DomUtil.create("button", "");
+      btn.innerHTML = "⌂ Recenter";
+      btn.style.cssText = "padding:6px 10px;border:0;background:white;cursor:pointer;font:13px system-ui;border-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,0.3);";
+      btn.title = "Reset map to route";
+      L.DomEvent.on(btn, "click", e => { L.DomEvent.stop(e); map.fitBounds(routeBounds); });
+      return btn;
+    },
+  });
+  map.addControl(new RecenterCtl());
+
+  const routePolylines = {};
+  const routeArrowGroups = {};
+  const routeWpMarkers = {};
+
+  for (const letter of routeLetters) {
+    const { wps, wpStops, coords } = routeData[letter];
+    const color = routeColor[letter];
+
+    routePolylines[letter] = L.polyline(coords.map(([lon, lat]) => [lat, lon]), {
+      color, weight: 3, opacity: 0.85,
+    }).addTo(map);
+
+    const arrowGroup = L.layerGroup().addTo(map);
+    routeArrowGroups[letter] = arrowGroup;
+    for (let i = 0; i < wps.length - 1; i++) {
+      const a = wps[i], b = wps[i + 1];
+      const midLat = (a.lat + b.lat) / 2, midLon = (a.lon + b.lon) / 2;
+      const dLat = b.lat - a.lat;
+      const dLon = (b.lon - a.lon) * Math.cos(a.lat * Math.PI / 180);
+      const bearing = Math.atan2(dLon, dLat) * 180 / Math.PI;
+      L.marker([midLat, midLon], {
+        icon: L.divIcon({
+          className: "",
+          html: `<div style="font-size:26px;color:${color};transform:rotate(${bearing}deg);opacity:0.8;text-shadow:0 0 3px white,0 0 3px white;">⬆</div>`,
+          iconSize: [26, 26], iconAnchor: [13, 13],
+        }),
+        interactive: false,
+      }).addTo(arrowGroup);
+    }
+
+    routeWpMarkers[letter] = wpStops.map((w, i) => {
+      if (w.lat == null) return null;
+      return L.circleMarker([w.lat, w.lon], {
+        radius: 7, color: "white", weight: 2, fillColor: "#999", fillOpacity: 0.5,
+      }).addTo(map).bindTooltip(`${i + 1}. ${w.label}`, { direction: "right" });
+    });
+  }
+
+  const teamLayer = L.layerGroup().addTo(map);
+
+  // ---- toggle support ----
+  const hiddenTeams = new Set();
+  const currentTeamMarkers = {};
+
+  function updateRouteVisibility(letter) {
+    const anyVisible = teamsToTrack.some(t => t.routeLetter === letter && !hiddenTeams.has(t.id));
+    const toggle = (layer) => {
+      if (!layer) return;
+      if (anyVisible) { if (!map.hasLayer(layer)) layer.addTo(map); }
+      else { if (map.hasLayer(layer)) map.removeLayer(layer); }
+    };
+    toggle(routePolylines[letter]);
+    toggle(routeArrowGroups[letter]);
+    routeWpMarkers[letter]?.forEach(m => m && toggle(m));
+  }
+
+  function toggleTeam(id) {
+    const wasHidden = hiddenTeams.has(id);
+    if (wasHidden) {
+      hiddenTeams.delete(id);
+      (currentTeamMarkers[id] || []).forEach(m => teamLayer.addLayer(m));
+    } else {
+      hiddenTeams.add(id);
+      (currentTeamMarkers[id] || []).forEach(m => teamLayer.removeLayer(m));
+    }
+    const team = teamsToTrack.find(t => t.id === id);
+    if (team) updateRouteVisibility(team.routeLetter);
+    const card = document.querySelector(`.team-card[data-id="${id}"]`);
+    if (card) {
+      card.querySelector(".team-body").hidden = hiddenTeams.has(id);
+      card.querySelector(".nm").classList.toggle("collapsed", hiddenTeams.has(id));
+    }
+  }
+  window._toggleTeam = toggleTeam;
+
+  // ---- refresh ----
+  async function refresh() {
+    const routeHtmlFetches = {};
+    for (const letter of routeLetters) {
+      routeHtmlFetches[letter] = fetch(`/api/route/${letter.toLowerCase()}?_=${Date.now()}`)
+        .then(r => r.text())
+        .then(text => new DOMParser().parseFromString(text, "text/html"))
+        .catch(() => null);
+    }
+    const routeDocs = {};
+    for (const [letter, p] of Object.entries(routeHtmlFetches)) {
+      routeDocs[letter] = await p;
+    }
+
+    const now = new Date();
+    let lastUpdated = null;
+    for (const doc of Object.values(routeDocs)) {
+      if (!doc) continue;
+      const m = doc.body.textContent.match(/Last updated[^0-9]*(\d{1,2}:\d{2})/i);
+      if (m) lastUpdated = m[1];
+    }
+
+    teamLayer.clearLayers();
+    for (const id of Object.keys(currentTeamMarkers)) delete currentTeamMarkers[id];
+
+    const panel = document.getElementById("teams");
+    panel.innerHTML = "";
+
+    const visitedByRoute = {};
+    for (const letter of routeLetters) visitedByRoute[letter] = new Set();
+
+    const zoomPoints = [];
+
+    for (const team of teamsToTrack) {
+      const letter = team.routeLetter;
+      const doc = routeDocs[letter];
+      const rd = routeData[letter];
+      const { wpStops, coords, cumDist, totalDist } = rd;
+      const color = routeColor[letter];
+      const visited = visitedByRoute[letter];
+      const isHidden = hiddenTeams.has(team.id);
+
+      const sourceUrl = `https://tentors.org.uk/eventdata/route${letter.toLowerCase()}.html`;
+      const routeBadge = routeLetters.length > 1
+        ? `<span class="route-badge" style="background:${color}">Route ${letter}</span>`
+        : "";
+
+      const card = document.createElement("div");
+      card.className = "team-card";
+      card.dataset.id = team.id;
+
+      const body = document.createElement("div");
+      body.className = "team-body";
+      body.hidden = isHidden;
+
+      const buildHeader = (nameHtml) => `
+        <div class="team-header">
+          <button class="nm${isHidden ? " collapsed" : ""}" onclick="window._toggleTeam('${team.id}')">${nameHtml}${routeBadge}</button>
+          <a class="src-link" href="${sourceUrl}" target="_blank">source times ↗</a>
+        </div>`;
+
+      if (!doc) {
+        card.innerHTML = buildHeader(team.name);
+        body.innerHTML = `<div class="wp">data unavailable</div>`;
+        card.appendChild(body); panel.appendChild(card); continue;
+      }
+
+      const tables = [...doc.querySelectorAll("table")];
+      if (!tables.length) {
+        card.innerHTML = buildHeader(team.name);
+        body.innerHTML = `<div class="wp">no table found</div>`;
+        card.appendChild(body); panel.appendChild(card); continue;
+      }
+      const table = tables.reduce((a, b) =>
+        b.querySelectorAll("tr").length > a.querySelectorAll("tr").length ? b : a
+      );
+      const rows = [...table.querySelectorAll("tr")];
+      const headers = [...rows[0].querySelectorAll("th, td")].map(c => c.textContent.trim());
+
+      const colToWp = headers.map((h, idx) => {
+        if (idx === 0) return null;
+        const target = normalizeWp(h);
+        return wpStops.find(w => normalizeWp(w.label) === target) || null;
+      });
+
+      const matchedRows = rows.slice(1).filter(row => {
+        const cells = [...row.querySelectorAll("th, td")];
+        if (!cells.length) return false;
+        return cells[0].textContent.toLowerCase().includes((team.match ?? team.name).toLowerCase());
+      });
+
+      if (!matchedRows.length) {
+        card.innerHTML = buildHeader(team.name);
+        body.innerHTML = `<div class="wp not-found">Not yet in live data</div>`;
+        card.appendChild(body); panel.appendChild(card); continue;
+      }
+
+      const allCells = [...matchedRows[0].querySelectorAll("th, td")].map(c => c.textContent.trim());
+      const teamName = allCells[0];
+      const dataCells = allCells.slice(1);
+
+      let firstT = null, lastT = null, lastIdx = -1, lastWp = null;
+      let campedAtCell = -1, prevT = null, dayOffset = 0;
+      let lastSatT = null, lastSatWp = null, lastDayOffset = 0;
+
+      for (let i = 0; i < dataCells.length; i++) {
+        const wp = colToWp[i + 1];
+        if (!wp) continue;
+        const cell = dataCells[i];
+        const t = parseHHMM(cell, now);
+        if (!t) continue;
+        if (prevT && t < prevT && (prevT - t) > 4 * 3600000) dayOffset = 1;
+        const adjusted = new Date(t);
+        if (dayOffset === 0) adjusted.setDate(adjusted.getDate() - 1);
+        if (firstT === null) firstT = adjusted;
+        if (dayOffset === 0) { lastSatT = adjusted; lastSatWp = wp; }
+        lastT = adjusted; lastIdx = i; lastWp = wp;
+        lastDayOffset = dayOffset;
+        prevT = t;
+        visited.add(normalizeWp(wp.label));
+        if (/CAMPED/i.test(cell)) campedAtCell = i;
+      }
+
+      const isCamped = campedAtCell >= 0 && campedAtCell === lastIdx;
+      const inferredCamp = lastDayOffset === 0 && lastWp != null;
+
+      let status = "—", pace = "", pos = null;
+
+      if (lastWp == null) {
+        card.classList.add("notstarted");
+        status = "not started";
+      } else {
+        const startWp = wpStops[0];
+        const distSoFar = lastWp.routeDist - startWp.routeDist;
+        let elapsedH;
+        const today0600 = new Date(now); today0600.setHours(6, 0, 0, 0);
+        const isSundayMorning = now.getHours() >= 6 && now.getHours() < 19;
+        const isEvening = now.getHours() >= 19 || now.getHours() < 6;
+
+        if (lastDayOffset === 1 && lastSatT) {
+          const satWalking = (lastSatT - firstT) / 3600000;
+          const sunWalking = (lastT - today0600) / 3600000;
+          elapsedH = Math.max(satWalking + sunWalking, 1 / 60);
+        } else {
+          elapsedH = Math.max((lastT - firstT) / 3600000, 1 / 60);
+        }
+        const paceKmh = distSoFar / 1000 / elapsedH;
+
+        const isFinished = normalizeWp(lastWp.label) === "FINISH";
+        const needsRestart = inferredCamp && isSundayMorning;
+        const hasDay2Data = lastDayOffset === 1;
+
+        let stopped = isFinished || isEvening, missedNt = null;
+        if (inferredCamp && !isSundayMorning) stopped = true;
+        if (isCamped && !needsRestart && !hasDay2Data) stopped = true;
+
+        if (!stopped) {
+          const startIdx = wpStops.findIndex(w => w === lastWp);
+          for (let k = startIdx + 1; k < wpStops.length; k++) {
+            const wp = wpStops[k];
+            if (!wp.nt) continue;
+            const segDist = wp.routeDist - lastWp.routeDist;
+            const segH = segDist / 1000 / Math.max(paceKmh, 0.01);
+            const projArr = new Date(lastT.getTime() + segH * 3600000);
+            const ntDate = parseHHMM(wp.nt, lastT);
+            if (projArr > ntDate) { stopped = true; missedNt = wp; }
+            break;
+          }
+        }
+
+        let target;
+        if (stopped) {
+          pos = [lastWp.lat, lastWp.lon];
+          target = lastWp.routeDist;
+        } else if (needsRestart) {
+          const sinceSix = (now - today0600) / 3600000;
+          target = Math.min(lastWp.routeDist + paceKmh * sinceSix * 1000, totalDist);
+        } else {
+          const sinceLast = (now - lastT) / 3600000;
+          target = Math.min(lastWp.routeDist + paceKmh * sinceLast * 1000, totalDist);
+        }
+
+        if (!pos) {
+          const i = bisect(cumDist, target);
+          const t = (target - cumDist[i]) / (cumDist[i + 1] - cumDist[i] || 1);
+          const a = coords[i], b = coords[i + 1] || a;
+          pos = [a[1] + t * (b[1] - a[1]), a[0] + t * (b[0] - a[0])];
+        }
+
+        if (isFinished) card.classList.add("finished");
+
+        const cellTime = (dataCells[lastIdx]?.match(/(\d{1,2}:\d{2})/) || [])[1] || "";
+        const campWpLabel = lastSatWp ? lastSatWp.label : lastWp.label;
+
+        status = isFinished
+          ? `finished at ${cellTime}`
+          : needsRestart
+            ? `🚶 walking from ${campWpLabel} (since 06:00)`
+            : hasDay2Data
+              ? `${lastWp.label} @ ${cellTime}`
+              : (isCamped || inferredCamp || isEvening)
+                ? `⛺ camped at ${lastWp.label} (${cellTime})`
+                : stopped
+                  ? `stopped at ${lastWp.label} (${cellTime})`
+                  : `${lastWp.label} @ ${cellTime}`;
+        pace = paceKmh > 0 ? ` · ${paceKmh.toFixed(1)} km/h` : "";
+
+        team._stopped = stopped; team._isFinished = isFinished;
+        team._isCamped = (isCamped || inferredCamp || isEvening) && !needsRestart && !hasDay2Data;
+        team._isSundayRestart = needsRestart; team._hasDay2Data = hasDay2Data;
+        team._campWp = lastSatWp || lastWp; team._missedNt = missedNt;
+        team._paceKmh = paceKmh; team._lastWp = lastWp; team._lastT = lastT;
+        team._cellTime = cellTime;
+      }
+
+      card.innerHTML = buildHeader(teamName);
+      body.innerHTML = `<div class="wp">${status}<span class="pace">${pace}</span></div>`;
+
+      if (lastWp) {
+        const distFromStart = lastWp.routeDist - wpStops[0].routeDist;
+        const stats = document.createElement("div");
+        stats.className = "stats";
+        stats.innerHTML = `
+          <span><b>${(distFromStart / 1000).toFixed(1)}</b> km covered</span>
+          <span><b>${((totalDist - lastWp.routeDist) / 1000).toFixed(1)}</b> km remaining</span>
+          <span>updated <b>${lastT.toLocaleTimeString().slice(0, 5)}</b></span>`;
+        body.appendChild(stats);
+      }
+
+      card.appendChild(body);
+      panel.appendChild(card);
+
+      if (pos && !isHidden) {
+        zoomPoints.push(L.latLng(pos[0], pos[1]));
+        currentTeamMarkers[team.id] = [];
+
+        const m = L.circleMarker(pos, {
+          radius: 9, color: "white", weight: 2, fillColor: color, fillOpacity: 0.95,
+        }).addTo(teamLayer);
+        m.bindTooltip(teamName, {
+          direction: "right", className: "team-tt", offset: [10, 0], permanent: true,
+        });
+        currentTeamMarkers[team.id].push(m);
+
+        const campWp = team._campWp;
+        if (campWp && !team._isFinished) {
+          const isMobile = window.innerWidth <= 640;
+          const sz = isMobile ? 64 : 32;
+          const tent = L.marker([campWp.lat, campWp.lon], {
+            icon: L.divIcon({
+              className: "",
+              html: `<div class="tent-icon" style="font-size:${isMobile ? 56 : 28}px;">⛺</div>`,
+              iconSize: [sz, sz], iconAnchor: [sz / 2, sz - 4],
+            }),
+          }).addTo(teamLayer)
+            .bindTooltip(`Camp: ${campWp.label}`, { direction: "right", offset: [12, -10] });
+          currentTeamMarkers[team.id].push(tent);
+        }
+
+        const pred = document.createElement("div");
+        pred.className = "pred";
+        const paceKmh = team._paceKmh;
+        const lastWpLocal = team._lastWp;
+        const lastTLocal = team._lastT;
+
+        if (team._isFinished) {
+          pred.innerHTML = `<div class="row eta"><span class="lbl">🏁 Finished</span><span class="val">${team._cellTime}</span></div>`;
+        } else if (team._isSundayRestart) {
+          const remaining = (totalDist - campWp.routeDist) / 1000;
+          const today0600 = new Date(now); today0600.setHours(6, 0, 0, 0);
+          const sinceSix = (now - today0600) / 3600000;
+          const stillToGo = Math.max(0, remaining - paceKmh * sinceSix);
+          const eta = new Date(now.getTime() + stillToGo / Math.max(paceKmh, 0.01) * 3600000);
+          pred.innerHTML = `
+            <div class="row"><span class="lbl">🚶 Restarted</span><span class="val">06:00 from ${campWp.label}</span></div>
+            <div class="row eta"><span class="lbl">🏁 ETA at FINISH</span><span class="val">${fmt(eta, -30)} – <b>${fmt(eta)}</b> – ${fmt(eta, 30)}</span></div>`;
+        } else if (team._hasDay2Data) {
+          const remaining = (totalDist - lastWpLocal.routeDist) / 1000;
+          const eta = new Date(lastTLocal.getTime() + remaining / Math.max(paceKmh, 0.01) * 3600000);
+          pred.innerHTML = `
+            <div class="row eta"><span class="lbl">🏁 ETA at FINISH</span><span class="val">${fmt(eta, -30)} – <b>${fmt(eta)}</b> – ${fmt(eta, 30)}</span></div>`;
+        } else if (team._stopped) {
+          const today0600 = new Date(now); today0600.setHours(6, 0, 0, 0);
+          const restart = today0600 > now ? today0600 : new Date(today0600.getTime() + 86400000);
+          const remaining = (totalDist - lastWpLocal.routeDist) / 1000;
+          const eta = new Date(restart.getTime() + remaining / Math.max(paceKmh, 0.01) * 3600000);
+          const missedRow = team._missedNt
+            ? `<div class="row"><span class="lbl">✕ Couldn't make</span><span class="val">${team._missedNt.label} NT ${team._missedNt.nt}</span></div>`
+            : "";
+          pred.innerHTML = `
+            <div class="row camp"><span class="lbl">⛺ Camp tonight</span><span class="val">${lastWpLocal.label}</span></div>
+            ${missedRow}
+            <div class="row"><span class="lbl">↑ Restart Sunday</span><span class="val">06:00 · ${remaining.toFixed(1)} km left</span></div>
+            <div class="row eta"><span class="lbl">🏁 ETA at FINISH</span><span class="val">${fmt(eta, -30)} – <b>${fmt(eta)}</b> – ${fmt(eta, 30)} Sun</span></div>`;
+        } else if (paceKmh > 0) {
+          const remaining = (totalDist - lastWpLocal.routeDist) / 1000;
+          const eta = new Date(lastTLocal.getTime() + remaining / paceKmh * 3600000);
+          pred.innerHTML = `
+            <div class="row eta"><span class="lbl">🏁 ETA at FINISH</span><span class="val">${fmt(eta, -30)} – <b>${fmt(eta)}</b> – ${fmt(eta, 30)} · ${remaining.toFixed(1)} km left</span></div>`;
+        }
+
+        body.appendChild(pred);
+      }
+    }
+
+    const now2 = new Date();
+    document.getElementById("meta").innerHTML =
+      `<a href="https://tentors.org.uk" target="_blank" style="color:#4af">tentors.org.uk</a>` +
+      (lastUpdated ? ` · source updated ${lastUpdated}` : "") +
+      ` · now ${now2.toLocaleTimeString().slice(0, 5)}` +
+      ` · ${teamsToTrack.length} team${teamsToTrack.length !== 1 ? "s" : ""}`;
+
+    for (const letter of routeLetters) {
+      const { wpStops } = routeData[letter];
+      const markers = routeWpMarkers[letter];
+      const visited = visitedByRoute[letter];
+      const color = routeColor[letter];
+      wpStops.forEach((w, i) => {
+        if (!markers[i]) return;
+        const v = visited.has(normalizeWp(w.label));
+        markers[i].setStyle({
+          fillColor: v ? color : "#ccc", fillOpacity: v ? 0.9 : 0.4,
+          color: v ? "white" : "#999", weight: v ? 2 : 1.5, radius: v ? 7 : 5,
+        });
+      });
+    }
+
+    if (zoomPoints.length && !refresh._zoomed) {
+      refresh._zoomed = true;
+      for (const letter of routeLetters) {
+        const { wpStops } = routeData[letter];
+        const visited = visitedByRoute[letter];
+        for (const w of wpStops) {
+          if (!visited.has(normalizeWp(w.label))) {
+            zoomPoints.push(L.latLng(w.lat, w.lon));
+            break;
+          }
+        }
+      }
+      const teamBounds = L.latLngBounds(zoomPoints).pad(0.6);
+      map.fitBounds(teamBounds, {
+        paddingBottomRight: [0, window.innerWidth <= 640 ? window.innerHeight * 0.32 : 0],
+      });
+    }
+  }
+
+  function fmt(date, offsetMin = 0) {
+    const d = new Date(date.getTime() + offsetMin * 60000);
+    return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false });
+  }
+
+  refresh();
+  setInterval(refresh, 30_000); // 30s to match test data cadence
+
+  let bootVersion = null;
+  async function checkVersion() {
+    try {
+      const v = await (await fetch("/api/version?_=" + Date.now())).json();
+      if (bootVersion === null) bootVersion = v.sha;
+      else if (v.sha && v.sha !== bootVersion) location.reload();
+    } catch (_) { /* ignore */ }
+  }
+  checkVersion();
+  setInterval(checkVersion, 60_000);
+}
+
+main().catch(e => {
+  document.getElementById("meta").textContent = "error: " + e.message;
+  console.error(e);
+});
+</script>
+</body>
+</html>

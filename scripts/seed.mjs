@@ -349,6 +349,16 @@ async function seedAllocations() {
     if (!routes[letter]) {
       console.log(`  Preserving existing route section ${letter}`);
       routes[letter] = data;
+    } else {
+      // Within a route that was rebuilt from allocations, preserve any teams
+      // whose IDs don't appear in the new allocation list (e.g. Test Team).
+      const newIds = new Set(routes[letter].teams.map(t => t.id));
+      for (const t of (data.teams ?? [])) {
+        if (!newIds.has(t.id)) {
+          routes[letter].teams.push(t);
+          console.log(`  Preserving manual team entry: ${t.id} (${t.name}) in route ${letter}`);
+        }
+      }
     }
   }
 

@@ -381,56 +381,48 @@ async function seedAllocations() {
 
 async function applyGpxRoutes() {
   const configPath = path.join(ROOT, "data", year, "config.json");
-  const routesPath = path.join(ROOT, "routes.json");
+  const tracksPath = path.join(ROOT, "data", year, "tracks.json");
 
-  let config, routesJson;
+  let config;
   try {
     config = JSON.parse(await fs.readFile(configPath, "utf8"));
-    routesJson = JSON.parse(await fs.readFile(routesPath, "utf8"));
   } catch (e) {
-    throw new Error(`Could not read config or routes.json: ${e.message}`);
+    throw new Error(`Could not read config.json: ${e.message}`);
   }
 
-  let updated = 0;
+  function parseGpxTrack(text) {
+    const pts = [];
+    const re = /<trkpt\s[^>]*lat="([^"]+)"[^>]*lon="([^"]+)"/gi;
+    let m;
+    while ((m = re.exec(text)) !== null) pts.push({ lat: parseFloat(m[1]), lon: parseFloat(m[2]) });
+    return pts;
+  }
+
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+  const tracks = {};
+  let fetched = 0;
   for (const [letter, route] of Object.entries(config.routes ?? {})) {
-    // Resolve GPX URL: prefer stored gpx_url on any team, fall back to conventional pattern.
-    const teamWithUrl = (route.teams ?? []).find(t => t.gpx_url);
-    let gpxUrl = teamWithUrl?.gpx_url;
-    if (!gpxUrl) {
-      const firstTeam = (route.teams ?? [])[0];
-      if (!firstTeam) continue;
-      gpxUrl = `${baseUrl}/eventdata/team${firstTeam.id.toUpperCase()}.gpx`;
-      console.log(`  Route ${letter}: trying conventional URL ${gpxUrl}`);
+    for (const team of (route.teams ?? [])) {
+      if (fetched > 0) await sleep(1000);
+      const gpxUrl = team.gpx_url || `${baseUrl}/eventdata/team${team.id.toUpperCase()}.gpx`;
+      try {
+        const r = await fetch(gpxUrl, { headers: { "User-Agent": "tentors-tracker/0.1" } });
+        fetched++;
+        if (!r.ok) { console.warn(`  [${letter}] ${team.id}: HTTP ${r.status} — skipping`); continue; }
+        const pts = parseGpxTrack(await r.text());
+        if (!pts.length) { console.warn(`  [${letter}] ${team.id}: no track points — skipping`); continue; }
+        tracks[team.id] = pts;
+        console.log(`  [${letter}] ${team.id}: ${pts.length} points`);
+      } catch (e) {
+        fetched++;
+        console.warn(`  [${letter}] ${team.id}: fetch failed (${e.message}) — skipping`);
+      }
     }
-
-    let gpxText;
-    try {
-      const r = await fetch(gpxUrl, { headers: { "User-Agent": "tentors-tracker/0.1" } });
-      if (!r.ok) { console.warn(`  Route ${letter}: GPX fetch ${r.status} — skipping`); continue; }
-      gpxText = await r.text();
-    } catch (e) {
-      console.warn(`  Route ${letter}: GPX fetch failed (${e.message}) — skipping`);
-      continue;
-    }
-
-    // Parse <trkpt lat="..." lon="..."> elements in order
-    const trkpts = [];
-    const trkRe = /<trkpt\s[^>]*lat="([^"]+)"[^>]*lon="([^"]+)"/gi;
-    let tm;
-    while ((tm = trkRe.exec(gpxText)) !== null) {
-      trkpts.push({ lat: parseFloat(tm[1]), lon: parseFloat(tm[2]) });
-    }
-    if (!trkpts.length) { console.warn(`  Route ${letter}: no <trkpt> points found — skipping`); continue; }
-
-    // Store the track points alongside the existing waypoints in routes.json
-    if (!routesJson[letter]) { console.warn(`  Route ${letter}: not in routes.json — skipping`); continue; }
-    routesJson[letter].gpx_track = trkpts;
-    console.log(`  Route ${letter}: ${trkpts.length} track points from ${gpxUrl}`);
-    updated++;
   }
 
-  await fs.writeFile(routesPath, JSON.stringify(routesJson, null, 2));
-  console.log(`  Updated routes.json with GPX tracks for ${updated} route(s)`);
+  await fs.writeFile(tracksPath, JSON.stringify(tracks));
+  console.log(`\n  Wrote ${Object.keys(tracks).length} team tracks → data/${year}/tracks.json`);
 }
 
 // ============================================================

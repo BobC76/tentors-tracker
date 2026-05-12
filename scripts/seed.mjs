@@ -383,20 +383,19 @@ async function applyGpxRoutes() {
 
   let updated = 0;
   for (const [letter, route] of Object.entries(config.routes ?? {})) {
-    // Find first team with a gpx_url
-    const team = (route.teams ?? []).find(t => t.gpx_url);
-    if (!team) {
-      // If no URL in config, try the conventional pattern using the first team's code
+    // Resolve GPX URL: prefer stored gpx_url on any team, fall back to conventional pattern.
+    const teamWithUrl = (route.teams ?? []).find(t => t.gpx_url);
+    let gpxUrl = teamWithUrl?.gpx_url;
+    if (!gpxUrl) {
       const firstTeam = (route.teams ?? [])[0];
       if (!firstTeam) continue;
-      const gpxUrl = `${baseUrl}/eventdata/team${firstTeam.id.toUpperCase()}.gpx`;
+      gpxUrl = `${baseUrl}/eventdata/team${firstTeam.id.toUpperCase()}.gpx`;
       console.log(`  Route ${letter}: trying conventional URL ${gpxUrl}`);
-      team.gpx_url = gpxUrl;
     }
 
     let gpxText;
     try {
-      const r = await fetch(team.gpx_url, { headers: { "User-Agent": "tentors-tracker/0.1" } });
+      const r = await fetch(gpxUrl, { headers: { "User-Agent": "tentors-tracker/0.1" } });
       if (!r.ok) { console.warn(`  Route ${letter}: GPX fetch ${r.status} — skipping`); continue; }
       gpxText = await r.text();
     } catch (e) {
@@ -416,7 +415,7 @@ async function applyGpxRoutes() {
     // Store the track points alongside the existing waypoints in routes.json
     if (!routesJson[letter]) { console.warn(`  Route ${letter}: not in routes.json — skipping`); continue; }
     routesJson[letter].gpx_track = trkpts;
-    console.log(`  Route ${letter}: ${trkpts.length} track points from ${team.gpx_url}`);
+    console.log(`  Route ${letter}: ${trkpts.length} track points from ${gpxUrl}`);
     updated++;
   }
 

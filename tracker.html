@@ -597,7 +597,8 @@ async function main() {
         currentTeamMarkers[team.id].push(m);
 
         const campWp = team._campWp;
-        if (campWp && !team._isFinished) {
+        if (campWp && campWp.lat != null && !team._isFinished &&
+            (team._isCamped || team._isSundayRestart || team._hasDay2Data)) {
           const isMobile = window.innerWidth <= 640;
           const sz = isMobile ? 64 : 32;
           const tent = L.marker([campWp.lat, campWp.lon], {

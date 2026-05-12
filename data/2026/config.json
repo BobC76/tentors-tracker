@@ -132,6 +132,10 @@
         {
           "id": "tf",
           "name": "Thomas Hall School"
+        },
+        {
+          "id": "tt",
+          "name": "Test Team"
         }
       ],
       "nt_overrides": {},

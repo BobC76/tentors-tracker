@@ -381,14 +381,13 @@ async function seedAllocations() {
 
 async function applyGpxRoutes() {
   const configPath = path.join(ROOT, "data", year, "config.json");
-  const routesPath = path.join(ROOT, "routes.json");
+  const tracksPath = path.join(ROOT, "data", year, "tracks.json");
 
-  let config, routesJson;
+  let config;
   try {
     config = JSON.parse(await fs.readFile(configPath, "utf8"));
-    routesJson = JSON.parse(await fs.readFile(routesPath, "utf8"));
   } catch (e) {
-    throw new Error(`Could not read config or routes.json: ${e.message}`);
+    throw new Error(`Could not read config.json: ${e.message}`);
   }
 
   function parseGpxTrack(text) {
@@ -399,35 +398,31 @@ async function applyGpxRoutes() {
     return pts;
   }
 
-  let updated = 0;
-  for (const [letter, route] of Object.entries(config.routes ?? {})) {
-    if (!routesJson[letter]) { console.warn(`  Route ${letter}: not in routes.json — skipping`); continue; }
-    const teams = route.teams ?? [];
-    if (!teams.length) continue;
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-    const teamTracks = {};
-    for (const team of teams) {
+  const tracks = {};
+  let fetched = 0;
+  for (const [letter, route] of Object.entries(config.routes ?? {})) {
+    for (const team of (route.teams ?? [])) {
+      if (fetched > 0) await sleep(1000);
       const gpxUrl = team.gpx_url || `${baseUrl}/eventdata/team${team.id.toUpperCase()}.gpx`;
       try {
         const r = await fetch(gpxUrl, { headers: { "User-Agent": "tentors-tracker/0.1" } });
-        if (!r.ok) { console.warn(`  Route ${letter} team ${team.id}: GPX fetch ${r.status} — skipping`); continue; }
+        fetched++;
+        if (!r.ok) { console.warn(`  [${letter}] ${team.id}: HTTP ${r.status} — skipping`); continue; }
         const pts = parseGpxTrack(await r.text());
-        if (!pts.length) { console.warn(`  Route ${letter} team ${team.id}: no track points — skipping`); continue; }
-        teamTracks[team.id] = pts;
-        console.log(`  Route ${letter} team ${team.id}: ${pts.length} track points`);
+        if (!pts.length) { console.warn(`  [${letter}] ${team.id}: no track points — skipping`); continue; }
+        tracks[team.id] = pts;
+        console.log(`  [${letter}] ${team.id}: ${pts.length} points`);
       } catch (e) {
-        console.warn(`  Route ${letter} team ${team.id}: GPX fetch failed (${e.message}) — skipping`);
+        fetched++;
+        console.warn(`  [${letter}] ${team.id}: fetch failed (${e.message}) — skipping`);
       }
-    }
-
-    if (Object.keys(teamTracks).length) {
-      routesJson[letter].team_tracks = teamTracks;
-      updated++;
     }
   }
 
-  await fs.writeFile(routesPath, JSON.stringify(routesJson, null, 2));
-  console.log(`  Updated routes.json with GPX tracks for ${updated} route(s)`);
+  await fs.writeFile(tracksPath, JSON.stringify(tracks));
+  console.log(`\n  Wrote ${Object.keys(tracks).length} team tracks → data/${year}/tracks.json`);
 }
 
 // ============================================================

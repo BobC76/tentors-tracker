@@ -295,6 +295,7 @@ async function main() {
       : coords.map(([lon, lat]) => [lat, lon]);
     teamPolylines[team.id] = L.polyline(polylineLatLngs, {
       color, weight: 3, opacity: 0.85,
+      smoothFactor: gpxTrack ? 0.5 : 1.0,
     }).addTo(map);
   }
 

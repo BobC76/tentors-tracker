@@ -1,6 +1,6 @@
 // Seed all data for a given Ten Tors year.
 //
-// Usage:  node scripts/seed.mjs <year> [--base-url https://www.tentors.org.uk]
+// Usage:  node scripts/seed.mjs <year> [--base-url https://www.tentors.org.uk] [--apply-gpx]
 //
 // What it does:
 //   1. Fetches /admin/routes/tors-tt  → control tor names + OS grid refs
@@ -16,6 +16,13 @@
 //      Fully populates data/{year}/config.json with teams in the correct route
 //      sections, preserving any existing nt_overrides/corrections per route.
 //      Team id = route code lowercased (e.g. "bc"); "match" field not needed.
+//      If the page includes GPX/KMZ download links they are stored as gpx_url/kmz_url
+//      on each team entry.
+//
+//   6. (--apply-gpx only) Downloads GPX track files for each route and stores the
+//      GPS trail as gpx_track in routes.json, enabling more accurate route geometry
+//      on the map.  GPX files are only published by Ten Tors after the event, so
+//      this step will fail silently during the event itself.
 
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -36,6 +43,7 @@ const baseUrlIdx = args.indexOf("--base-url");
 const baseUrl = (args.find((a) => a.startsWith("--base-url="))?.split("=")[1]
   ?? (baseUrlIdx !== -1 ? args[baseUrlIdx + 1] : null)
   ?? "https://www.tentors.org.uk").replace(/\/$/, "");
+const applyGpx = args.includes("--apply-gpx");
 
 const currentYear = new Date().getFullYear().toString();
 const isArchive = year !== currentYear;
@@ -268,7 +276,7 @@ async function seedTeams(routeLetters) {
 // ============================================================
 
 function parseRouteAllocations(html) {
-  // Returns [{ routeLetter, routeCode, distance, name }]
+  // Returns [{ routeLetter, routeCode, distance, name, gpxUrl, kmzUrl }]
   const tableMatch = html.match(/<table[^>]*class="[^"]*team-overview-table[^"]*"[^>]*>([\s\S]*?)<\/table>/i);
   if (!tableMatch) { console.warn("  No team-overview-table found"); return []; }
   const tbodyMatch = tableMatch[1].match(/<tbody>([\s\S]*?)<\/tbody>/i);
@@ -277,16 +285,30 @@ function parseRouteAllocations(html) {
   const rowRe = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
   let m;
   while ((m = rowRe.exec(tbodyMatch[1])) !== null) {
-    const cells = extractCells(m[1]);
+    // Extract raw <td> HTML (before stripping) so we can pull out file URLs.
+    const rawCells = [], rawRe = /<td[^>]*>([\s\S]*?)<\/td>/gi;
+    let rm;
+    while ((rm = rawRe.exec(m[1])) !== null) rawCells.push(rm[1]);
+
+    const cells = rawCells.map(c => stripHtml(c));
     if (cells.length < 3) continue;
     const distStr = cells[0].trim();   // e.g. "TT35"
     const routeCode = cells[1].trim(); // e.g. "BC"
-    const name = cells[2].trim();
+    // Strip KMZ/GPX/KML link text that appears after stripping HTML from the name cell.
+    const name = cells[2].replace(/\s*\b(KMZ|GPX|KML)\b\s*/gi, " ").trim();
     if (!distStr || !routeCode || !name) continue;
     const distance = parseInt(distStr.replace(/^TT/i, ""), 10);
     if (isNaN(distance)) continue;
     const routeLetter = routeCode[0].toUpperCase();
-    rows.push({ routeLetter, routeCode, distance, name });
+
+    // Extract GPX and KMZ download URLs from the raw name cell HTML.
+    const nameCellHtml = rawCells[2] ?? "";
+    const gpxMatch = nameCellHtml.match(/href="([^"]*\.gpx)"/i);
+    const kmzMatch = nameCellHtml.match(/href="([^"]*\.kmz)"/i);
+    const gpxUrl = gpxMatch ? gpxMatch[1] : null;
+    const kmzUrl = kmzMatch ? kmzMatch[1] : null;
+
+    rows.push({ routeLetter, routeCode, distance, name, gpxUrl, kmzUrl });
   }
   return rows;
 }
@@ -305,7 +327,7 @@ async function seedAllocations() {
 
   // Build route sections from allocations
   const routes = {};
-  for (const { routeLetter, routeCode, distance, name } of rows) {
+  for (const { routeLetter, routeCode, distance, name, gpxUrl, kmzUrl } of rows) {
     if (!routes[routeLetter]) {
       const existing = config.routes?.[routeLetter] ?? {};
       routes[routeLetter] = {
@@ -316,7 +338,10 @@ async function seedAllocations() {
         corrections: existing.corrections ?? [],
       };
     }
-    routes[routeLetter].teams.push({ id: routeCode.toLowerCase(), name });
+    const team = { id: routeCode.toLowerCase(), name };
+    if (gpxUrl) team.gpx_url = gpxUrl;
+    if (kmzUrl) team.kmz_url = kmzUrl;
+    routes[routeLetter].teams.push(team);
   }
 
   // Preserve any route sections not covered by allocations (e.g. manual entries)
@@ -331,6 +356,72 @@ async function seedAllocations() {
   await fs.writeFile(configPath, JSON.stringify(updated, null, 2));
   const teamCount = Object.values(routes).reduce((s, r) => s + r.teams.length, 0);
   console.log(`  Wrote ${configPath} (${Object.keys(routes).length} routes, ${teamCount} teams)`);
+}
+
+// ============================================================
+// Step 6 (optional --apply-gpx): Download GPX track files and
+// replace straight-line waypoint segments in routes.json with
+// the actual GPS trail data.
+//
+// GPX files are published by Ten Tors after (not during) the event.
+// Each team has its own file: /eventdata/team{CODE}.gpx
+// Teams on the same route share the same track; we use the first
+// team per route that has a gpx_url recorded in config.json.
+// ============================================================
+
+async function applyGpxRoutes() {
+  const configPath = path.join(ROOT, "data", year, "config.json");
+  const routesPath = path.join(ROOT, "routes.json");
+
+  let config, routesJson;
+  try {
+    config = JSON.parse(await fs.readFile(configPath, "utf8"));
+    routesJson = JSON.parse(await fs.readFile(routesPath, "utf8"));
+  } catch (e) {
+    throw new Error(`Could not read config or routes.json: ${e.message}`);
+  }
+
+  let updated = 0;
+  for (const [letter, route] of Object.entries(config.routes ?? {})) {
+    // Find first team with a gpx_url
+    const team = (route.teams ?? []).find(t => t.gpx_url);
+    if (!team) {
+      // If no URL in config, try the conventional pattern using the first team's code
+      const firstTeam = (route.teams ?? [])[0];
+      if (!firstTeam) continue;
+      const gpxUrl = `${baseUrl}/eventdata/team${firstTeam.id.toUpperCase()}.gpx`;
+      console.log(`  Route ${letter}: trying conventional URL ${gpxUrl}`);
+      team.gpx_url = gpxUrl;
+    }
+
+    let gpxText;
+    try {
+      const r = await fetch(team.gpx_url, { headers: { "User-Agent": "tentors-tracker/0.1" } });
+      if (!r.ok) { console.warn(`  Route ${letter}: GPX fetch ${r.status} — skipping`); continue; }
+      gpxText = await r.text();
+    } catch (e) {
+      console.warn(`  Route ${letter}: GPX fetch failed (${e.message}) — skipping`);
+      continue;
+    }
+
+    // Parse <trkpt lat="..." lon="..."> elements in order
+    const trkpts = [];
+    const trkRe = /<trkpt\s[^>]*lat="([^"]+)"[^>]*lon="([^"]+)"/gi;
+    let tm;
+    while ((tm = trkRe.exec(gpxText)) !== null) {
+      trkpts.push({ lat: parseFloat(tm[1]), lon: parseFloat(tm[2]) });
+    }
+    if (!trkpts.length) { console.warn(`  Route ${letter}: no <trkpt> points found — skipping`); continue; }
+
+    // Store the track points alongside the existing waypoints in routes.json
+    if (!routesJson[letter]) { console.warn(`  Route ${letter}: not in routes.json — skipping`); continue; }
+    routesJson[letter].gpx_track = trkpts;
+    console.log(`  Route ${letter}: ${trkpts.length} track points from ${team.gpx_url}`);
+    updated++;
+  }
+
+  await fs.writeFile(routesPath, JSON.stringify(routesJson, null, 2));
+  console.log(`  Updated routes.json with GPX tracks for ${updated} route(s)`);
 }
 
 // ============================================================
@@ -364,6 +455,12 @@ async function main() {
   console.log("\nStep 5: Fetching route allocations...");
   await seedAllocations();
 
+  // 6. (optional) Apply GPX track data → routes.json
+  if (applyGpx) {
+    console.log("\nStep 6: Applying GPX route tracks...");
+    await applyGpxRoutes();
+  }
+
   console.log(`
 === Done ===
 
@@ -371,7 +468,7 @@ data/${year}/config.json has been fully populated.
 If any establishment names differ from what eventdata uses, add a "match"
 field to that team entry with the substring eventdata uses instead.
 Add "nt_overrides" for controls with non-standard night times if needed.
-`);
+${applyGpx ? "" : "Re-run with --apply-gpx after the event to add accurate GPS track data to routes.json.\n"}`);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

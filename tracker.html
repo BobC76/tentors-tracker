@@ -29,11 +29,14 @@
     /* Team name is the toggle button */
     .nm {
       flex: 1; font-weight: 600; font-size: 15px; text-align: left;
-      background: none; border: none; padding: 0; cursor: pointer; color: inherit;
+      background: #f0f4ff; border: 1.5px solid #c8d8f0; border-radius: 7px;
+      padding: 4px 8px; cursor: pointer; color: #1a1a1a;
       font-family: inherit; line-height: inherit;
+      transition: background 0.1s, border-color 0.1s;
     }
-    .nm:hover { color: #0066cc; }
-    .nm::after { content: " ▼"; font-size: 9px; color: #aaa; vertical-align: middle; }
+    .nm:hover { background: #ddeaff; border-color: #0066cc; color: #0044aa; }
+    .nm::after { content: " ▼"; font-size: 9px; color: #88a; vertical-align: middle; }
+    .nm.collapsed { background: #f5f5f5; border-color: #ddd; color: #888; }
     .nm.collapsed::after { content: " ▶"; }
 
     .route-badge {
@@ -236,16 +239,20 @@ async function main() {
   });
   map.addControl(new RecenterCtl());
 
+  const routePolylines = {};
+  const routeArrowGroups = {};
   const routeWpMarkers = {};
 
   for (const letter of routeLetters) {
     const { wps, wpStops, coords } = routeData[letter];
     const color = routeColor[letter];
 
-    L.polyline(coords.map(([lon, lat]) => [lat, lon]), {
+    routePolylines[letter] = L.polyline(coords.map(([lon, lat]) => [lat, lon]), {
       color, weight: 3, opacity: 0.85,
     }).addTo(map);
 
+    const arrowGroup = L.layerGroup().addTo(map);
+    routeArrowGroups[letter] = arrowGroup;
     for (let i = 0; i < wps.length - 1; i++) {
       const a = wps[i], b = wps[i + 1];
       const midLat = (a.lat + b.lat) / 2, midLon = (a.lon + b.lon) / 2;
@@ -259,7 +266,7 @@ async function main() {
           iconSize: [26, 26], iconAnchor: [13, 13],
         }),
         interactive: false,
-      }).addTo(map);
+      }).addTo(arrowGroup);
     }
 
     routeWpMarkers[letter] = wpStops.map((w, i) => {
@@ -276,6 +283,18 @@ async function main() {
   const hiddenTeams = new Set();
   const currentTeamMarkers = {};
 
+  function updateRouteVisibility(letter) {
+    const anyVisible = teamsToTrack.some(t => t.routeLetter === letter && !hiddenTeams.has(t.id));
+    const toggle = (layer) => {
+      if (!layer) return;
+      if (anyVisible) { if (!map.hasLayer(layer)) layer.addTo(map); }
+      else { if (map.hasLayer(layer)) map.removeLayer(layer); }
+    };
+    toggle(routePolylines[letter]);
+    toggle(routeArrowGroups[letter]);
+    routeWpMarkers[letter]?.forEach(m => m && toggle(m));
+  }
+
   function toggleTeam(id) {
     const wasHidden = hiddenTeams.has(id);
     if (wasHidden) {
@@ -285,6 +304,8 @@ async function main() {
       hiddenTeams.add(id);
       (currentTeamMarkers[id] || []).forEach(m => teamLayer.removeLayer(m));
     }
+    const team = teamsToTrack.find(t => t.id === id);
+    if (team) updateRouteVisibility(team.routeLetter);
     const card = document.querySelector(`.team-card[data-id="${id}"]`);
     if (card) {
       card.querySelector(".team-body").hidden = hiddenTeams.has(id);
@@ -351,7 +372,7 @@ async function main() {
       const buildHeader = (nameHtml) => `
         <div class="team-header">
           <button class="nm${isHidden ? " collapsed" : ""}" onclick="window._toggleTeam('${team.id}')">${nameHtml}${routeBadge}</button>
-          <a class="src-link" href="${sourceUrl}" target="_blank">source ↗</a>
+          <a class="src-link" href="${sourceUrl}" target="_blank">source times ↗</a>
         </div>`;
 
       if (!doc) {
@@ -632,7 +653,7 @@ async function main() {
           }
         }
       }
-      const teamBounds = L.latLngBounds(zoomPoints).pad(0.3);
+      const teamBounds = L.latLngBounds(zoomPoints).pad(0.6);
       map.fitBounds(teamBounds, {
         paddingBottomRight: [0, window.innerWidth <= 640 ? window.innerHeight * 0.32 : 0],
       });

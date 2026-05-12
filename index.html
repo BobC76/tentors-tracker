@@ -79,6 +79,23 @@
     }
     .attribution a { color: #aaa; text-decoration: none; }
     .attribution a:hover { text-decoration: underline; }
+    details.guide {
+      margin-top: 28px; border-top: 1px solid #e8e8e8; padding-top: 14px;
+    }
+    details.guide summary {
+      font-size: 13px; font-weight: 600; color: #555; cursor: pointer;
+      list-style: none; display: flex; align-items: center; gap: 6px;
+    }
+    details.guide summary::-webkit-details-marker { display: none; }
+    details.guide summary::before { content: "▶"; font-size: 9px; color: #aaa; }
+    details[open].guide summary::before { content: "▼"; }
+    details.guide summary:hover { color: #0066cc; }
+    .guide-body { margin-top: 12px; font-size: 13px; color: #555; line-height: 1.7; }
+    .guide-body h3 { font-size: 12px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.05em; color: #888; margin: 14px 0 4px; }
+    .guide-body p { margin: 0 0 8px; }
+    .guide-body ul { margin: 0 0 8px; padding-left: 18px; }
+    .guide-body li { margin-bottom: 4px; }
   </style>
 </head>
 <body>
@@ -95,6 +112,34 @@
   <div class="actions">
     <button class="btn-track" id="btn-track" disabled>Select a team above</button>
   </div>
+
+  <details class="guide">
+    <summary>How to use</summary>
+    <div class="guide-body">
+      <h3>Finding a team</h3>
+      <p>Type any part of a team name or route code (e.g. "TA") into the search box. Select from the dropdown — you can add multiple teams to track at once.</p>
+
+      <h3>On the map</h3>
+      <ul>
+        <li>Each team's estimated position is shown as a coloured dot with their name.</li>
+        <li>A ⛺ tent marker shows where the team camped on Saturday night.</li>
+        <li>Visited checkpoints are shown in colour; unvisited ones are grey.</li>
+        <li>Direction arrows show which way the route runs.</li>
+        <li>Use ⌂ Recenter to zoom back to the full route.</li>
+      </ul>
+
+      <h3>Position and timing</h3>
+      <ul>
+        <li>Checkpoint times come from the <a href="https://tentors.org.uk" target="_blank">Ten Tors</a> live results page, updated roughly every minute.</li>
+        <li>Position between checkpoints is estimated from the team's recorded pace — treat it as a guide, not a GPS fix.</li>
+        <li>ETA at finish shows a –30 min / best / +30 min range based on current pace.</li>
+        <li>Click a team name on the tracker panel to hide or show that team's data and route.</li>
+        <li>Use <em>source times ↗</em> to open the raw checkpoint data for that route.</li>
+      </ul>
+
+      <h3>This tracker updates every 30 seconds.</h3>
+    </div>
+  </details>
 
   <footer class="attribution">
     <div>Route data &copy; <a href="https://tentors.org.uk" target="_blank">Ten Tors</a></div>

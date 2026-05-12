@@ -11,6 +11,9 @@ Supports all routes (A–Z) and all teams for any event year.
 - **Predictions** — estimates pace from recorded check-ins and projects:
   - ⛺ overnight camp location (first NT cut-off the team can't reach in time)
   - 🏁 ETA at finish with a ±30 min confidence range
+  - ⏱️ "Approaching finish" when pace puts a team at the finish but no confirmation is recorded yet
+- **DNF detection** — teams marked "DID NOT FINISH" in the results page show red with no ETA; teams still unfinished after Sunday 17:00 are treated as implied DNF
+- **Per-team GPS tracks** — after the event, each team's actual GPS recording is shown as their route line (post-event only; straight waypoint segments are used during the event)
 - **Multi-year** — archive years are accessible via the year selector once added to `data/years.json`
 
 ## Run locally
@@ -50,7 +53,7 @@ After the event, Ten Tors publishes per-team GPX files. Run with `--apply-gpx` t
 node scripts/seed.mjs <year> --apply-gpx
 ```
 
-Or tick the *Apply GPX* checkbox in the GitHub Actions workflow. This writes `gpx_track` arrays into `routes.json`; the tracker uses them automatically.
+Or tick the *Apply GPX* checkbox in the GitHub Actions workflow. This writes per-team track arrays into `data/<year>/tracks.json`; the tracker fetches this file at startup and uses each team's own GPS recording for their route line. `routes.json` is not modified — it holds only stable waypoint geometry shared across years.
 
 ### config.json structure
 

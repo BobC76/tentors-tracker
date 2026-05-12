@@ -6,7 +6,7 @@ Supports all routes (A–Z) and all teams for any event year.
 ## What it does
 
 - **Team search** — type a team name or route code to find and select teams; track multiple at once
-- **Live map** — shows each team's estimated position along their route, updated every 30 seconds
+- **Live map** — shows each team's estimated position along their route, updated every 30 seconds during the event (once daily outside it)
 - **Checkpoint times** — pulled from the Ten Tors live results pages; visited checkpoints are highlighted
 - **Predictions** — estimates pace from recorded check-ins and projects:
   - ⛺ overnight camp location (first NT cut-off the team can't reach in time)
@@ -33,13 +33,24 @@ through checkpoints every 30 seconds.
 node scripts/seed.mjs <year>
 ```
 
+Or trigger it from the **Actions** tab on GitHub (→ *Seed year data* → *Run workflow*) — no terminal needed.
+
 This fetches from tentors.org.uk and writes:
 - `routes.json` — waypoint lat/lon for all routes (shared across years)
 - `data/<year>/teams-raw.json` — raw establishment list
 - `data/<year>/config.json` — route sections with teams fully populated from `/page/route-allocations`
 
-After seeding, set `"current": true` for the new year in `data/years.json`
-and move the previous year to `"current": false`.
+After seeding, add the new year to `data/years.json` (see Year management below).
+
+### Applying GPX track data (post-event)
+
+After the event, Ten Tors publishes per-team GPX files. Run with `--apply-gpx` to download them and replace the straight waypoint-to-waypoint lines with the actual GPS trail:
+
+```
+node scripts/seed.mjs <year> --apply-gpx
+```
+
+Or tick the *Apply GPX* checkbox in the GitHub Actions workflow. This writes `gpx_track` arrays into `routes.json`; the tracker uses them automatically.
 
 ### config.json structure
 
@@ -74,21 +85,23 @@ Hosted on **Vercel**:
 
 ## Year management
 
-`data/years.json` controls the year selector on the home page:
+`data/years.json` controls the year selector and polling behaviour:
 
 ```json
 [
-  { "year": 2026, "current": true }
+  { "year": 2026, "current": true, "event_active": false }
 ]
 ```
 
-When the current year appears in the Ten Tors archive (tentors.org.uk/page/archive),
-add the new year as `current` and mark the old one `false`:
+- **`current`** — marks the live year; all others show as "archive" in the selector
+- **`event_active`** — `true` during the two event days (30-second polling); `false` the rest of the year (once-daily polling + manual refresh button). Flip this in the GitHub editor on the morning of the event.
+
+When the current year appears in the Ten Tors archive (tentors.org.uk/page/archive), add the new year and mark the old one archived:
 
 ```json
 [
-  { "year": 2027, "current": true },
-  { "year": 2026, "current": false }
+  { "year": 2027, "current": true, "event_active": false },
+  { "year": 2026, "current": false, "event_active": false }
 ]
 ```
 

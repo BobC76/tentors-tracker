@@ -69,7 +69,7 @@
       .panel {
         left: 0; right: 0; bottom: 0; max-width: none;
         border-radius: 10px 10px 0 0; max-height: 32vh;
-        padding: 6px 10px 8px; overflow: hidden;
+        padding: 6px 10px 8px; overflow-y: auto;
       }
       .panel h2 { font-size: 14px; margin: 0 0 2px; }
       .meta { font-size: 10px; margin-bottom: 4px; }
@@ -250,7 +250,7 @@ async function main() {
   }
   const pad = 0.02;
   const routeBounds = L.latLngBounds([latMin - pad, lonMin - pad], [latMax + pad, lonMax + pad]);
-  const maxBounds = L.latLngBounds([latMin - 0.08, lonMin - 0.08], [latMax + 0.08, lonMax + 0.08]);
+  const maxBounds = L.latLngBounds([latMin - 0.4, lonMin - 0.4], [latMax + 0.4, lonMax + 0.4]);
 
   const map = L.map("map", { maxBounds, maxBoundsViscosity: 1.0, minZoom: 10 }).fitBounds(routeBounds);
 
@@ -450,7 +450,10 @@ async function main() {
       }
 
       const allCells = [...matchedRows[0].querySelectorAll("th, td")].map(c => c.textContent.trim());
-      const teamName = allCells[0].replace(/\s*\b(KMZ|GPX|KML)\b\s*/gi, " ").trim();
+      const teamName = allCells[0]
+        .replace(/\s*\b(KMZ|GPX|KML)\b\s*/gi, " ")
+        .replace(/\s*\([^)]*\)\s*/g, " ")
+        .trim();
       const dataCells = allCells.slice(1);
 
       let firstT = null, lastT = null, lastIdx = -1, lastWp = null;
@@ -597,7 +600,7 @@ async function main() {
         currentTeamMarkers[team.id].push(m);
 
         const campWp = team._campWp;
-        if (campWp && campWp.lat != null && !team._isFinished &&
+        if (campWp && campWp.lat != null &&
             (team._isCamped || team._isSundayRestart || team._hasDay2Data)) {
           const isMobile = window.innerWidth <= 640;
           const sz = isMobile ? 64 : 32;

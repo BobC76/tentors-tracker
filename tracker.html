@@ -100,7 +100,7 @@
   <h2 id="title">Ten Tors Tracker</h2>
   <div class="meta" id="meta">loading…</div>
   <div id="quiet-bar" hidden style="margin:6px 0 4px;display:flex;align-items:center;gap:8px;font-size:12px;color:#888;">
-    <span>Event not active — updates once daily</span>
+    <span id="quiet-msg">Event not active — updates once daily</span>
     <button id="btn-refresh-now" style="font-size:12px;padding:2px 8px;border:1px solid #ccc;border-radius:5px;background:white;cursor:pointer;">Refresh now</button>
   </div>
   <div id="teams"></div>
@@ -145,6 +145,26 @@ const params = new URLSearchParams(location.search);
 const YEAR = params.get("year") || "2026";
 const TEAM_IDS = (params.get("teams") || "").split(",").map(s => s.trim()).filter(Boolean);
 
+// ---- event date calculation ----
+// Ten Tors takes place on the weekend following the May Day bank holiday
+// (first Monday in May). Returns { sat, sun } as Date objects (local midnight).
+function tenTorsEventDates(year) {
+  const may1 = new Date(year, 4, 1);
+  const toMonday = (may1.getDay() === 1) ? 0 : (8 - may1.getDay()) % 7;
+  const mayDay = new Date(year, 4, 1 + toMonday);
+  const sat = new Date(mayDay); sat.setDate(mayDay.getDate() + 5);
+  const sun = new Date(mayDay); sun.setDate(mayDay.getDate() + 6);
+  return { sat, sun };
+}
+
+function autoEventActive(year) {
+  const { sat, sun } = tenTorsEventDates(parseInt(year));
+  const now = new Date();
+  const start = new Date(sat); start.setHours(0, 0, 0, 0);
+  const end   = new Date(sun); end.setHours(23, 59, 59, 999);
+  return now >= start && now <= end;
+}
+
 // ---- main ----
 async function main() {
   // Update back link to carry year + teams so selection is remembered.
@@ -159,7 +179,11 @@ async function main() {
     fetch("data/years.json").then(r => r.ok ? r.json() : []),
   ]);
   const yearMeta = years.find(y => y.year?.toString() === YEAR);
-  const eventActive = yearMeta?.event_active ?? true;
+  // event_active in years.json is an explicit override (true = force on, false = force off).
+  // When absent, auto-detect from the computed event weekend.
+  const eventActive = (yearMeta?.event_active !== undefined)
+    ? yearMeta.event_active
+    : autoEventActive(YEAR);
 
   const teamsToTrack = [];
   for (const [letter, route] of Object.entries(config.routes)) {
@@ -682,6 +706,21 @@ async function main() {
   const POLL_MS = eventActive ? 30_000 : 24 * 60 * 60 * 1000;
   const quietBar = document.getElementById("quiet-bar");
   if (!eventActive) {
+    // Show next event date in the quiet bar.
+    const yr = parseInt(YEAR);
+    const candidateYears = [yr, yr + 1];
+    const now = new Date();
+    let nextEvent = null;
+    for (const y of candidateYears) {
+      const { sat, sun } = tenTorsEventDates(y);
+      const end = new Date(sun); end.setHours(23, 59, 59, 999);
+      if (end >= now) { nextEvent = { sat, sun }; break; }
+    }
+    const fmtDate = d => d.toLocaleDateString(undefined, { day: "numeric", month: "short" });
+    const nextStr = nextEvent
+      ? ` · Next event: ${fmtDate(nextEvent.sat)}–${fmtDate(nextEvent.sun)} ${nextEvent.sun.getFullYear()}`
+      : "";
+    document.getElementById("quiet-msg").textContent = `Event not active — updates once daily${nextStr}`;
     quietBar.hidden = false;
     document.getElementById("btn-refresh-now").addEventListener("click", refresh);
   }

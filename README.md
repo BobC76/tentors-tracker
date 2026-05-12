@@ -85,23 +85,23 @@ Hosted on **Vercel**:
 
 ## Year management
 
-`data/years.json` controls the year selector and polling behaviour:
+`data/years.json` controls the year selector:
 
 ```json
 [
-  { "year": 2026, "current": true, "event_active": false }
+  { "year": 2026, "current": true }
 ]
 ```
 
 - **`current`** — marks the live year; all others show as "archive" in the selector
-- **`event_active`** — `true` during the two event days (30-second polling); `false` the rest of the year (once-daily polling + manual refresh button). Flip this in the GitHub editor on the morning of the event.
+- **`event_active`** *(optional override)* — the tracker automatically switches to 30-second polling on the event weekend (Saturday–Sunday following the May Day bank holiday). Set `"event_active": true` to force it on, or `false` to force it off, if the event date ever differs.
 
 When the current year appears in the Ten Tors archive (tentors.org.uk/page/archive), add the new year and mark the old one archived:
 
 ```json
 [
-  { "year": 2027, "current": true, "event_active": false },
-  { "year": 2026, "current": false, "event_active": false }
+  { "year": 2027, "current": true },
+  { "year": 2026, "current": false }
 ]
 ```
 

@@ -142,29 +142,31 @@ function normalizeWp(s) {
 
 const ROUTE_PALETTE = ["#0066cc", "#e05c00", "#2a8a2a", "#8800cc", "#cc0044", "#007799"];
 
-function elevationSparkline(track, color) {
-  const pts = track.filter(p => p.ele != null);
+// pts: [{x: 0..1, ele}], progressFrac: 0..1 optional marker
+function elevationSparkline(pts, color, progressFrac) {
+  pts = pts.filter(p => p.ele != null);
   if (pts.length < 2) return "";
   const eles = pts.map(p => p.ele);
   const minE = Math.min(...eles), maxE = Math.max(...eles);
   const range = maxE - minE || 1;
   const W = 100, H = 32;
-  const coords = pts.map((p, i) => {
-    const x = (i / (pts.length - 1)) * W;
-    const y = H - ((p.ele - minE) / range) * H;
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
-  });
+  const coords = pts.map(p =>
+    `${(p.x * W).toFixed(1)},${(H - ((p.ele - minE) / range) * H).toFixed(1)}`
+  );
   const line = `M${coords.join("L")}`;
   const area = `${line}L${W},${H}L0,${H}Z`;
-  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:32px;display:block;margin:3px 0 0;"><path d="${area}" fill="${color}" opacity="0.15"/><path d="${line}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
+  const marker = progressFrac != null
+    ? `<line x1="${(progressFrac * W).toFixed(1)}" y1="0" x2="${(progressFrac * W).toFixed(1)}" y2="${H}" stroke="${color}" stroke-width="1.5" opacity="0.7"/>`
+    : "";
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:32px;display:block;margin:3px 0 0;"><path d="${area}" fill="${color}" opacity="0.15"/><path d="${line}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round"/>${marker}</svg>`;
 }
 
-function totalAscent(track) {
+function totalAscent(pts) {
   let gain = 0;
-  for (let i = 1; i < track.length; i++) {
-    if (track[i].ele == null || track[i-1].ele == null) continue;
-    const d = track[i].ele - track[i-1].ele;
-    if (d > 2) gain += d; // threshold filters GPS noise
+  for (let i = 1; i < pts.length; i++) {
+    if (pts[i].ele == null || pts[i-1].ele == null) continue;
+    const d = pts[i].ele - pts[i-1].ele;
+    if (d > 2) gain += d;
   }
   return Math.round(gain);
 }
@@ -623,6 +625,7 @@ async function main() {
                       : `${lastWp.label} @ ${cellTime}`;
         pace = (paceKmh > 0 && !teamDnf && !atFinish) ? ` · ${paceKmh.toFixed(1)} km/h` : "";
 
+        team._target = target;
         team._stopped = stopped; team._isFinished = isFinished; team._isDnf = teamDnf; team._atFinish = atFinish;
         team._isCamped = (isCamped || inferredCamp || isEvening) && !needsRestart && !hasDay2Data;
         team._isSundayRestart = needsRestart; team._hasDay2Data = hasDay2Data;
@@ -636,20 +639,39 @@ async function main() {
 
       if (lastWp) {
         const distFromStart = lastWp.routeDist - wpStops[0].routeDist;
-        const track = teamTracks[team.id];
-        const ascent = track ? totalAscent(track) : 0;
+
+        // Elevation: prefer per-team GPS track; fall back to waypoint elevations
+        const rawTrack = teamTracks[team.id];
+        const hasTrackEle = rawTrack?.some(p => p.ele != null);
+        let sparkPts = null, ascentVal = 0, progressFrac = null;
+        if (hasTrackEle) {
+          sparkPts = rawTrack.map((p, i) => ({ x: i / (rawTrack.length - 1), ele: p.ele }));
+          ascentVal = totalAscent(rawTrack);
+        } else {
+          const wpsWithEle = wpStops.filter(w => w.ele != null && w.lat != null);
+          if (wpsWithEle.length >= 2) {
+            sparkPts = wpsWithEle.map(w => ({ x: w.routeDist / totalDist, ele: w.ele }));
+            ascentVal = totalAscent(wpsWithEle);
+            progressFrac = Math.min((team._target ?? lastWp.routeDist) / totalDist, 1);
+          }
+        }
+
         const stats = document.createElement("div");
         stats.className = "stats";
         stats.innerHTML = `
           <span><b>${(distFromStart / 1000).toFixed(1)}</b> km covered</span>
           <span><b>${((totalDist - lastWp.routeDist) / 1000).toFixed(1)}</b> km remaining</span>
-          ${ascent ? `<span>↑ <b>${ascent.toLocaleString()}</b> m ascent</span>` : ""}
+          ${ascentVal ? `<span>↑ <b>${ascentVal.toLocaleString()}</b> m ascent</span>` : ""}
           <span>updated <b>${lastT.toLocaleTimeString().slice(0, 5)}</b></span>`;
         body.appendChild(stats);
-        if (track) {
-          const svg = document.createElement("div");
-          svg.innerHTML = elevationSparkline(track, color);
-          if (svg.firstChild) body.appendChild(svg.firstChild);
+
+        if (sparkPts) {
+          const svgHtml = elevationSparkline(sparkPts, color, progressFrac);
+          if (svgHtml) {
+            const wrap = document.createElement("div");
+            wrap.innerHTML = svgHtml;
+            if (wrap.firstChild) body.appendChild(wrap.firstChild);
+          }
         }
       }
 

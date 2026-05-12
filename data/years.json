@@ -1,3 +1,3 @@
 [
-  { "year": 2026, "current": true }
+  { "year": 2026, "current": true, "event_active": false }
 ]

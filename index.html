@@ -205,6 +205,7 @@
         allTeams = [];
         for (const [letter, route] of Object.entries(config.routes)) {
           for (const team of route.teams) {
+            if (team.dev_only) continue;
             allTeams.push({ ...team, routeLetter: letter, routeLabel: route.label, distance: route.distance });
           }
         }

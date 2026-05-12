@@ -135,7 +135,8 @@
         },
         {
           "id": "tt",
-          "name": "Test Team"
+          "name": "Test Team",
+          "dev_only": true
         }
       ],
       "nt_overrides": {},

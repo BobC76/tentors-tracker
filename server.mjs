@@ -102,8 +102,7 @@ async function proxyRoute(req, res) {
     res.status(502).type("text/plain").send("Upstream fetch failed: " + e.message);
   }
 }
-app.get("/route:letter.html", proxyRoute);
-app.get("/api/route:letter", proxyRoute);
+app.get("/route/:letter.html", proxyRoute);
 app.get("/api/route/:letter", proxyRoute);
 
 app.use((_req, res, next) => {

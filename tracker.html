@@ -565,6 +565,7 @@ async function main() {
         const hasDay2Data = lastDayOffset === 1;
 
         let stopped = isFinished || isEvening, missedNt = null;
+        if (pastDeadline && !isFinished) stopped = true;
         if (inferredCamp && !isSundayMorning) stopped = true;
         if (isCamped && !needsRestart && !hasDay2Data) stopped = true;
 

@@ -1,19 +1,24 @@
 # Ten Tors Tracker
 
-A live tracker for the [Ten Tors](https://tentors.org.uk) challenge on Dartmoor.
+A free, independent live tracker for the [Ten Tors](https://tentors.org.uk) challenge on Dartmoor — built as a hobby project by a Ten Tors parent.
 Supports all routes (A–Z) and all teams for any event year.
+
+> **Not affiliated with the Ten Tors organisation or the British Army.**
+> Checkpoint data is fetched from the official tentors.org.uk results pages.
 
 ## What it does
 
 - **Team search** — type a team name or route code to find and select teams; track multiple at once
 - **Live map** — shows each team's estimated position along their route, updated every 30 seconds during the event (once daily outside it)
 - **Checkpoint times** — pulled from the Ten Tors live results pages; visited checkpoints are highlighted
+- **Elevation profile** — sparkline showing the route's elevation, with a progress marker during the event
 - **Predictions** — estimates pace from recorded check-ins and projects:
   - ⛺ overnight camp location (first NT cut-off the team can't reach in time)
   - 🏁 ETA at finish with a ±30 min confidence range
   - ⏱️ "Approaching finish" when pace puts a team at the finish but no confirmation is recorded yet
 - **DNF detection** — teams marked "DID NOT FINISH" in the results page show red with no ETA; teams still unfinished after Sunday 17:00 are treated as implied DNF
 - **Per-team GPS tracks** — after the event, each team's actual GPS recording is shown as their route line (post-event only; straight waypoint segments are used during the event)
+- **Resilient fetching** — if tentors.org.uk is slow or temporarily unavailable, the tracker falls back to the last successfully fetched data and shows a warning
 - **Multi-year** — archive years are accessible via the year selector once added to `data/years.json`
 
 ## Run locally
@@ -53,7 +58,7 @@ After the event, Ten Tors publishes per-team GPX files. Run with `--apply-gpx` t
 node scripts/seed.mjs <year> --apply-gpx
 ```
 
-Or tick the *Apply GPX* checkbox in the GitHub Actions workflow. This writes per-team track arrays into `data/<year>/tracks.json`; the tracker fetches this file at startup and uses each team's own GPS recording for their route line. `routes.json` is not modified — it holds only stable waypoint geometry shared across years.
+Or tick the *Apply GPX* checkbox in the GitHub Actions workflow. This writes per-team track arrays into `data/<year>/tracks.json`; the tracker fetches this file at startup and uses each team's own GPS recording for their route line. Waypoint elevations (used for the in-event sparkline) are also snapped from the GPX data and stored in `routes.json`.
 
 ### config.json structure
 
@@ -78,11 +83,12 @@ Or tick the *Apply GPX* checkbox in the GitHub Actions workflow. This writes per
 - `name` — establishment name as it appears in the eventdata results table
 - `match` — optional substring override if the eventdata spelling differs from the name
 - `nt_overrides` — map of `"WAYPOINT LABEL": "HH:MM"` for non-standard NT cut-off times
+- `dev_only: true` — hides a team from the public search (used for the local test team)
 
 ## Deploy
 
 Hosted on **Vercel**:
-- `api/route/[letter].js` — serverless proxy for the upstream results HTML
+- `api/route/[letter].js` — serverless proxy for the upstream results HTML (CORS workaround)
 - `api/version.js` — returns the current deploy SHA for auto-reload on redeploy
 - everything else is static, served from the repo root
 
@@ -108,7 +114,8 @@ When the current year appears in the Ten Tors archive (tentors.org.uk/page/archi
 ]
 ```
 
-## Attribution
+## Attribution & disclaimer
 
 - Route and results data © [Ten Tors](https://tentors.org.uk)
 - Map tiles © [OpenStreetMap](https://openstreetmap.org/copyright) contributors
+- This project is not affiliated with or endorsed by the Ten Tors organisation or the British Army

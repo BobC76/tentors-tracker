@@ -3,7 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Ten Tors Tracker</title>
+  <title>Ten Tors Tracker – Live team tracker for the Ten Tors Challenge</title>
+  <meta name="description" content="Follow your team live on the map during the Ten Tors Challenge on Dartmoor. See checkpoint times, estimated position, overnight camp, and finish ETA — updated every 30 seconds during the event." />
+  <meta property="og:title" content="Ten Tors Tracker" />
+  <meta property="og:description" content="Follow your team live on the map during the Ten Tors Challenge on Dartmoor. Checkpoint times, estimated position, and finish ETA — updated every 30 seconds." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Ten Tors Tracker" />
+  <meta name="twitter:description" content="Follow your team live during the Ten Tors Challenge. Checkpoint times, map position, and finish ETA updated every 30 seconds." />
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     body {
@@ -96,6 +103,16 @@
     .guide-body p { margin: 0 0 8px; }
     .guide-body ul { margin: 0 0 8px; padding-left: 18px; }
     .guide-body li { margin-bottom: 4px; }
+    .bmc-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      margin-top: 12px; padding: 9px 16px;
+      background: #FFDD00; color: #000; font: 600 13px system-ui;
+      border: none; border-radius: 8px; text-decoration: none; cursor: pointer;
+    }
+    .bmc-btn:hover { background: #f0ce00; }
+    .disclaimer {
+      margin-top: 10px; font-size: 12px; color: #aaa; line-height: 1.6;
+    }
   </style>
 </head>
 <body>
@@ -145,8 +162,21 @@
     </div>
   </details>
 
+  <details class="guide">
+    <summary>About this project</summary>
+    <div class="guide-body">
+      <p>Ten Tors Tracker is a free, independent hobby project built by a Ten Tors parent who wanted a better way to follow teams on the moor during the event. It is <strong>not affiliated with, endorsed by, or connected to the Ten Tors organisation or the British Army</strong> in any way.</p>
+      <p>Checkpoint times are fetched directly from the official <a href="https://tentors.org.uk" target="_blank">tentors.org.uk</a> results pages. Everything else — the map, position estimates, pace predictions, elevation profiles — is built on top of that public data as a personal side project.</p>
+      <p>If it helped you follow your team and you'd like to support the running costs, a coffee is always appreciated:</p>
+      <a class="bmc-btn" href="https://buymeacoffee.com/bobinabout" target="_blank" rel="noopener">
+        ☕ Buy me a coffee
+      </a>
+      <p class="disclaimer">The source code is open and free to use — <a href="https://github.com/BobC76/tentors-tracker" target="_blank">view on GitHub</a>.</p>
+    </div>
+  </details>
+
   <footer class="attribution">
-    <div>Route data &copy; <a href="https://tentors.org.uk" target="_blank">Ten Tors</a></div>
+    <div>Route &amp; results data &copy; <a href="https://tentors.org.uk" target="_blank">Ten Tors</a> · not affiliated</div>
     <div>Map &copy; <a href="https://openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors</div>
     <div><a href="https://github.com/BobC76/tentors-tracker" target="_blank">View source on GitHub</a></div>
   </footer>

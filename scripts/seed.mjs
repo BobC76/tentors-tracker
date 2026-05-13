@@ -382,19 +382,26 @@ async function seedAllocations() {
 async function applyGpxRoutes() {
   const configPath = path.join(ROOT, "data", year, "config.json");
   const tracksPath = path.join(ROOT, "data", year, "tracks.json");
+  const routesPath = path.join(ROOT, "routes.json");
 
-  let config;
+  let config, routesJson;
   try {
     config = JSON.parse(await fs.readFile(configPath, "utf8"));
+    routesJson = JSON.parse(await fs.readFile(routesPath, "utf8"));
   } catch (e) {
-    throw new Error(`Could not read config.json: ${e.message}`);
+    throw new Error(`Could not read config or routes.json: ${e.message}`);
   }
 
   function parseGpxTrack(text) {
     const pts = [];
-    const re = /<trkpt\s[^>]*lat="([^"]+)"[^>]*lon="([^"]+)"/gi;
+    const re = /<trkpt\s[^>]*lat="([^"]+)"[^>]*lon="([^"]+)"[^>]*>([\s\S]*?)<\/trkpt>/gi;
     let m;
-    while ((m = re.exec(text)) !== null) pts.push({ lat: parseFloat(m[1]), lon: parseFloat(m[2]) });
+    while ((m = re.exec(text)) !== null) {
+      const pt = { lat: parseFloat(m[1]), lon: parseFloat(m[2]) };
+      const ele = m[3].match(/<ele>([^<]+)<\/ele>/);
+      if (ele) pt.ele = parseFloat(ele[1]);
+      pts.push(pt);
+    }
     return pts;
   }
 
@@ -403,6 +410,7 @@ async function applyGpxRoutes() {
   const tracks = {};
   let fetched = 0;
   for (const [letter, route] of Object.entries(config.routes ?? {})) {
+    const routeTracks = [];
     for (const team of (route.teams ?? [])) {
       if (fetched > 0) await sleep(1000);
       const gpxUrl = team.gpx_url || `${baseUrl}/eventdata/team${team.id.toUpperCase()}.gpx`;
@@ -413,16 +421,35 @@ async function applyGpxRoutes() {
         const pts = parseGpxTrack(await r.text());
         if (!pts.length) { console.warn(`  [${letter}] ${team.id}: no track points — skipping`); continue; }
         tracks[team.id] = pts;
+        routeTracks.push(pts);
         console.log(`  [${letter}] ${team.id}: ${pts.length} points`);
       } catch (e) {
         fetched++;
         console.warn(`  [${letter}] ${team.id}: fetch failed (${e.message}) — skipping`);
       }
     }
+
+    // Snap waypoint elevations from the first team track that has elevation data
+    const trackWithEle = routeTracks.find(t => t.some(p => p.ele != null));
+    if (trackWithEle && routesJson[letter]?.waypoints) {
+      for (const wp of routesJson[letter].waypoints) {
+        if (wp.lat == null) continue;
+        let minD = Infinity, bestEle = null;
+        for (const pt of trackWithEle) {
+          if (pt.ele == null) continue;
+          const d = Math.hypot(pt.lat - wp.lat, pt.lon - wp.lon);
+          if (d < minD) { minD = d; bestEle = pt.ele; }
+        }
+        if (bestEle != null) wp.ele = Math.round(bestEle);
+      }
+      console.log(`  [${letter}] waypoint elevations snapped`);
+    }
   }
 
   await fs.writeFile(tracksPath, JSON.stringify(tracks));
   console.log(`\n  Wrote ${Object.keys(tracks).length} team tracks → data/${year}/tracks.json`);
+  await fs.writeFile(routesPath, JSON.stringify(routesJson));
+  console.log(`  Updated waypoint elevations → routes.json`);
 }
 
 // ============================================================

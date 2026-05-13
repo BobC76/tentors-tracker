@@ -4,7 +4,7 @@
 export const config = { runtime: "nodejs" };
 
 export default async function handler(req, res) {
-  const letter = (req.query.letter || "e").toLowerCase();
+  const letter = (req.query.letter || "").toLowerCase();
   if (!/^[a-z]$/.test(letter)) {
     res.status(400).type("text/plain").send("Invalid route letter");
     return;

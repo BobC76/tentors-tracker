@@ -483,6 +483,11 @@ async function main() {
         b.querySelectorAll("tr").length > a.querySelectorAll("tr").length ? b : a
       );
       const rows = [...table.querySelectorAll("tr")];
+      if (!rows.length) {
+        card.innerHTML = buildHeader(team.name);
+        body.innerHTML = `<div class="wp not-found">No data rows found</div>`;
+        card.appendChild(body); panel.appendChild(card); continue;
+      }
       const headers = [...rows[0].querySelectorAll("th, td")].map(c => c.textContent.trim());
 
       const colToWp = headers.map((h, idx) => {
@@ -596,7 +601,7 @@ async function main() {
         }
 
         if (!pos) {
-          const i = bisect(cumDist, target);
+          const i = Math.min(bisect(cumDist, target), cumDist.length - 2);
           const t = (target - cumDist[i]) / (cumDist[i + 1] - cumDist[i] || 1);
           const a = coords[i], b = coords[i + 1] || a;
           pos = [a[1] + t * (b[1] - a[1]), a[0] + t * (b[0] - a[0])];

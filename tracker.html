@@ -166,7 +166,7 @@ function totalAscent(pts) {
   for (let i = 1; i < pts.length; i++) {
     if (pts[i].ele == null || pts[i-1].ele == null) continue;
     const d = pts[i].ele - pts[i-1].ele;
-    if (d > 2) gain += d;
+    if (d > 8) gain += d;
   }
   return Math.round(gain);
 }
@@ -416,7 +416,9 @@ async function main() {
     }
 
     const now = new Date();
-    const { sun: _eventSun } = tenTorsEventDates(parseInt(YEAR));
+    const { sat: _eventSat, sun: _eventSun } = tenTorsEventDates(parseInt(YEAR));
+    const eventSatStart = new Date(_eventSat); eventSatStart.setHours(0, 0, 0, 0);
+    const eventSunStart = new Date(_eventSun); eventSunStart.setHours(0, 0, 0, 0);
     const sundayDeadline = new Date(_eventSun); sundayDeadline.setHours(17, 0, 0, 0);
     const pastDeadline = now > sundayDeadline;
     let lastUpdated = null;
@@ -544,8 +546,10 @@ async function main() {
         const distSoFar = lastWp.routeDist - startWp.routeDist;
         let elapsedH;
         const today0600 = new Date(now); today0600.setHours(6, 0, 0, 0);
-        const isSundayMorning = now.getHours() >= 6 && now.getHours() < 19;
-        const isEvening = now.getHours() >= 19 || now.getHours() < 6;
+        const isEventSunday = now >= eventSunStart && !pastDeadline;
+        const inEventWeekend = now >= eventSatStart && !pastDeadline;
+        const isSundayMorning = isEventSunday && now.getHours() >= 6 && now.getHours() < 19;
+        const isEvening = inEventWeekend && (now.getHours() >= 19 || now.getHours() < 6);
 
         if (lastDayOffset === 1 && lastSatT) {
           const satWalking = (lastSatT - firstT) / 3600000;

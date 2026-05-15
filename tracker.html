@@ -679,10 +679,10 @@ async function main() {
       if (lastWp) {
         const distFromStart = lastWp.routeDist - wpStops[0].routeDist;
 
-        // Elevation: prefer per-team GPS track; fall back to waypoint elevations
+        // Elevation + distance: prefer per-team GPS track; fall back to waypoint elevations
         const rawTrack = teamTracks[team.id];
         const hasTrackEle = rawTrack?.some(p => p.ele != null);
-        let sparkPts = null, ascentVal = 0, progressFrac = null;
+        let sparkPts = null, ascentVal = 0, progressFrac = null, gpxDistM = null;
         if (hasTrackEle) {
           const trackCumDist = [0];
           for (let i = 1; i < rawTrack.length; i++) {
@@ -691,7 +691,8 @@ async function main() {
               [rawTrack[i].lon, rawTrack[i].lat]
             ));
           }
-          const trackTotal = trackCumDist[trackCumDist.length - 1] || 1;
+          gpxDistM = trackCumDist[trackCumDist.length - 1];
+          const trackTotal = gpxDistM || 1;
           const smoothedTrack = smoothEle(rawTrack);
           sparkPts = smoothedTrack.map((p, i) => ({ x: trackCumDist[i] / trackTotal, ele: p.ele }));
           ascentVal = totalAscent(smoothedTrack);
@@ -704,11 +705,13 @@ async function main() {
           }
         }
 
+        const coveredKm = ((gpxDistM ?? distFromStart) / 1000).toFixed(1);
+        const remainingKm = ((totalDist - lastWp.routeDist) / 1000).toFixed(1);
         const stats = document.createElement("div");
         stats.className = "stats";
         stats.innerHTML = `
-          <span><b>${(distFromStart / 1000).toFixed(1)}</b> km covered</span>
-          <span><b>${((totalDist - lastWp.routeDist) / 1000).toFixed(1)}</b> km remaining</span>
+          <span><b>${coveredKm}</b> km covered</span>
+          <span><b>${remainingKm}</b> km remaining</span>
           ${ascentVal ? `<span>↑ <b>${ascentVal.toLocaleString()}</b> m ascent</span>` : ""}
           <span>updated <b>${lastT.toLocaleTimeString().slice(0, 5)}</b></span>`;
         body.appendChild(stats);

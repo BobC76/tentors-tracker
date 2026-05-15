@@ -165,7 +165,8 @@ function elevationSparkline(pts, color, progressFrac) {
 // Inline (no px arg): sized to 1em for use in text. With px: fixed pixel size for map markers.
 function tentSvg(px, fillColor) {
   const size = px ? `width="${px}" height="${px}"` : `width=".9em" height=".85em" style="vertical-align:-.1em"`;
-  return `<svg viewBox="0 0 10 9" ${size} fill="${fillColor || "currentColor"}" aria-hidden="true"><path fill-rule="evenodd" d="M5 0L10 9H0Z M4 9V6.5h2V9Z"/></svg>`;
+  const fill = fillColor || "currentColor";
+  return `<svg viewBox="0 0 10 9" ${size} aria-hidden="true"><path fill-rule="evenodd" fill="${fill}" stroke="rgba(0,0,0,0.6)" stroke-width=".5" stroke-linejoin="round" d="M5 0L10 9H0Z M4 9V6.5h2V9Z"/></svg>`;
 }
 
 // Hysteresis ascent: count gain only when elevation rises >= threshold above last valley.

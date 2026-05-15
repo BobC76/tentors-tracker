@@ -671,7 +671,15 @@ async function main() {
         const hasTrackEle = rawTrack?.some(p => p.ele != null);
         let sparkPts = null, ascentVal = 0, progressFrac = null;
         if (hasTrackEle) {
-          sparkPts = rawTrack.map((p, i) => ({ x: i / (rawTrack.length - 1), ele: p.ele }));
+          const trackCumDist = [0];
+          for (let i = 1; i < rawTrack.length; i++) {
+            trackCumDist.push(trackCumDist[i - 1] + haversine(
+              [rawTrack[i - 1].lon, rawTrack[i - 1].lat],
+              [rawTrack[i].lon, rawTrack[i].lat]
+            ));
+          }
+          const trackTotal = trackCumDist[trackCumDist.length - 1] || 1;
+          sparkPts = rawTrack.map((p, i) => ({ x: trackCumDist[i] / trackTotal, ele: p.ele }));
           ascentVal = totalAscent(rawTrack);
         } else {
           const wpsWithEle = wpStops.filter(w => w.ele != null && w.lat != null);

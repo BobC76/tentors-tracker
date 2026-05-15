@@ -162,8 +162,8 @@ function elevationSparkline(pts, color, progressFrac) {
 }
 
 // Box-filter elevation to suppress GPS noise before ascent/display.
-// Window of 31 spans ~25 m at typical walking pace — removes ~10 m GPS noise.
-function smoothEle(pts, half = 15) {
+// Window of 11 spans ~9 m at typical walking pace — damps noise without losing hill detail.
+function smoothEle(pts, half = 5) {
   return pts.map((p, i) => {
     if (p.ele == null) return p;
     let sum = 0, count = 0;
@@ -174,12 +174,15 @@ function smoothEle(pts, half = 15) {
   });
 }
 
-function totalAscent(pts) {
-  let gain = 0;
-  for (let i = 1; i < pts.length; i++) {
-    if (pts[i].ele == null || pts[i-1].ele == null) continue;
-    const d = pts[i].ele - pts[i-1].ele;
-    if (d > 8) gain += d;
+// Hysteresis ascent: count gain only when elevation rises >= threshold above last valley.
+// For GPS tracks use threshold=20 (noise-safe on smoothed data); for clean waypoints use 8.
+function totalAscent(pts, threshold = 8) {
+  let gain = 0, valley = null;
+  for (const p of pts) {
+    if (p.ele == null) continue;
+    if (valley === null) { valley = p.ele; continue; }
+    if (p.ele < valley) { valley = p.ele; }
+    else if (p.ele - valley >= threshold) { gain += p.ele - valley; valley = p.ele; }
   }
   return Math.round(gain);
 }
@@ -695,7 +698,7 @@ async function main() {
           const trackTotal = gpxDistM || 1;
           const smoothedTrack = smoothEle(rawTrack);
           sparkPts = smoothedTrack.map((p, i) => ({ x: trackCumDist[i] / trackTotal, ele: p.ele }));
-          ascentVal = totalAscent(smoothedTrack);
+          ascentVal = totalAscent(smoothedTrack, 20);
         } else {
           const wpsWithEle = wpStops.filter(w => w.ele != null && w.lat != null);
           if (wpsWithEle.length >= 2) {

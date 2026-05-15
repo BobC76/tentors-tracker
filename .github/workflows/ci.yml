@@ -24,3 +24,6 @@ jobs:
           node --check server.mjs
           node --check scripts/seed.mjs
           for f in api/**/*.js; do node --check "$f"; done
+
+      - name: Run tests
+        run: node --test tests/seed.test.mjs

@@ -32,22 +32,24 @@ import proj4 from "proj4";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, "..");
 
-// --- Args ---
-const args = process.argv.slice(2);
-const year = args.find((a) => /^\d{4}$/.test(a));
-if (!year) {
-  console.error("Usage: node scripts/seed.mjs <year> [--base-url <url>]");
-  process.exit(1);
+// --- Args (only parsed when run directly; undefined when imported for tests) ---
+const isMain = process.argv[1] === fileURLToPath(import.meta.url);
+let year, baseUrl, applyGpx, autoGpx, isArchive;
+if (isMain) {
+  const args = process.argv.slice(2);
+  year = args.find((a) => /^\d{4}$/.test(a));
+  if (!year) {
+    console.error("Usage: node scripts/seed.mjs <year> [--base-url <url>]");
+    process.exit(1);
+  }
+  const baseUrlIdx = args.indexOf("--base-url");
+  baseUrl = (args.find((a) => a.startsWith("--base-url="))?.split("=")[1]
+    ?? (baseUrlIdx !== -1 ? args[baseUrlIdx + 1] : null)
+    ?? "https://www.tentors.org.uk").replace(/\/$/, "");
+  applyGpx = args.includes("--apply-gpx");
+  autoGpx  = args.includes("--auto-gpx");
+  isArchive = year !== new Date().getFullYear().toString();
 }
-const baseUrlIdx = args.indexOf("--base-url");
-const baseUrl = (args.find((a) => a.startsWith("--base-url="))?.split("=")[1]
-  ?? (baseUrlIdx !== -1 ? args[baseUrlIdx + 1] : null)
-  ?? "https://www.tentors.org.uk").replace(/\/$/, "");
-const applyGpx = args.includes("--apply-gpx");
-const autoGpx  = args.includes("--auto-gpx");  // like --apply-gpx but only if GPX URLs exist and tracks.json is absent
-
-const currentYear = new Date().getFullYear().toString();
-const isArchive = year !== currentYear;
 
 // --- OSGB36 → WGS84 ---
 const OSGB36 = "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs";
@@ -576,4 +578,8 @@ Add "nt_overrides" for controls with non-standard night times if needed.
 ${applyGpx ? "" : "Re-run with --apply-gpx after the event to add accurate GPS track data to routes.json.\n"}`);
 }
 
-main().catch((e) => { console.error(e); process.exit(1); });
+if (isMain) {
+  main().catch((e) => { console.error(e); process.exit(1); });
+}
+
+export { parseTors, parseRouteTables, parseTeamsTable, parseRouteAllocations, gridRefToLatLon, stripSuffix };

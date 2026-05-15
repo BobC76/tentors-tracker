@@ -174,6 +174,102 @@ function totalAscent(pts, threshold = 5) {
   return Math.round(gain);
 }
 
+// Derives team status, position, pace, and prediction from parsed checkpoint data.
+function analyzeTeamStatus(parsed, eventCtx, routeCtx) {
+  const { firstT, lastT, lastIdx, dataCells, lastSatT, lastSatWp, lastDayOffset, isCamped, inferredCamp, isDnf, lastWp } = parsed;
+  const { now, eventSunStart, eventSatStart, pastDeadline } = eventCtx;
+  const { wpStops, totalDist, cumDist, coords } = routeCtx;
+
+  if (lastWp == null) return { status: "not started", pace: "", pos: null, cssClass: "notstarted" };
+
+  const startWp = wpStops[0];
+  const distSoFar = lastWp.routeDist - startWp.routeDist;
+  const today0600 = new Date(now); today0600.setHours(6, 0, 0, 0);
+  const isEventSunday = now >= eventSunStart && !pastDeadline;
+  const inEventWeekend = now >= eventSatStart && !pastDeadline;
+  const isSundayMorning = isEventSunday && now.getHours() >= 6 && now.getHours() < 19;
+  const isEvening = inEventWeekend && (now.getHours() >= 19 || now.getHours() < 6);
+
+  let elapsedH;
+  if (lastDayOffset === 1 && lastSatT) {
+    const satWalking = (lastSatT - firstT) / 3600000;
+    const sunWalking = (lastT - today0600) / 3600000;
+    elapsedH = Math.max(satWalking + sunWalking, 1 / 60);
+  } else {
+    elapsedH = Math.max((lastT - firstT) / 3600000, 1 / 60);
+  }
+  const paceKmh = distSoFar / 1000 / elapsedH;
+
+  const isFinished = normalizeWp(lastWp.label) === "FINISH";
+  const needsRestart = inferredCamp && isSundayMorning;
+  const hasDay2Data = lastDayOffset === 1;
+
+  let stopped = isFinished || isEvening, missedNt = null;
+  if (pastDeadline && !isFinished) stopped = true;
+  if (inferredCamp && !isSundayMorning) stopped = true;
+  if (isCamped && !needsRestart && !hasDay2Data) stopped = true;
+
+  if (!stopped) {
+    const startIdx = wpStops.findIndex(w => w === lastWp);
+    for (let k = startIdx + 1; k < wpStops.length; k++) {
+      const wp = wpStops[k];
+      if (!wp.nt) continue;
+      const segDist = wp.routeDist - lastWp.routeDist;
+      const segH = segDist / 1000 / Math.max(paceKmh, 0.01);
+      const projArr = new Date(lastT.getTime() + segH * 3600000);
+      const ntDate = parseHHMM(wp.nt, lastT);
+      if (projArr > ntDate) { stopped = true; missedNt = wp; }
+      break;
+    }
+  }
+
+  let target, pos;
+  if (stopped) {
+    target = lastWp.routeDist;
+    pos = [lastWp.lat, lastWp.lon];
+  } else {
+    const elapsed = needsRestart ? (now - today0600) / 3600000 : (now - lastT) / 3600000;
+    target = Math.min(lastWp.routeDist + paceKmh * elapsed * 1000, totalDist);
+    const i = Math.min(bisect(cumDist, target), cumDist.length - 2);
+    const t = (target - cumDist[i]) / (cumDist[i + 1] - cumDist[i] || 1);
+    const a = coords[i], b = coords[i + 1] || a;
+    pos = [a[1] + t * (b[1] - a[1]), a[0] + t * (b[0] - a[0])];
+  }
+
+  const impliedDnf = pastDeadline && !isFinished;
+  const teamDnf = isDnf || impliedDnf;
+  const atFinish = !isFinished && !teamDnf && target >= totalDist;
+  const cellTime = (dataCells[lastIdx]?.match(/(\d{1,2}:\d{2})/) || [])[1] || "";
+  const campWpLabel = lastSatWp ? lastSatWp.label : lastWp.label;
+
+  const status = teamDnf
+    ? `✕ Did not finish`
+    : isFinished
+      ? `finished at ${cellTime}`
+      : atFinish
+        ? `⏱️ At finish — awaiting confirmation`
+        : needsRestart
+          ? `🚶 walking from ${campWpLabel} (since 06:00)`
+          : hasDay2Data
+            ? `${lastWp.label} @ ${cellTime}`
+            : (isCamped || inferredCamp || isEvening)
+              ? `⛺ camped at ${lastWp.label} (${cellTime})`
+              : stopped
+                ? `stopped at ${lastWp.label} (${cellTime})`
+                : `${lastWp.label} @ ${cellTime}`;
+  const pace = (paceKmh > 0 && !teamDnf && !atFinish) ? ` · ${paceKmh.toFixed(1)} km/h` : "";
+
+  return {
+    status, pace, pos,
+    cssClass: isFinished ? "finished" : teamDnf ? "dnf" : null,
+    target, stopped, isFinished, teamDnf, atFinish,
+    isCamped: (isCamped || inferredCamp || isEvening) && !needsRestart && !hasDay2Data,
+    isSundayRestart: needsRestart, hasDay2Data,
+    campWp: lastSatWp || lastWp, missedNt,
+    paceKmh, lastWp, lastT, cellTime,
+  };
+}
+
 // ---- parse URL params ----
 const params = new URLSearchParams(location.search);
 const YEAR = params.get("year") || "2026";
@@ -560,108 +656,21 @@ async function main() {
       const isCamped = campedAtCell >= 0 && campedAtCell === lastIdx;
       const inferredCamp = lastDayOffset === 0 && lastWp != null;
 
-      let status = "—", pace = "", pos = null;
-
-      if (lastWp == null) {
-        card.classList.add("notstarted");
-        status = "not started";
-      } else {
-        const startWp = wpStops[0];
-        const distSoFar = lastWp.routeDist - startWp.routeDist;
-        let elapsedH;
-        const today0600 = new Date(now); today0600.setHours(6, 0, 0, 0);
-        const isEventSunday = now >= eventSunStart && !pastDeadline;
-        const inEventWeekend = now >= eventSatStart && !pastDeadline;
-        const isSundayMorning = isEventSunday && now.getHours() >= 6 && now.getHours() < 19;
-        const isEvening = inEventWeekend && (now.getHours() >= 19 || now.getHours() < 6);
-
-        if (lastDayOffset === 1 && lastSatT) {
-          const satWalking = (lastSatT - firstT) / 3600000;
-          const sunWalking = (lastT - today0600) / 3600000;
-          elapsedH = Math.max(satWalking + sunWalking, 1 / 60);
-        } else {
-          elapsedH = Math.max((lastT - firstT) / 3600000, 1 / 60);
-        }
-        const paceKmh = distSoFar / 1000 / elapsedH;
-
-        const isFinished = normalizeWp(lastWp.label) === "FINISH";
-        const needsRestart = inferredCamp && isSundayMorning;
-        const hasDay2Data = lastDayOffset === 1;
-
-        let stopped = isFinished || isEvening, missedNt = null;
-        if (pastDeadline && !isFinished) stopped = true;
-        if (inferredCamp && !isSundayMorning) stopped = true;
-        if (isCamped && !needsRestart && !hasDay2Data) stopped = true;
-
-        if (!stopped) {
-          const startIdx = wpStops.findIndex(w => w === lastWp);
-          for (let k = startIdx + 1; k < wpStops.length; k++) {
-            const wp = wpStops[k];
-            if (!wp.nt) continue;
-            const segDist = wp.routeDist - lastWp.routeDist;
-            const segH = segDist / 1000 / Math.max(paceKmh, 0.01);
-            const projArr = new Date(lastT.getTime() + segH * 3600000);
-            const ntDate = parseHHMM(wp.nt, lastT);
-            if (projArr > ntDate) { stopped = true; missedNt = wp; }
-            break;
-          }
-        }
-
-        let target;
-        if (stopped) {
-          pos = [lastWp.lat, lastWp.lon];
-          target = lastWp.routeDist;
-        } else if (needsRestart) {
-          const sinceSix = (now - today0600) / 3600000;
-          target = Math.min(lastWp.routeDist + paceKmh * sinceSix * 1000, totalDist);
-        } else {
-          const sinceLast = (now - lastT) / 3600000;
-          target = Math.min(lastWp.routeDist + paceKmh * sinceLast * 1000, totalDist);
-        }
-
-        if (!pos) {
-          const i = Math.min(bisect(cumDist, target), cumDist.length - 2);
-          const t = (target - cumDist[i]) / (cumDist[i + 1] - cumDist[i] || 1);
-          const a = coords[i], b = coords[i + 1] || a;
-          pos = [a[1] + t * (b[1] - a[1]), a[0] + t * (b[0] - a[0])];
-        }
-
-        const impliedDnf = pastDeadline && !isFinished;
-        const teamDnf = isDnf || impliedDnf;
-
-        const atFinish = !isFinished && !teamDnf && target >= totalDist;
-
-        if (isFinished) card.classList.add("finished");
-        if (teamDnf) card.classList.add("dnf");
-
-        const cellTime = (dataCells[lastIdx]?.match(/(\d{1,2}:\d{2})/) || [])[1] || "";
-        const campWpLabel = lastSatWp ? lastSatWp.label : lastWp.label;
-
-        status = teamDnf
-          ? `✕ Did not finish`
-          : isFinished
-            ? `finished at ${cellTime}`
-            : atFinish
-              ? `⏱️ At finish — awaiting confirmation`
-              : needsRestart
-                ? `🚶 walking from ${campWpLabel} (since 06:00)`
-                : hasDay2Data
-                  ? `${lastWp.label} @ ${cellTime}`
-                  : (isCamped || inferredCamp || isEvening)
-                    ? `⛺ camped at ${lastWp.label} (${cellTime})`
-                    : stopped
-                      ? `stopped at ${lastWp.label} (${cellTime})`
-                      : `${lastWp.label} @ ${cellTime}`;
-        pace = (paceKmh > 0 && !teamDnf && !atFinish) ? ` · ${paceKmh.toFixed(1)} km/h` : "";
-
-        team._target = target;
-        team._stopped = stopped; team._isFinished = isFinished; team._isDnf = teamDnf; team._atFinish = atFinish;
-        team._isCamped = (isCamped || inferredCamp || isEvening) && !needsRestart && !hasDay2Data;
-        team._isSundayRestart = needsRestart; team._hasDay2Data = hasDay2Data;
-        team._campWp = lastSatWp || lastWp; team._missedNt = missedNt;
-        team._paceKmh = paceKmh; team._lastWp = lastWp; team._lastT = lastT;
-        team._cellTime = cellTime;
-      }
+      const analysis = analyzeTeamStatus(
+        { firstT, lastT, lastIdx, dataCells, lastSatT, lastSatWp, lastDayOffset, isCamped, inferredCamp, isDnf, lastWp },
+        { now, eventSunStart, eventSatStart, pastDeadline },
+        { wpStops, totalDist, cumDist, coords }
+      );
+      const { status, pace, pos } = analysis;
+      if (analysis.cssClass) card.classList.add(analysis.cssClass);
+      team._target = analysis.target;
+      team._stopped = analysis.stopped; team._isFinished = analysis.isFinished;
+      team._isDnf = analysis.teamDnf; team._atFinish = analysis.atFinish;
+      team._isCamped = analysis.isCamped; team._isSundayRestart = analysis.isSundayRestart;
+      team._hasDay2Data = analysis.hasDay2Data; team._campWp = analysis.campWp;
+      team._missedNt = analysis.missedNt; team._paceKmh = analysis.paceKmh;
+      team._lastWp = analysis.lastWp; team._lastT = analysis.lastT;
+      team._cellTime = analysis.cellTime;
 
       card.innerHTML = buildHeader(teamName);
       body.innerHTML = `<div class="wp">${status}<span class="pace">${pace}</span></div>`;

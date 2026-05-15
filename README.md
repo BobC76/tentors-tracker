@@ -58,7 +58,9 @@ After the event, Ten Tors publishes per-team GPX files. Run with `--apply-gpx` t
 node scripts/seed.mjs <year> --apply-gpx
 ```
 
-Or tick the *Apply GPX* checkbox in the GitHub Actions workflow. This writes per-team track arrays into `data/<year>/tracks.json`; the tracker fetches this file at startup and uses each team's own GPS recording for their route line. Waypoint elevations (used for the in-event sparkline) are also snapped from the GPX data and stored in `routes.json`.
+Or tick the *Apply GPX* checkbox in the GitHub Actions workflow. This writes per-team track arrays into `data/<year>/tracks.json`; the tracker fetches this file at startup and uses each team's own GPS recording for their route line.
+
+GPS altitude in the raw GPX files is inaccurate (±50 m). After downloading tracks, the seed automatically queries the [ASTER 30m DEM](https://www.opentopodata.org) (free, no API key required) to replace GPS altitude with accurate terrain elevation on every track point and waypoint. This brings ascent figures in line with what Garmin/RideWithGPS report. The DEM pass adds roughly 5–15 minutes depending on team count (API rate limit: 1 req/sec, 100 points/req).
 
 ### config.json structure
 

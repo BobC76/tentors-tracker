@@ -161,16 +161,18 @@ function elevationSparkline(pts, color, progressFrac) {
   return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:32px;display:block;margin:3px 0 0;"><path d="${area}" fill="${color}" opacity="0.15"/><path d="${line}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round"/>${marker}</svg>`;
 }
 
-// Box-filter elevation to suppress GPS noise before ascent/display.
-// Window of 11 spans ~9 m at typical walking pace — damps noise without losing hill detail.
-function smoothEle(pts, half = 5) {
+// Median-filter elevation to reject GPS altitude outliers before ascent/display.
+// Median (vs mean) removes large spikes without pulling the baseline up.
+// half=3 → 7-point window, ~6 m at typical walking pace.
+function smoothEle(pts, half = 3) {
   return pts.map((p, i) => {
     if (p.ele == null) return p;
-    let sum = 0, count = 0;
+    const vals = [];
     for (let j = Math.max(0, i - half); j <= Math.min(pts.length - 1, i + half); j++) {
-      if (pts[j].ele != null) { sum += pts[j].ele; count++; }
+      if (pts[j].ele != null) vals.push(pts[j].ele);
     }
-    return { ...p, ele: count ? sum / count : p.ele };
+    vals.sort((a, b) => a - b);
+    return { ...p, ele: vals[Math.floor(vals.length / 2)] };
   });
 }
 

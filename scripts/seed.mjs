@@ -379,6 +379,37 @@ async function seedAllocations() {
 // team per route that has a gpx_url recorded in config.json.
 // ============================================================
 
+// Query ASTER 30m DEM from opentopodata.org and replace ele on each point in-place.
+// pts is mutated directly (objects are shared references).
+// Returns number of points successfully corrected.
+async function applyDemElevations(pts, sleep) {
+  const BATCH = 100;
+  const DEM = "https://api.opentopodata.org/v1/aster30m";
+  let fixed = 0;
+  for (let i = 0; i < pts.length; i += BATCH) {
+    if (i > 0) await sleep(1100); // slightly over 1 s — free tier is 1 req/sec
+    const chunk = pts.slice(i, i + BATCH);
+    const locations = chunk.map(p => `${p.lat.toFixed(6)},${p.lon.toFixed(6)}`).join("|");
+    try {
+      const r = await fetch(DEM, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "User-Agent": "tentors-tracker/0.1" },
+        body: JSON.stringify({ locations }),
+      });
+      if (!r.ok) { console.warn(`    DEM API ${r.status} on batch ${Math.floor(i/BATCH)+1} — keeping GPS elevation`); continue; }
+      const json = await r.json();
+      if (json.status !== "OK") { console.warn(`    DEM API error: ${json.error}`); continue; }
+      for (let j = 0; j < chunk.length; j++) {
+        const e = json.results?.[j]?.elevation;
+        if (e != null) { chunk[j].ele = Math.round(e); fixed++; }
+      }
+    } catch (e) {
+      console.warn(`    DEM fetch failed (${e.message}) — keeping GPS elevation for this batch`);
+    }
+  }
+  return fixed;
+}
+
 async function applyGpxRoutes() {
   const configPath = path.join(ROOT, "data", year, "config.json");
   const tracksPath = path.join(ROOT, "data", year, "tracks.json");
@@ -407,10 +438,10 @@ async function applyGpxRoutes() {
 
   const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+  // Step 6a: download all GPX tracks
   const tracks = {};
   let fetched = 0;
   for (const [letter, route] of Object.entries(config.routes ?? {})) {
-    const routeTracks = [];
     for (const team of (route.teams ?? [])) {
       if (fetched > 0) await sleep(1000);
       const gpxUrl = team.gpx_url || `${baseUrl}/eventdata/team${team.id.toUpperCase()}.gpx`;
@@ -421,29 +452,32 @@ async function applyGpxRoutes() {
         const pts = parseGpxTrack(await r.text());
         if (!pts.length) { console.warn(`  [${letter}] ${team.id}: no track points — skipping`); continue; }
         tracks[team.id] = pts;
-        routeTracks.push(pts);
         console.log(`  [${letter}] ${team.id}: ${pts.length} points`);
       } catch (e) {
         fetched++;
         console.warn(`  [${letter}] ${team.id}: fetch failed (${e.message}) — skipping`);
       }
     }
+  }
 
-    // Snap waypoint elevations from the first team track that has elevation data
-    const trackWithEle = routeTracks.find(t => t.some(p => p.ele != null));
-    if (trackWithEle && routesJson[letter]?.waypoints) {
-      for (const wp of routesJson[letter].waypoints) {
-        if (wp.lat == null) continue;
-        let minD = Infinity, bestEle = null;
-        for (const pt of trackWithEle) {
-          if (pt.ele == null) continue;
-          const d = Math.hypot(pt.lat - wp.lat, pt.lon - wp.lon);
-          if (d < minD) { minD = d; bestEle = pt.ele; }
-        }
-        if (bestEle != null) wp.ele = Math.round(bestEle);
-      }
-      console.log(`  [${letter}] waypoint elevations snapped`);
-    }
+  // Step 6b: replace GPS altitude with ASTER 30m DEM elevation on all track points.
+  // Objects are mutated in place so tracks[id] automatically reflects the corrections.
+  const allTrackPts = Object.values(tracks).flat();
+  if (allTrackPts.length) {
+    const batches = Math.ceil(allTrackPts.length / 100);
+    console.log(`\n  DEM elevation correction: ${allTrackPts.length} track points across ${Object.keys(tracks).length} teams (~${batches} API calls, ~${Math.ceil(batches * 1.1 / 60)} min)...`);
+    const fixed = await applyDemElevations(allTrackPts, sleep);
+    console.log(`  Corrected ${fixed}/${allTrackPts.length} track point elevations from DEM`);
+  }
+
+  // Step 6c: DEM-correct waypoint elevations directly at their exact lat/lon.
+  // This is more accurate than snapping from the nearest (noisy) GPS track point.
+  const allWaypoints = Object.values(routesJson)
+    .flatMap(r => (r.waypoints ?? []).filter(w => w.lat != null));
+  if (allWaypoints.length) {
+    console.log(`\n  DEM elevation correction: ${allWaypoints.length} waypoints...`);
+    const fixed = await applyDemElevations(allWaypoints, sleep);
+    console.log(`  Corrected ${fixed}/${allWaypoints.length} waypoint elevations from DEM`);
   }
 
   await fs.writeFile(tracksPath, JSON.stringify(tracks));

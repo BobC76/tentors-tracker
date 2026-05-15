@@ -13,13 +13,14 @@ Supports all routes (A–Z) and all teams for any event year.
 - **Checkpoint times** — pulled from the Ten Tors live results pages; visited checkpoints are highlighted
 - **Elevation profile** — sparkline showing the route's elevation, with a progress marker during the event
 - **Predictions** — estimates pace from recorded check-ins and projects:
-  - ⛺ overnight camp location (first NT cut-off the team can't reach in time)
+  - Tent marker showing overnight camp location (first NT cut-off the team can't reach in time)
   - 🏁 ETA at finish with a ±30 min confidence range
   - ⏱️ "Approaching finish" when pace puts a team at the finish but no confirmation is recorded yet
 - **DNF detection** — teams marked "DID NOT FINISH" in the results page show red with no ETA; teams still unfinished after Sunday 17:00 are treated as implied DNF
 - **Per-team GPS tracks** — after the event, each team's actual GPS recording is shown as their route line (post-event only; straight waypoint segments are used during the event)
+- **Accurate elevation** — GPS altitude is replaced with ASTER 30m DEM data during seeding, giving ascent figures that match Garmin/RideWithGPS
 - **Resilient fetching** — if tentors.org.uk is slow or temporarily unavailable, the tracker falls back to the last successfully fetched data and shows a warning
-- **Multi-year** — archive years are accessible via the year selector once added to `data/years.json`
+- **Multi-year** — archive years are accessible via the year selector
 
 ## Run locally
 
@@ -35,7 +36,20 @@ The server proxies `/api/route/:letter` to tentors.org.uk to avoid CORS issues.
 For local testing, route T has a synthetic "Test Team" injected that advances
 through checkpoints every 30 seconds.
 
-## Seeding data for a new year
+## Year lifecycle (automatic)
+
+From 2027 onwards, everything is handled by the `auto-seed` GitHub Actions workflow, which runs weekly year-round and daily throughout May:
+
+1. Seeds the current year's teams, routes, and waypoints from tentors.org.uk
+2. Once post-event GPX files appear, automatically downloads them and applies DEM elevation correction
+3. Updates `data/years.json` so the new year becomes current and old years become archive
+4. Commits changes and pushes — Vercel redeploys automatically
+
+**No manual steps are needed.** If the workflow fails (upstream down, HTML structure changed, etc.), GitHub sends a failure email.
+
+## Seeding data manually
+
+If you need to reseed outside the automated schedule:
 
 ```
 node scripts/seed.mjs <year>
@@ -46,21 +60,21 @@ Or trigger it from the **Actions** tab on GitHub (→ *Seed year data* → *Run 
 This fetches from tentors.org.uk and writes:
 - `routes.json` — waypoint lat/lon for all routes (shared across years)
 - `data/<year>/teams-raw.json` — raw establishment list
-- `data/<year>/config.json` — route sections with teams fully populated from `/page/route-allocations`
+- `data/<year>/config.json` — route sections with teams fully populated
 
-After seeding, add the new year to `data/years.json` (see Year management below).
+After seeding, `data/years.json` is updated automatically via `scripts/update-years.mjs`.
 
 ### Applying GPX track data (post-event)
 
-After the event, Ten Tors publishes per-team GPX files. Run with `--apply-gpx` to download them and replace the straight waypoint-to-waypoint lines with the actual GPS trail:
+After the event, Ten Tors publishes per-team GPX files. Run with `--apply-gpx` to download them and replace the straight waypoint lines with actual GPS trails:
 
 ```
 node scripts/seed.mjs <year> --apply-gpx
 ```
 
-Or tick the *Apply GPX* checkbox in the GitHub Actions workflow. This writes per-team track arrays into `data/<year>/tracks.json`; the tracker fetches this file at startup and uses each team's own GPS recording for their route line.
+Or use `--auto-gpx` to apply GPX only if URLs are present and tracks haven't been applied yet (what the auto-seed workflow uses).
 
-GPS altitude in the raw GPX files is inaccurate (±50 m). After downloading tracks, the seed automatically queries the [ASTER 30m DEM](https://www.opentopodata.org) (free, no API key required) to replace GPS altitude with accurate terrain elevation on every track point and waypoint. This brings ascent figures in line with what Garmin/RideWithGPS report. The DEM pass adds roughly 5–15 minutes depending on team count (API rate limit: 1 req/sec, 100 points/req).
+This writes per-team track arrays into `data/<year>/tracks.json`. GPS altitude in the raw GPX files is inaccurate (±50 m) — the seed automatically queries the [ASTER 30m DEM](https://www.opentopodata.org) (free, no API key) to replace every track point and waypoint elevation with accurate terrain data. This takes roughly 5–15 minutes depending on team count (API rate limit: 1 req/sec, 100 points/req).
 
 ### config.json structure
 
@@ -93,28 +107,6 @@ Hosted on **Vercel**:
 - `api/route/[letter].js` — serverless proxy for the upstream results HTML (CORS workaround)
 - `api/version.js` — returns the current deploy SHA for auto-reload on redeploy
 - everything else is static, served from the repo root
-
-## Year management
-
-`data/years.json` controls the year selector:
-
-```json
-[
-  { "year": 2026, "current": true }
-]
-```
-
-- **`current`** — marks the live year; all others show as "archive" in the selector
-- **`event_active`** *(optional override)* — the tracker automatically switches to 30-second polling on the event weekend (Saturday–Sunday following the May Day bank holiday). Set `"event_active": true` to force it on, or `false` to force it off, if the event date ever differs.
-
-When the current year appears in the Ten Tors archive (tentors.org.uk/page/archive), add the new year and mark the old one archived:
-
-```json
-[
-  { "year": 2027, "current": true },
-  { "year": 2026, "current": false }
-]
-```
 
 ## Attribution & disclaimer
 

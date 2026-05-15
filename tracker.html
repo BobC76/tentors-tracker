@@ -272,7 +272,6 @@ function analyzeTeamStatus(parsed, eventCtx, routeCtx) {
 
 // ---- parse URL params ----
 const params = new URLSearchParams(location.search);
-const YEAR = params.get("year") || "2026";
 const TEAM_IDS = (params.get("teams") || "").split(",").map(s => s.trim()).filter(Boolean);
 
 // ---- event date calculation ----
@@ -297,16 +296,21 @@ function autoEventActive(year) {
 
 // ---- main ----
 async function main() {
+  // Resolve year: URL param takes precedence, else use the current year from years.json.
+  const years = await fetch("data/years.json").then(r => r.ok ? r.json() : []);
+  const YEAR = params.get("year")
+    || (years.find(y => y.current) ?? years[0])?.year?.toString()
+    || new Date().getFullYear().toString();
+
   // Update back link to carry year + teams so selection is remembered.
   document.getElementById("back-link").href =
     `index.html?year=${encodeURIComponent(YEAR)}&teams=${encodeURIComponent(TEAM_IDS.join(","))}`;
 
-  const [config, years, teamTracks] = await Promise.all([
+  const [config, teamTracks] = await Promise.all([
     fetch(`data/${YEAR}/config.json`).then(r => {
       if (!r.ok) throw new Error(`Config not found for ${YEAR}`);
       return r.json();
     }),
-    fetch("data/years.json").then(r => r.ok ? r.json() : []),
     fetch(`data/${YEAR}/tracks.json`).then(r => r.ok ? r.json() : {}),
   ]);
   const yearMeta = years.find(y => y.year?.toString() === YEAR);

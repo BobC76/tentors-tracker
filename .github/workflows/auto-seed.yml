@@ -1,0 +1,56 @@
+name: Auto-seed
+
+# Keeps team, route, and track data current without manual intervention.
+# - Weekly year-round: picks up team/allocation changes
+# - Daily in May: catches when post-event GPX files become available quickly
+# - Gracefully does nothing if upstream hasn't published data yet
+# - Workflow failure = something genuinely broken = GitHub sends failure email
+
+on:
+  schedule:
+    - cron: '0 3 * * 0'   # Every Sunday 03:00 UTC (year-round)
+    - cron: '0 3 * 5 *'   # Every day in May 03:00 UTC (event month)
+  workflow_dispatch:
+    inputs:
+      year:
+        description: 'Year to seed (defaults to current year)'
+        required: false
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Resolve year
+        id: year
+        run: |
+          YEAR="${{ inputs.year }}"
+          if [ -z "$YEAR" ]; then YEAR=$(date +%Y); fi
+          echo "value=$YEAR" >> $GITHUB_OUTPUT
+
+      - name: Seed and update years
+        run: |
+          node scripts/seed.mjs ${{ steps.year.outputs.value }} --auto-gpx
+          node scripts/update-years.mjs ${{ steps.year.outputs.value }}
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add routes.json data/years.json "data/${{ steps.year.outputs.value }}/"
+          if git diff --cached --quiet; then
+            echo "No changes — data is already up to date."
+          else
+            git commit -m "Auto-seed ${{ steps.year.outputs.value }} data"
+            git push
+          fi

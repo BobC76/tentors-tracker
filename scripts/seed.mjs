@@ -44,6 +44,7 @@ const baseUrl = (args.find((a) => a.startsWith("--base-url="))?.split("=")[1]
   ?? (baseUrlIdx !== -1 ? args[baseUrlIdx + 1] : null)
   ?? "https://www.tentors.org.uk").replace(/\/$/, "");
 const applyGpx = args.includes("--apply-gpx");
+const autoGpx  = args.includes("--auto-gpx");  // like --apply-gpx but only if GPX URLs exist and tracks.json is absent
 
 const currentYear = new Date().getFullYear().toString();
 const isArchive = year !== currentYear;
@@ -186,17 +187,30 @@ async function seedRoutes(torsByName) {
     output[letter] = { waypoints };
   }
 
-  // Preserve manually-entered routes not in the fetched set
+  const fetchedCount = Object.keys(output).length;
+
+  // Preserve manually-entered routes and DEM-corrected elevations from previous seed
   const routesPath = path.join(ROOT, "routes.json");
+  let existingRoutes = {};
   try {
-    const existing = JSON.parse(await fs.readFile(routesPath, "utf8"));
-    for (const [l, d] of Object.entries(existing)) {
+    existingRoutes = JSON.parse(await fs.readFile(routesPath, "utf8"));
+    for (const [l, d] of Object.entries(existingRoutes)) {
       if (!output[l]) { console.log(`  Preserving manual route ${l}`); output[l] = d; }
     }
   } catch { /* no existing file */ }
 
+  // Carry forward ele values set by DEM correction so re-seeding doesn't wipe them
+  for (const [letter, route] of Object.entries(output)) {
+    const existingWps = existingRoutes[letter]?.waypoints ?? [];
+    for (const wp of route.waypoints) {
+      const prev = existingWps.find(w => w.label === wp.label);
+      if (prev?.ele != null) wp.ele = prev.ele;
+    }
+  }
+
   await fs.writeFile(routesPath, JSON.stringify(output, null, 2));
   console.log(`  Wrote routes.json (${Object.keys(output).length} routes)`);
+  return fetchedCount;
 
   if (missing.length) {
     const unique = [...new Set(missing)].sort();
@@ -501,7 +515,11 @@ async function main() {
 
   // 2. Routes → routes.json
   console.log("\nStep 2: Fetching route sequences → routes.json...");
-  await seedRoutes(torsByName);
+  const routeCount = await seedRoutes(torsByName);
+  if (routeCount === 0) {
+    console.log(`\nNo routes found — ${year} data may not be published yet. Nothing written.`);
+    process.exit(0);
+  }
 
   // 3. Results page → route letters
   console.log("\nStep 3: Fetching results page...");
@@ -518,8 +536,33 @@ async function main() {
   await seedAllocations();
 
   // 6. (optional) Apply GPX track data → routes.json
-  if (applyGpx) {
-    console.log("\nStep 6: Applying GPX route tracks...");
+  let shouldApplyGpx = applyGpx;
+  if (autoGpx && !applyGpx) {
+    const tracksPath = path.join(ROOT, "data", year, "tracks.json");
+    let hasExistingTracks = false;
+    try {
+      const t = JSON.parse(await fs.readFile(tracksPath, "utf8"));
+      hasExistingTracks = Object.keys(t).length > 0;
+    } catch { /* no tracks.json yet */ }
+
+    if (hasExistingTracks) {
+      console.log("\nStep 6: GPX tracks already applied — skipping.");
+    } else {
+      const configPath = path.join(ROOT, "data", year, "config.json");
+      const config = JSON.parse(await fs.readFile(configPath, "utf8"));
+      const hasGpxUrls = Object.values(config.routes ?? {})
+        .flatMap(r => r.teams ?? [])
+        .some(t => t.gpx_url);
+      if (hasGpxUrls) {
+        console.log("\nStep 6: GPX URLs found — applying tracks...");
+        shouldApplyGpx = true;
+      } else {
+        console.log("\nStep 6: No GPX URLs in config — pre-event or GPX not yet published.");
+      }
+    }
+  }
+  if (shouldApplyGpx) {
+    if (!autoGpx) console.log("\nStep 6: Applying GPX route tracks...");
     await applyGpxRoutes();
   }
 

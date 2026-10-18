@@ -294,6 +294,13 @@
     "teams55": 0
   },
   {
+    "code": "1594",
+    "name": "Churcher’s College",
+    "teams35": 0,
+    "teams45": 0,
+    "teams55": 0
+  },
+  {
     "code": "1559",
     "name": "Clifton College",
     "teams35": 0,
@@ -422,13 +429,6 @@
   {
     "code": "1531",
     "name": "Downend District Scouts",
-    "teams35": 0,
-    "teams45": 0,
-    "teams55": 0
-  },
-  {
-    "code": "1101",
-    "name": "Downside School CCF",
     "teams35": 0,
     "teams45": 0,
     "teams55": 0

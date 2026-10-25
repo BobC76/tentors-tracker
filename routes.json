@@ -10,28 +10,18 @@
         "ele": 366
       },
       {
-        "label": "HIGHER TOR",
-        "lat": 50.708606441108614,
-        "lon": -3.9661686012820163,
-        "via": true,
-        "nt": null,
-        "ele": 458
+        "label": "OKEMENT HILL",
+        "lat": 50.67259473950243,
+        "lon": -3.9789577234612694,
+        "via": false,
+        "nt": null
       },
       {
-        "label": "COSDON HILL",
-        "lat": 50.70718330239055,
-        "lon": -3.9329666111421377,
+        "label": "HANGINGSTONE HILL",
+        "lat": 50.65855892089285,
+        "lon": -3.9579932253344805,
         "via": false,
-        "nt": null,
-        "ele": 538
-      },
-      {
-        "label": "WATERN TOR",
-        "lat": 50.66558356724063,
-        "lon": -3.941304416562812,
-        "via": false,
-        "nt": null,
-        "ele": 515
+        "nt": null
       },
       {
         "label": "KES TOR",
@@ -42,12 +32,11 @@
         "ele": 413
       },
       {
-        "label": "SITTAFORD TOR",
-        "lat": 50.631086978902864,
-        "lon": -3.933519436318861,
-        "via": true,
-        "nt": null,
-        "ele": 531
+        "label": "WATER HILL",
+        "lat": 50.61605507470089,
+        "lon": -3.8793275414969277,
+        "via": false,
+        "nt": null
       },
       {
         "label": "POSTBRIDGE",
@@ -58,12 +47,18 @@
         "ele": 329
       },
       {
-        "label": "HIGHER WHITE TOR",
-        "lat": 50.590726472884384,
-        "lon": -3.953764054718143,
+        "label": "BEARDOWN TOR",
+        "lat": 50.57963676183409,
+        "lon": -3.971385157125429,
+        "via": true,
+        "nt": null
+      },
+      {
+        "label": "LITTLE MIS TOR",
+        "lat": 50.568946046630394,
+        "lon": -4.028274079493375,
         "via": false,
-        "nt": null,
-        "ele": 503
+        "nt": null
       },
       {
         "label": "WHITE BARROW",
@@ -77,9 +72,16 @@
         "label": "STANDON FARM",
         "lat": 50.614654393582235,
         "lon": -4.05794616320515,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 286
+      },
+      {
+        "label": "WILLSWORTHY",
+        "lat": 50.630435642977524,
+        "lon": -4.085926672979535,
+        "via": false,
+        "nt": null
       },
       {
         "label": "HARE TOR",
@@ -90,36 +92,19 @@
         "ele": 507
       },
       {
-        "label": "NODDEN GATE",
-        "lat": 50.65795420841026,
-        "lon": -4.081062002254915,
+        "label": "ARMS TOR",
+        "lat": 50.65743472131696,
+        "lon": -4.064768070871484,
         "via": false,
-        "nt": null,
-        "ele": 307
-      },
-      {
-        "label": "KITTY TOR",
-        "lat": 50.66894998382941,
-        "lon": -4.028761009402047,
-        "via": false,
-        "nt": null,
-        "ele": 567
+        "nt": null
       },
       {
         "label": "DINGER TOR",
         "lat": 50.67525895473643,
         "lon": -4.001999098057237,
-        "via": true,
-        "nt": null,
-        "ele": 547
-      },
-      {
-        "label": "OKE TOR",
-        "lat": 50.691090550646216,
-        "lon": -3.964869623572984,
         "via": false,
         "nt": null,
-        "ele": 446
+        "ele": 547
       },
       {
         "label": "FINISH",
@@ -142,36 +127,19 @@
         "ele": 366
       },
       {
-        "label": "OKE TOR",
-        "lat": 50.691090550646216,
-        "lon": -3.964869623572984,
-        "via": false,
-        "nt": null,
-        "ele": 446
-      },
-      {
         "label": "DINGER TOR",
         "lat": 50.67525895473643,
         "lon": -4.001999098057237,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 547
       },
       {
-        "label": "KITTY TOR",
-        "lat": 50.66894998382941,
-        "lon": -4.028761009402047,
+        "label": "ARMS TOR",
+        "lat": 50.65743472131696,
+        "lon": -4.064768070871484,
         "via": false,
-        "nt": null,
-        "ele": 567
-      },
-      {
-        "label": "NODDEN GATE",
-        "lat": 50.65795420841026,
-        "lon": -4.081062002254915,
-        "via": false,
-        "nt": null,
-        "ele": 307
+        "nt": null
       },
       {
         "label": "HARE TOR",
@@ -182,10 +150,17 @@
         "ele": 507
       },
       {
+        "label": "WILLSWORTHY",
+        "lat": 50.630435642977524,
+        "lon": -4.085926672979535,
+        "via": false,
+        "nt": null
+      },
+      {
         "label": "STANDON FARM",
         "lat": 50.614654393582235,
         "lon": -4.05794616320515,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 286
       },
@@ -198,12 +173,18 @@
         "ele": 479
       },
       {
-        "label": "HIGHER WHITE TOR",
-        "lat": 50.590726472884384,
-        "lon": -3.953764054718143,
+        "label": "LITTLE MIS TOR",
+        "lat": 50.568946046630394,
+        "lon": -4.028274079493375,
         "via": false,
-        "nt": null,
-        "ele": 503
+        "nt": null
+      },
+      {
+        "label": "BEARDOWN TOR",
+        "lat": 50.57963676183409,
+        "lon": -3.971385157125429,
+        "via": true,
+        "nt": null
       },
       {
         "label": "POSTBRIDGE",
@@ -214,12 +195,11 @@
         "ele": 329
       },
       {
-        "label": "SITTAFORD TOR",
-        "lat": 50.631086978902864,
-        "lon": -3.933519436318861,
-        "via": true,
-        "nt": null,
-        "ele": 531
+        "label": "WATER HILL",
+        "lat": 50.61605507470089,
+        "lon": -3.8793275414969277,
+        "via": false,
+        "nt": null
       },
       {
         "label": "KES TOR",
@@ -230,28 +210,18 @@
         "ele": 413
       },
       {
-        "label": "WATERN TOR",
-        "lat": 50.66558356724063,
-        "lon": -3.941304416562812,
+        "label": "HANGINGSTONE HILL",
+        "lat": 50.65855892089285,
+        "lon": -3.9579932253344805,
         "via": false,
-        "nt": null,
-        "ele": 515
+        "nt": null
       },
       {
-        "label": "COSDON HILL",
-        "lat": 50.70718330239055,
-        "lon": -3.9329666111421377,
+        "label": "OKEMENT HILL",
+        "lat": 50.67259473950243,
+        "lon": -3.9789577234612694,
         "via": false,
-        "nt": null,
-        "ele": 538
-      },
-      {
-        "label": "HIGHER TOR",
-        "lat": 50.708606441108614,
-        "lon": -3.9661686012820163,
-        "via": true,
-        "nt": null,
-        "ele": 458
+        "nt": null
       },
       {
         "label": "FINISH",
@@ -274,18 +244,10 @@
         "ele": 366
       },
       {
-        "label": "OKE TOR",
-        "lat": 50.691090550646216,
-        "lon": -3.964869623572984,
-        "via": false,
-        "nt": null,
-        "ele": 446
-      },
-      {
         "label": "COSDON HILL",
         "lat": 50.70718330239055,
         "lon": -3.9329666111421377,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 538
       },
@@ -298,36 +260,25 @@
         "ele": 328
       },
       {
-        "label": "STEEPERTON TOR",
-        "lat": 50.683217919614,
-        "lon": -3.957037867231583,
+        "label": "HANGINGSTONE HILL",
+        "lat": 50.65855892089285,
+        "lon": -3.9579932253344805,
         "via": false,
-        "nt": null,
-        "ele": 513
+        "nt": null
       },
       {
-        "label": "WATERN TOR",
-        "lat": 50.66558356724063,
-        "lon": -3.941304416562812,
-        "via": true,
-        "nt": null,
-        "ele": 515
-      },
-      {
-        "label": "FERNWORTHY",
-        "lat": 50.64266985472795,
-        "lon": -3.9238112702997507,
+        "label": "SITTAFORD TOR",
+        "lat": 50.631086978902864,
+        "lon": -3.933519436318861,
         "via": false,
-        "nt": null,
-        "ele": 433
+        "nt": null
       },
       {
-        "label": "STANNON TOR",
-        "lat": 50.61378371529461,
-        "lon": -3.9138683810637995,
+        "label": "WATER HILL",
+        "lat": 50.61605507470089,
+        "lon": -3.8793275414969277,
         "via": true,
-        "nt": null,
-        "ele": 446
+        "nt": null
       },
       {
         "label": "POSTBRIDGE",
@@ -338,34 +289,24 @@
         "ele": 329
       },
       {
-        "label": "HIGHER WHITE TOR",
-        "lat": 50.590726472884384,
-        "lon": -3.953764054718143,
+        "label": "BEARDOWN TOR",
+        "lat": 50.57963676183409,
+        "lon": -3.971385157125429,
         "via": false,
-        "nt": null,
-        "ele": 503
+        "nt": null
       },
       {
-        "label": "HOLMING BEAM",
-        "lat": 50.57085708312392,
-        "lon": -3.9905076543837756,
+        "label": "ROUGH TOR",
+        "lat": 50.601495614272984,
+        "lon": -3.971168145597841,
         "via": true,
-        "nt": null,
-        "ele": 459
-      },
-      {
-        "label": "LITTLE MIS TOR",
-        "lat": 50.568946046630394,
-        "lon": -4.028274079493375,
-        "via": false,
-        "nt": null,
-        "ele": 476
+        "nt": null
       },
       {
         "label": "WHITE BARROW",
         "lat": 50.59591374384258,
         "lon": -4.023922639310708,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 479
       },
@@ -373,33 +314,30 @@
         "label": "STANDON FARM",
         "lat": 50.614654393582235,
         "lon": -4.05794616320515,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 286
       },
       {
-        "label": "HARE TOR",
-        "lat": 50.64015232191572,
-        "lon": -4.050291170965754,
+        "label": "WILLSWORTHY",
+        "lat": 50.630435642977524,
+        "lon": -4.085926672979535,
         "via": false,
-        "nt": null,
-        "ele": 507
+        "nt": null
       },
       {
-        "label": "KITTY TOR",
-        "lat": 50.66894998382941,
-        "lon": -4.028761009402047,
-        "via": true,
-        "nt": null,
-        "ele": 567
+        "label": "ARMS TOR",
+        "lat": 50.65743472131696,
+        "lon": -4.064768070871484,
+        "via": false,
+        "nt": null
       },
       {
-        "label": "DINGER TOR",
-        "lat": 50.67525895473643,
-        "lon": -4.001999098057237,
+        "label": "HIGH WILLHAYS",
+        "lat": 50.68526101302258,
+        "lon": -4.011343769978243,
         "via": false,
-        "nt": null,
-        "ele": 547
+        "nt": null
       },
       {
         "label": "FINISH",
@@ -422,34 +360,31 @@
         "ele": 366
       },
       {
-        "label": "DINGER TOR",
-        "lat": 50.67525895473643,
-        "lon": -4.001999098057237,
+        "label": "HIGH WILLHAYS",
+        "lat": 50.68526101302258,
+        "lon": -4.011343769978243,
         "via": false,
-        "nt": null,
-        "ele": 547
+        "nt": null
       },
       {
-        "label": "KITTY TOR",
-        "lat": 50.66894998382941,
-        "lon": -4.028761009402047,
-        "via": true,
-        "nt": null,
-        "ele": 567
+        "label": "ARMS TOR",
+        "lat": 50.65743472131696,
+        "lon": -4.064768070871484,
+        "via": false,
+        "nt": null
       },
       {
-        "label": "HARE TOR",
-        "lat": 50.64015232191572,
-        "lon": -4.050291170965754,
+        "label": "WILLSWORTHY",
+        "lat": 50.630435642977524,
+        "lon": -4.085926672979535,
         "via": false,
-        "nt": null,
-        "ele": 507
+        "nt": null
       },
       {
         "label": "STANDON FARM",
         "lat": 50.614654393582235,
         "lon": -4.05794616320515,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 286
       },
@@ -457,33 +392,23 @@
         "label": "WHITE BARROW",
         "lat": 50.59591374384258,
         "lon": -4.023922639310708,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 479
       },
       {
-        "label": "LITTLE MIS TOR",
-        "lat": 50.568946046630394,
-        "lon": -4.028274079493375,
-        "via": false,
-        "nt": null,
-        "ele": 476
-      },
-      {
-        "label": "HOLMING BEAM",
-        "lat": 50.57085708312392,
-        "lon": -3.9905076543837756,
+        "label": "ROUGH TOR",
+        "lat": 50.601495614272984,
+        "lon": -3.971168145597841,
         "via": true,
-        "nt": null,
-        "ele": 459
+        "nt": null
       },
       {
-        "label": "HIGHER WHITE TOR",
-        "lat": 50.590726472884384,
-        "lon": -3.953764054718143,
+        "label": "BEARDOWN TOR",
+        "lat": 50.57963676183409,
+        "lon": -3.971385157125429,
         "via": false,
-        "nt": null,
-        "ele": 503
+        "nt": null
       },
       {
         "label": "POSTBRIDGE",
@@ -494,36 +419,25 @@
         "ele": 329
       },
       {
-        "label": "STANNON TOR",
-        "lat": 50.61378371529461,
-        "lon": -3.9138683810637995,
+        "label": "WATER HILL",
+        "lat": 50.61605507470089,
+        "lon": -3.8793275414969277,
         "via": true,
-        "nt": null,
-        "ele": 446
+        "nt": null
       },
       {
-        "label": "FERNWORTHY",
-        "lat": 50.64266985472795,
-        "lon": -3.9238112702997507,
+        "label": "SITTAFORD TOR",
+        "lat": 50.631086978902864,
+        "lon": -3.933519436318861,
         "via": false,
-        "nt": null,
-        "ele": 433
+        "nt": null
       },
       {
-        "label": "WATERN TOR",
-        "lat": 50.66558356724063,
-        "lon": -3.941304416562812,
-        "via": true,
-        "nt": null,
-        "ele": 515
-      },
-      {
-        "label": "STEEPERTON TOR",
-        "lat": 50.683217919614,
-        "lon": -3.957037867231583,
+        "label": "HANGINGSTONE HILL",
+        "lat": 50.65855892089285,
+        "lon": -3.9579932253344805,
         "via": false,
-        "nt": null,
-        "ele": 513
+        "nt": null
       },
       {
         "label": "SHILSTONE TOR",
@@ -534,20 +448,11 @@
         "ele": 328
       },
       {
-        "label": "COSDON HILL",
-        "lat": 50.70718330239055,
-        "lon": -3.9329666111421377,
-        "via": true,
-        "nt": null,
-        "ele": 538
-      },
-      {
-        "label": "OKE TOR",
-        "lat": 50.691090550646216,
-        "lon": -3.964869623572984,
+        "label": "HIGHER TOR",
+        "lat": 50.70833681947965,
+        "lon": -3.9661573183314722,
         "via": false,
-        "nt": null,
-        "ele": 446
+        "nt": null
       },
       {
         "label": "FINISH",
@@ -573,41 +478,23 @@
         "label": "OKE TOR",
         "lat": 50.691090550646216,
         "lon": -3.964869623572984,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 446
       },
       {
-        "label": "OKEMENT HILL",
-        "lat": 50.67259473950243,
-        "lon": -3.9789577234612694,
+        "label": "HANGINGSTONE HILL",
+        "lat": 50.65855892089285,
+        "lon": -3.9579932253344805,
         "via": false,
-        "nt": null,
-        "ele": 556
+        "nt": null
       },
       {
-        "label": "WATERN TOR",
-        "lat": 50.66558356724063,
-        "lon": -3.941304416562812,
+        "label": "KES TOR",
+        "lat": 50.66076763230601,
+        "lon": -3.88960194600092,
         "via": false,
-        "nt": null,
-        "ele": 515
-      },
-      {
-        "label": "FERNWORTHY",
-        "lat": 50.64266985472795,
-        "lon": -3.9238112702997507,
-        "via": false,
-        "nt": null,
-        "ele": 433
-      },
-      {
-        "label": "SITTAFORD TOR",
-        "lat": 50.631086978902864,
-        "lon": -3.933519436318861,
-        "via": true,
-        "nt": null,
-        "ele": 531
+        "nt": null
       },
       {
         "label": "WATER HILL",
@@ -621,31 +508,22 @@
         "label": "POSTBRIDGE",
         "lat": 50.59309081830653,
         "lon": -3.9143004419548966,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 329
       },
       {
-        "label": "HIGHER WHITE TOR",
-        "lat": 50.590726472884384,
-        "lon": -3.953764054718143,
-        "via": false,
-        "nt": null,
-        "ele": 503
-      },
-      {
-        "label": "HOLMING BEAM",
-        "lat": 50.57085708312392,
-        "lon": -3.9905076543837756,
-        "via": false,
-        "nt": null,
-        "ele": 459
+        "label": "ROUGH TOR",
+        "lat": 50.601495614272984,
+        "lon": -3.971168145597841,
+        "via": true,
+        "nt": null
       },
       {
         "label": "WHITE BARROW",
         "lat": 50.59591374384258,
         "lon": -4.023922639310708,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 479
       },
@@ -658,34 +536,46 @@
         "ele": 286
       },
       {
+        "label": "WILLSWORTHY",
+        "lat": 50.630435642977524,
+        "lon": -4.085926672979535,
+        "via": true,
+        "nt": null
+      },
+      {
+        "label": "ARMS TOR",
+        "lat": 50.65743472131696,
+        "lon": -4.064768070871484,
+        "via": false,
+        "nt": null
+      },
+      {
         "label": "HARE TOR",
         "lat": 50.64015232191572,
         "lon": -4.050291170965754,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 507
       },
       {
-        "label": "NODDEN GATE",
-        "lat": 50.65795420841026,
-        "lon": -4.081062002254915,
+        "label": "GREAT KNEESET",
+        "lat": 50.65537032372571,
+        "lon": -3.9974746579420315,
         "via": false,
-        "nt": null,
-        "ele": 307
+        "nt": null
       },
       {
-        "label": "KITTY TOR",
-        "lat": 50.66894998382941,
-        "lon": -4.028761009402047,
-        "via": true,
-        "nt": null,
-        "ele": 567
+        "label": "DINGER TOR",
+        "lat": 50.67525895473643,
+        "lon": -4.001999098057237,
+        "via": false,
+        "nt": null
       },
       {
         "label": "EAST MILL TOR",
         "lat": 50.69157091828485,
         "lon": -3.9842872159630978,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 496
       },
@@ -713,33 +603,45 @@
         "label": "EAST MILL TOR",
         "lat": 50.69157091828485,
         "lon": -3.9842872159630978,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 496
       },
       {
-        "label": "KITTY TOR",
-        "lat": 50.66894998382941,
-        "lon": -4.028761009402047,
-        "via": true,
-        "nt": null,
-        "ele": 567
+        "label": "DINGER TOR",
+        "lat": 50.67525895473643,
+        "lon": -4.001999098057237,
+        "via": false,
+        "nt": null
       },
       {
-        "label": "NODDEN GATE",
-        "lat": 50.65795420841026,
-        "lon": -4.081062002254915,
+        "label": "GREAT KNEESET",
+        "lat": 50.65537032372571,
+        "lon": -3.9974746579420315,
         "via": false,
-        "nt": null,
-        "ele": 307
+        "nt": null
       },
       {
         "label": "HARE TOR",
         "lat": 50.64015232191572,
         "lon": -4.050291170965754,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 507
+      },
+      {
+        "label": "ARMS TOR",
+        "lat": 50.65743472131696,
+        "lon": -4.064768070871484,
+        "via": false,
+        "nt": null
+      },
+      {
+        "label": "WILLSWORTHY",
+        "lat": 50.630435642977524,
+        "lon": -4.085926672979535,
+        "via": true,
+        "nt": null
       },
       {
         "label": "STANDON FARM",
@@ -753,31 +655,22 @@
         "label": "WHITE BARROW",
         "lat": 50.59591374384258,
         "lon": -4.023922639310708,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 479
       },
       {
-        "label": "HOLMING BEAM",
-        "lat": 50.57085708312392,
-        "lon": -3.9905076543837756,
-        "via": false,
-        "nt": null,
-        "ele": 459
-      },
-      {
-        "label": "HIGHER WHITE TOR",
-        "lat": 50.590726472884384,
-        "lon": -3.953764054718143,
-        "via": false,
-        "nt": null,
-        "ele": 503
+        "label": "ROUGH TOR",
+        "lat": 50.601495614272984,
+        "lon": -3.971168145597841,
+        "via": true,
+        "nt": null
       },
       {
         "label": "POSTBRIDGE",
         "lat": 50.59309081830653,
         "lon": -3.9143004419548966,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 329
       },
@@ -790,42 +683,24 @@
         "ele": 494
       },
       {
-        "label": "SITTAFORD TOR",
-        "lat": 50.631086978902864,
-        "lon": -3.933519436318861,
-        "via": true,
-        "nt": null,
-        "ele": 531
+        "label": "KES TOR",
+        "lat": 50.66076763230601,
+        "lon": -3.88960194600092,
+        "via": false,
+        "nt": null
       },
       {
-        "label": "FERNWORTHY",
-        "lat": 50.64266985472795,
-        "lon": -3.9238112702997507,
+        "label": "HANGINGSTONE HILL",
+        "lat": 50.65855892089285,
+        "lon": -3.9579932253344805,
         "via": false,
-        "nt": null,
-        "ele": 433
-      },
-      {
-        "label": "WATERN TOR",
-        "lat": 50.66558356724063,
-        "lon": -3.941304416562812,
-        "via": false,
-        "nt": null,
-        "ele": 515
-      },
-      {
-        "label": "OKEMENT HILL",
-        "lat": 50.67259473950243,
-        "lon": -3.9789577234612694,
-        "via": false,
-        "nt": null,
-        "ele": 556
+        "nt": null
       },
       {
         "label": "OKE TOR",
         "lat": 50.691090550646216,
         "lon": -3.964869623572984,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 446
       },
@@ -850,66 +725,60 @@
         "ele": 366
       },
       {
-        "label": "EAST MILL TOR",
-        "lat": 50.69157091828485,
-        "lon": -3.9842872159630978,
+        "label": "OKE TOR",
+        "lat": 50.691090550646216,
+        "lon": -3.964869623572984,
         "via": false,
-        "nt": null,
-        "ele": 496
+        "nt": null
       },
       {
-        "label": "WATERN TOR",
-        "lat": 50.66558356724063,
-        "lon": -3.941304416562812,
-        "via": true,
-        "nt": null,
-        "ele": 515
+        "label": "COSDON HILL",
+        "lat": 50.70718330239055,
+        "lon": -3.9329666111421377,
+        "via": false,
+        "nt": null
       },
       {
-        "label": "FERNWORTHY",
-        "lat": 50.64266985472795,
-        "lon": -3.9238112702997507,
+        "label": "HANGINGSTONE HILL",
+        "lat": 50.65855892089285,
+        "lon": -3.9579932253344805,
         "via": false,
-        "nt": null,
-        "ele": 433
+        "nt": null
       },
       {
-        "label": "KES TOR",
-        "lat": 50.66076763230601,
-        "lon": -3.88960194600092,
+        "label": "SITTAFORD TOR",
+        "lat": 50.631086978902864,
+        "lon": -3.933519436318861,
         "via": false,
-        "nt": null,
-        "ele": 413
-      },
-      {
-        "label": "WATER HILL",
-        "lat": 50.61605507470089,
-        "lon": -3.8793275414969277,
-        "via": false,
-        "nt": null,
-        "ele": 494
+        "nt": null
       },
       {
         "label": "POSTBRIDGE",
         "lat": 50.59309081830653,
         "lon": -3.9143004419548966,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 329
       },
       {
-        "label": "HIGHER WHITE TOR",
-        "lat": 50.590726472884384,
-        "lon": -3.953764054718143,
+        "label": "BEARDOWN TOR",
+        "lat": 50.57963676183409,
+        "lon": -3.971385157125429,
         "via": false,
-        "nt": null,
-        "ele": 503
+        "nt": null
+      },
+      {
+        "label": "LITTLE MIS TOR",
+        "lat": 50.568946046630394,
+        "lon": -4.028274079493375,
+        "via": false,
+        "nt": null
       },
       {
         "label": "WHITE BARROW",
         "lat": 50.59591374384258,
         "lon": -4.023922639310708,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 479
       },
@@ -917,7 +786,7 @@
         "label": "STANDON FARM",
         "lat": 50.614654393582235,
         "lon": -4.05794616320515,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 286
       },
@@ -925,33 +794,17 @@
         "label": "WILLSWORTHY",
         "lat": 50.630435642977524,
         "lon": -4.085926672979535,
-        "via": true,
-        "nt": null,
-        "ele": 321
-      },
-      {
-        "label": "NODDEN GATE",
-        "lat": 50.65795420841026,
-        "lon": -4.081062002254915,
         "via": false,
         "nt": null,
-        "ele": 307
+        "ele": 321
       },
       {
         "label": "HARE TOR",
         "lat": 50.64015232191572,
         "lon": -4.050291170965754,
-        "via": true,
-        "nt": null,
-        "ele": 507
-      },
-      {
-        "label": "GREAT KNEESET",
-        "lat": 50.65537032372571,
-        "lon": -3.9974746579420315,
         "via": false,
         "nt": null,
-        "ele": 557
+        "ele": 507
       },
       {
         "label": "DINGER TOR",
@@ -960,6 +813,14 @@
         "via": false,
         "nt": null,
         "ele": 547
+      },
+      {
+        "label": "EAST MILL TOR",
+        "lat": 50.69157091828485,
+        "lon": -3.9842872159630978,
+        "via": true,
+        "nt": null,
+        "ele": 496
       },
       {
         "label": "FINISH",
@@ -982,6 +843,14 @@
         "ele": 366
       },
       {
+        "label": "EAST MILL TOR",
+        "lat": 50.69157091828485,
+        "lon": -3.9842872159630978,
+        "via": true,
+        "nt": null,
+        "ele": 496
+      },
+      {
         "label": "DINGER TOR",
         "lat": 50.67525895473643,
         "lon": -4.001999098057237,
@@ -990,34 +859,18 @@
         "ele": 547
       },
       {
-        "label": "GREAT KNEESET",
-        "lat": 50.65537032372571,
-        "lon": -3.9974746579420315,
-        "via": false,
-        "nt": null,
-        "ele": 557
-      },
-      {
         "label": "HARE TOR",
         "lat": 50.64015232191572,
         "lon": -4.050291170965754,
-        "via": true,
-        "nt": null,
-        "ele": 507
-      },
-      {
-        "label": "NODDEN GATE",
-        "lat": 50.65795420841026,
-        "lon": -4.081062002254915,
         "via": false,
         "nt": null,
-        "ele": 307
+        "ele": 507
       },
       {
         "label": "WILLSWORTHY",
         "lat": 50.630435642977524,
         "lon": -4.085926672979535,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 321
       },
@@ -1025,7 +878,7 @@
         "label": "STANDON FARM",
         "lat": 50.614654393582235,
         "lon": -4.05794616320515,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 286
       },
@@ -1033,65 +886,59 @@
         "label": "WHITE BARROW",
         "lat": 50.59591374384258,
         "lon": -4.023922639310708,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 479
       },
       {
-        "label": "HIGHER WHITE TOR",
-        "lat": 50.590726472884384,
-        "lon": -3.953764054718143,
+        "label": "LITTLE MIS TOR",
+        "lat": 50.568946046630394,
+        "lon": -4.028274079493375,
         "via": false,
-        "nt": null,
-        "ele": 503
+        "nt": null
+      },
+      {
+        "label": "BEARDOWN TOR",
+        "lat": 50.57963676183409,
+        "lon": -3.971385157125429,
+        "via": false,
+        "nt": null
       },
       {
         "label": "POSTBRIDGE",
         "lat": 50.59309081830653,
         "lon": -3.9143004419548966,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 329
       },
       {
-        "label": "WATER HILL",
-        "lat": 50.61605507470089,
-        "lon": -3.8793275414969277,
+        "label": "SITTAFORD TOR",
+        "lat": 50.631086978902864,
+        "lon": -3.933519436318861,
         "via": false,
-        "nt": null,
-        "ele": 494
+        "nt": null
       },
       {
-        "label": "KES TOR",
-        "lat": 50.66076763230601,
-        "lon": -3.88960194600092,
+        "label": "HANGINGSTONE HILL",
+        "lat": 50.65855892089285,
+        "lon": -3.9579932253344805,
         "via": false,
-        "nt": null,
-        "ele": 413
+        "nt": null
       },
       {
-        "label": "FERNWORTHY",
-        "lat": 50.64266985472795,
-        "lon": -3.9238112702997507,
+        "label": "COSDON HILL",
+        "lat": 50.70718330239055,
+        "lon": -3.9329666111421377,
         "via": false,
-        "nt": null,
-        "ele": 433
+        "nt": null
       },
       {
-        "label": "WATERN TOR",
-        "lat": 50.66558356724063,
-        "lon": -3.941304416562812,
-        "via": true,
-        "nt": null,
-        "ele": 515
-      },
-      {
-        "label": "EAST MILL TOR",
-        "lat": 50.69157091828485,
-        "lon": -3.9842872159630978,
+        "label": "OKE TOR",
+        "lat": 50.691090550646216,
+        "lon": -3.964869623572984,
         "via": false,
-        "nt": null,
-        "ele": 496
+        "nt": null
       },
       {
         "label": "FINISH",
@@ -1114,12 +961,12 @@
         "ele": 366
       },
       {
-        "label": "HIGHER TOR",
-        "lat": 50.708606441108614,
-        "lon": -3.9661686012820163,
-        "via": true,
+        "label": "EAST MILL TOR",
+        "lat": 50.69157091828485,
+        "lon": -3.9842872159630978,
+        "via": false,
         "nt": null,
-        "ele": 458
+        "ele": 496
       },
       {
         "label": "COSDON HILL",
@@ -1130,28 +977,18 @@
         "ele": 538
       },
       {
-        "label": "SHILSTONE TOR",
-        "lat": 50.69591941271859,
-        "lon": -3.9014930120444857,
-        "via": true,
-        "nt": null,
-        "ele": 328
+        "label": "HANGINGSTONE HILL",
+        "lat": 50.65855892089285,
+        "lon": -3.9579932253344805,
+        "via": false,
+        "nt": null
       },
       {
-        "label": "STEEPERTON TOR",
-        "lat": 50.683217919614,
-        "lon": -3.957037867231583,
+        "label": "KES TOR",
+        "lat": 50.66076763230601,
+        "lon": -3.88960194600092,
         "via": false,
-        "nt": null,
-        "ele": 513
-      },
-      {
-        "label": "WATERN TOR",
-        "lat": 50.66558356724063,
-        "lon": -3.941304416562812,
-        "via": false,
-        "nt": null,
-        "ele": 515
+        "nt": null
       },
       {
         "label": "SITTAFORD TOR",
@@ -1162,36 +999,19 @@
         "ele": 531
       },
       {
-        "label": "STANNON TOR",
-        "lat": 50.61378371529461,
-        "lon": -3.9138683810637995,
-        "via": true,
-        "nt": null,
-        "ele": 446
-      },
-      {
         "label": "POSTBRIDGE",
         "lat": 50.59309081830653,
         "lon": -3.9143004419548966,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 329
       },
       {
-        "label": "HIGHER WHITE TOR",
-        "lat": 50.590726472884384,
-        "lon": -3.953764054718143,
-        "via": true,
-        "nt": null,
-        "ele": 503
-      },
-      {
-        "label": "HOLMING BEAM",
-        "lat": 50.57085708312392,
-        "lon": -3.9905076543837756,
+        "label": "BEARDOWN TOR",
+        "lat": 50.57963676183409,
+        "lon": -3.971385157125429,
         "via": false,
-        "nt": null,
-        "ele": 459
+        "nt": null
       },
       {
         "label": "WHITE BARROW",
@@ -1221,25 +1041,16 @@
         "label": "HARE TOR",
         "lat": 50.64015232191572,
         "lon": -4.050291170965754,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 507
       },
       {
-        "label": "KITTY TOR",
-        "lat": 50.66894998382941,
-        "lon": -4.028761009402047,
+        "label": "DINGER TOR",
+        "lat": 50.67525895473643,
+        "lon": -4.001999098057237,
         "via": false,
-        "nt": null,
-        "ele": 567
-      },
-      {
-        "label": "EAST MILL TOR",
-        "lat": 50.69157091828485,
-        "lon": -3.9842872159630978,
-        "via": false,
-        "nt": null,
-        "ele": 496
+        "nt": null
       },
       {
         "label": "FINISH",
@@ -1262,26 +1073,17 @@
         "ele": 366
       },
       {
-        "label": "EAST MILL TOR",
-        "lat": 50.69157091828485,
-        "lon": -3.9842872159630978,
+        "label": "DINGER TOR",
+        "lat": 50.67525895473643,
+        "lon": -4.001999098057237,
         "via": false,
-        "nt": null,
-        "ele": 496
-      },
-      {
-        "label": "KITTY TOR",
-        "lat": 50.66894998382941,
-        "lon": -4.028761009402047,
-        "via": false,
-        "nt": null,
-        "ele": 567
+        "nt": null
       },
       {
         "label": "HARE TOR",
         "lat": 50.64015232191572,
         "lon": -4.050291170965754,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 507
       },
@@ -1310,36 +1112,19 @@
         "ele": 479
       },
       {
-        "label": "HOLMING BEAM",
-        "lat": 50.57085708312392,
-        "lon": -3.9905076543837756,
+        "label": "BEARDOWN TOR",
+        "lat": 50.57963676183409,
+        "lon": -3.971385157125429,
         "via": false,
-        "nt": null,
-        "ele": 459
-      },
-      {
-        "label": "HIGHER WHITE TOR",
-        "lat": 50.590726472884384,
-        "lon": -3.953764054718143,
-        "via": true,
-        "nt": null,
-        "ele": 503
+        "nt": null
       },
       {
         "label": "POSTBRIDGE",
         "lat": 50.59309081830653,
         "lon": -3.9143004419548966,
-        "via": false,
-        "nt": null,
-        "ele": 329
-      },
-      {
-        "label": "STANNON TOR",
-        "lat": 50.61378371529461,
-        "lon": -3.9138683810637995,
         "via": true,
         "nt": null,
-        "ele": 446
+        "ele": 329
       },
       {
         "label": "SITTAFORD TOR",
@@ -1350,28 +1135,18 @@
         "ele": 531
       },
       {
-        "label": "WATERN TOR",
-        "lat": 50.66558356724063,
-        "lon": -3.941304416562812,
+        "label": "KES TOR",
+        "lat": 50.66076763230601,
+        "lon": -3.88960194600092,
         "via": false,
-        "nt": null,
-        "ele": 515
+        "nt": null
       },
       {
-        "label": "STEEPERTON TOR",
-        "lat": 50.683217919614,
-        "lon": -3.957037867231583,
+        "label": "HANGINGSTONE HILL",
+        "lat": 50.65855892089285,
+        "lon": -3.9579932253344805,
         "via": false,
-        "nt": null,
-        "ele": 513
-      },
-      {
-        "label": "SHILSTONE TOR",
-        "lat": 50.69591941271859,
-        "lon": -3.9014930120444857,
-        "via": true,
-        "nt": null,
-        "ele": 328
+        "nt": null
       },
       {
         "label": "COSDON HILL",
@@ -1382,12 +1157,12 @@
         "ele": 538
       },
       {
-        "label": "HIGHER TOR",
-        "lat": 50.708606441108614,
-        "lon": -3.9661686012820163,
-        "via": true,
+        "label": "EAST MILL TOR",
+        "lat": 50.69157091828485,
+        "lon": -3.9842872159630978,
+        "via": false,
         "nt": null,
-        "ele": 458
+        "ele": 496
       },
       {
         "label": "FINISH",
@@ -1411,8 +1186,8 @@
       },
       {
         "label": "HIGHER TOR",
-        "lat": 50.708606441108614,
-        "lon": -3.9661686012820163,
+        "lat": 50.70833681947965,
+        "lon": -3.9661573183314722,
         "via": false,
         "nt": null,
         "ele": 458
@@ -1421,25 +1196,23 @@
         "label": "OKEMENT HILL",
         "lat": 50.67259473950243,
         "lon": -3.9789577234612694,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 556
       },
       {
-        "label": "WATERN TOR",
-        "lat": 50.66558356724063,
-        "lon": -3.941304416562812,
-        "via": true,
-        "nt": null,
-        "ele": 515
+        "label": "HANGINGSTONE HILL",
+        "lat": 50.65855892089285,
+        "lon": -3.9579932253344805,
+        "via": false,
+        "nt": null
       },
       {
-        "label": "KES TOR",
-        "lat": 50.66076763230601,
-        "lon": -3.88960194600092,
+        "label": "SITTAFORD TOR",
+        "lat": 50.631086978902864,
+        "lon": -3.933519436318861,
         "via": false,
-        "nt": null,
-        "ele": 413
+        "nt": null
       },
       {
         "label": "WATER HILL",
@@ -1458,20 +1231,18 @@
         "ele": 329
       },
       {
-        "label": "HIGHER WHITE TOR",
-        "lat": 50.590726472884384,
-        "lon": -3.953764054718143,
+        "label": "ROUGH TOR",
+        "lat": 50.601495614272984,
+        "lon": -3.971168145597841,
         "via": true,
-        "nt": null,
-        "ele": 503
+        "nt": null
       },
       {
-        "label": "HOLMING BEAM",
-        "lat": 50.57085708312392,
-        "lon": -3.9905076543837756,
+        "label": "BEARDOWN TOR",
+        "lat": 50.57963676183409,
+        "lon": -3.971385157125429,
         "via": false,
-        "nt": null,
-        "ele": 459
+        "nt": null
       },
       {
         "label": "WHITE BARROW",
@@ -1490,14 +1261,6 @@
         "ele": 286
       },
       {
-        "label": "WILLSWORTHY",
-        "lat": 50.630435642977524,
-        "lon": -4.085926672979535,
-        "via": false,
-        "nt": null,
-        "ele": 321
-      },
-      {
         "label": "HARE TOR",
         "lat": 50.64015232191572,
         "lon": -4.050291170965754,
@@ -1506,20 +1269,26 @@
         "ele": 507
       },
       {
+        "label": "ARMS TOR",
+        "lat": 50.65743472131696,
+        "lon": -4.064768070871484,
+        "via": true,
+        "nt": null
+      },
+      {
         "label": "GREAT KNEESET",
         "lat": 50.65537032372571,
         "lon": -3.9974746579420315,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 557
       },
       {
-        "label": "EAST MILL TOR",
-        "lat": 50.69157091828485,
-        "lon": -3.9842872159630978,
+        "label": "HIGH WILLHAYS",
+        "lat": 50.68526101302258,
+        "lon": -4.011343769978243,
         "via": false,
-        "nt": null,
-        "ele": 496
+        "nt": null
       },
       {
         "label": "FINISH",
@@ -1542,12 +1311,26 @@
         "ele": 366
       },
       {
+        "label": "HIGH WILLHAYS",
+        "lat": 50.68526101302258,
+        "lon": -4.011343769978243,
+        "via": false,
+        "nt": null
+      },
+      {
         "label": "GREAT KNEESET",
         "lat": 50.65537032372571,
         "lon": -3.9974746579420315,
         "via": false,
         "nt": null,
         "ele": 557
+      },
+      {
+        "label": "ARMS TOR",
+        "lat": 50.65743472131696,
+        "lon": -4.064768070871484,
+        "via": true,
+        "nt": null
       },
       {
         "label": "HARE TOR",
@@ -1569,25 +1352,23 @@
         "label": "WHITE BARROW",
         "lat": 50.59591374384258,
         "lon": -4.023922639310708,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 479
       },
       {
-        "label": "HOLMING BEAM",
-        "lat": 50.57085708312392,
-        "lon": -3.9905076543837756,
+        "label": "BEARDOWN TOR",
+        "lat": 50.57963676183409,
+        "lon": -3.971385157125429,
         "via": false,
-        "nt": null,
-        "ele": 459
+        "nt": null
       },
       {
-        "label": "HIGHER WHITE TOR",
-        "lat": 50.590726472884384,
-        "lon": -3.953764054718143,
+        "label": "ROUGH TOR",
+        "lat": 50.601495614272984,
+        "lon": -3.971168145597841,
         "via": true,
-        "nt": null,
-        "ele": 503
+        "nt": null
       },
       {
         "label": "POSTBRIDGE",
@@ -1601,33 +1382,23 @@
         "label": "WATER HILL",
         "lat": 50.61605507470089,
         "lon": -3.8793275414969277,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 494
       },
       {
-        "label": "FERNWORTHY",
-        "lat": 50.64266985472795,
-        "lon": -3.9238112702997507,
+        "label": "SITTAFORD TOR",
+        "lat": 50.631086978902864,
+        "lon": -3.933519436318861,
         "via": false,
-        "nt": null,
-        "ele": 433
+        "nt": null
       },
       {
-        "label": "KES TOR",
-        "lat": 50.66076763230601,
-        "lon": -3.88960194600092,
+        "label": "HANGINGSTONE HILL",
+        "lat": 50.65855892089285,
+        "lon": -3.9579932253344805,
         "via": false,
-        "nt": null,
-        "ele": 413
-      },
-      {
-        "label": "WATERN TOR",
-        "lat": 50.66558356724063,
-        "lon": -3.941304416562812,
-        "via": false,
-        "nt": null,
-        "ele": 515
+        "nt": null
       },
       {
         "label": "OKEMENT HILL",
@@ -1639,8 +1410,8 @@
       },
       {
         "label": "HIGHER TOR",
-        "lat": 50.708606441108614,
-        "lon": -3.9661686012820163,
+        "lat": 50.70833681947965,
+        "lon": -3.9661573183314722,
         "via": false,
         "nt": null,
         "ele": 458
@@ -1666,14 +1437,6 @@
         "ele": 366
       },
       {
-        "label": "OKEMENT HILL",
-        "lat": 50.67259473950243,
-        "lon": -3.9789577234612694,
-        "via": false,
-        "nt": null,
-        "ele": 556
-      },
-      {
         "label": "COSDON HILL",
         "lat": 50.70718330239055,
         "lon": -3.9329666111421377,
@@ -1682,66 +1445,54 @@
         "ele": 538
       },
       {
-        "label": "SHILSTONE TOR",
-        "lat": 50.69591941271859,
-        "lon": -3.9014930120444857,
+        "label": "OKEMENT HILL",
+        "lat": 50.67259473950243,
+        "lon": -3.9789577234612694,
         "via": false,
         "nt": null,
-        "ele": 328
+        "ele": 556
       },
       {
-        "label": "KES TOR",
-        "lat": 50.66076763230601,
-        "lon": -3.88960194600092,
-        "via": true,
-        "nt": null,
-        "ele": 413
-      },
-      {
-        "label": "FERNWORTHY",
-        "lat": 50.64266985472795,
-        "lon": -3.9238112702997507,
+        "label": "HANGINGSTONE HILL",
+        "lat": 50.65855892089285,
+        "lon": -3.9579932253344805,
         "via": false,
-        "nt": null,
-        "ele": 433
+        "nt": null
       },
       {
-        "label": "STANNON TOR",
-        "lat": 50.61378371529461,
-        "lon": -3.9138683810637995,
-        "via": true,
-        "nt": null,
-        "ele": 446
+        "label": "SITTAFORD TOR",
+        "lat": 50.631086978902864,
+        "lon": -3.933519436318861,
+        "via": false,
+        "nt": null
       },
       {
         "label": "POSTBRIDGE",
         "lat": 50.59309081830653,
         "lon": -3.9143004419548966,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 329
       },
       {
-        "label": "HIGHER WHITE TOR",
-        "lat": 50.590726472884384,
-        "lon": -3.953764054718143,
+        "label": "BEARDOWN TOR",
+        "lat": 50.57963676183409,
+        "lon": -3.971385157125429,
         "via": false,
-        "nt": null,
-        "ele": 503
+        "nt": null
       },
       {
-        "label": "HOLMING BEAM",
-        "lat": 50.57085708312392,
-        "lon": -3.9905076543837756,
-        "via": true,
-        "nt": null,
-        "ele": 459
+        "label": "ROUGH TOR",
+        "lat": 50.601495614272984,
+        "lon": -3.971168145597841,
+        "via": false,
+        "nt": null
       },
       {
         "label": "WHITE BARROW",
         "lat": 50.59591374384258,
         "lon": -4.023922639310708,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 479
       },
@@ -1754,28 +1505,26 @@
         "ele": 286
       },
       {
-        "label": "HARE TOR",
-        "lat": 50.64015232191572,
-        "lon": -4.050291170965754,
+        "label": "ARMS TOR",
+        "lat": 50.65743472131696,
+        "lon": -4.064768070871484,
         "via": false,
-        "nt": null,
-        "ele": 507
-      },
-      {
-        "label": "GREAT KNEESET",
-        "lat": 50.65537032372571,
-        "lon": -3.9974746579420315,
-        "via": false,
-        "nt": null,
-        "ele": 557
+        "nt": null
       },
       {
         "label": "DINGER TOR",
         "lat": 50.67525895473643,
         "lon": -4.001999098057237,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 547
+      },
+      {
+        "label": "OKE TOR",
+        "lat": 50.691090550646216,
+        "lon": -3.964869623572984,
+        "via": false,
+        "nt": null
       },
       {
         "label": "FINISH",
@@ -1798,34 +1547,31 @@
         "ele": 366
       },
       {
-        "label": "GREAT KNEESET",
-        "lat": 50.65537032372571,
-        "lon": -3.9974746579420315,
+        "label": "OKE TOR",
+        "lat": 50.691090550646216,
+        "lon": -3.964869623572984,
         "via": false,
-        "nt": null,
-        "ele": 557
+        "nt": null
       },
       {
-        "label": "HARE TOR",
-        "lat": 50.64015232191572,
-        "lon": -4.050291170965754,
+        "label": "DINGER TOR",
+        "lat": 50.67525895473643,
+        "lon": -4.001999098057237,
         "via": false,
-        "nt": null,
-        "ele": 507
+        "nt": null
       },
       {
-        "label": "WILLSWORTHY",
-        "lat": 50.630435642977524,
-        "lon": -4.085926672979535,
+        "label": "ARMS TOR",
+        "lat": 50.65743472131696,
+        "lon": -4.064768070871484,
         "via": false,
-        "nt": null,
-        "ele": 321
+        "nt": null
       },
       {
         "label": "STANDON FARM",
         "lat": 50.614654393582235,
         "lon": -4.05794616320515,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 286
       },
@@ -1833,57 +1579,53 @@
         "label": "WHITE BARROW",
         "lat": 50.59591374384258,
         "lon": -4.023922639310708,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 479
       },
       {
-        "label": "HIGHER WHITE TOR",
-        "lat": 50.590726472884384,
-        "lon": -3.953764054718143,
+        "label": "ROUGH TOR",
+        "lat": 50.601495614272984,
+        "lon": -3.971168145597841,
         "via": false,
-        "nt": null,
-        "ele": 503
+        "nt": null
+      },
+      {
+        "label": "BEARDOWN TOR",
+        "lat": 50.57963676183409,
+        "lon": -3.971385157125429,
+        "via": false,
+        "nt": null
       },
       {
         "label": "POSTBRIDGE",
         "lat": 50.59309081830653,
         "lon": -3.9143004419548966,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 329
       },
       {
-        "label": "STANNON TOR",
-        "lat": 50.61378371529461,
-        "lon": -3.9138683810637995,
-        "via": true,
-        "nt": null,
-        "ele": 446
+        "label": "SITTAFORD TOR",
+        "lat": 50.631086978902864,
+        "lon": -3.933519436318861,
+        "via": false,
+        "nt": null
       },
       {
-        "label": "FERNWORTHY",
-        "lat": 50.64266985472795,
-        "lon": -3.9238112702997507,
+        "label": "HANGINGSTONE HILL",
+        "lat": 50.65855892089285,
+        "lon": -3.9579932253344805,
+        "via": false,
+        "nt": null
+      },
+      {
+        "label": "OKEMENT HILL",
+        "lat": 50.67259473950243,
+        "lon": -3.9789577234612694,
         "via": false,
         "nt": null,
-        "ele": 433
-      },
-      {
-        "label": "KES TOR",
-        "lat": 50.66076763230601,
-        "lon": -3.88960194600092,
-        "via": true,
-        "nt": null,
-        "ele": 413
-      },
-      {
-        "label": "SHILSTONE TOR",
-        "lat": 50.69591941271859,
-        "lon": -3.9014930120444857,
-        "via": false,
-        "nt": null,
-        "ele": 328
+        "ele": 556
       },
       {
         "label": "COSDON HILL",
@@ -1894,12 +1636,11 @@
         "ele": 538
       },
       {
-        "label": "OKEMENT HILL",
-        "lat": 50.67259473950243,
-        "lon": -3.9789577234612694,
-        "via": false,
-        "nt": null,
-        "ele": 556
+        "label": "HIGHER TOR",
+        "lat": 50.70833681947965,
+        "lon": -3.9661573183314722,
+        "via": true,
+        "nt": null
       },
       {
         "label": "FINISH",
@@ -1922,20 +1663,18 @@
         "ele": 366
       },
       {
-        "label": "OKEMENT HILL",
-        "lat": 50.67259473950243,
-        "lon": -3.9789577234612694,
+        "label": "HIGHER TOR",
+        "lat": 50.70833681947965,
+        "lon": -3.9661573183314722,
         "via": false,
-        "nt": null,
-        "ele": 556
+        "nt": null
       },
       {
-        "label": "WATERN TOR",
-        "lat": 50.66558356724063,
-        "lon": -3.941304416562812,
+        "label": "SHILSTONE TOR",
+        "lat": 50.69591941271859,
+        "lon": -3.9014930120444857,
         "via": false,
-        "nt": null,
-        "ele": 515
+        "nt": null
       },
       {
         "label": "KES TOR",
@@ -1954,42 +1693,32 @@
         "ele": 531
       },
       {
-        "label": "WATER HILL",
-        "lat": 50.61605507470089,
-        "lon": -3.8793275414969277,
-        "via": true,
-        "nt": null,
-        "ele": 494
-      },
-      {
         "label": "POSTBRIDGE",
         "lat": 50.59309081830653,
         "lon": -3.9143004419548966,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 329
       },
       {
-        "label": "HIGHER WHITE TOR",
-        "lat": 50.590726472884384,
-        "lon": -3.953764054718143,
-        "via": true,
-        "nt": null,
-        "ele": 503
+        "label": "ROUGH TOR",
+        "lat": 50.601495614272984,
+        "lon": -3.971168145597841,
+        "via": false,
+        "nt": null
       },
       {
-        "label": "HOLMING BEAM",
-        "lat": 50.57085708312392,
-        "lon": -3.9905076543837756,
+        "label": "LITTLE MIS TOR",
+        "lat": 50.568946046630394,
+        "lon": -4.028274079493375,
         "via": false,
-        "nt": null,
-        "ele": 459
+        "nt": null
       },
       {
         "label": "WHITE BARROW",
         "lat": 50.59591374384258,
         "lon": -4.023922639310708,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 479
       },
@@ -1997,17 +1726,9 @@
         "label": "STANDON FARM",
         "lat": 50.614654393582235,
         "lon": -4.05794616320515,
-        "via": true,
-        "nt": null,
-        "ele": 286
-      },
-      {
-        "label": "WILLSWORTHY",
-        "lat": 50.630435642977524,
-        "lon": -4.085926672979535,
         "via": false,
         "nt": null,
-        "ele": 321
+        "ele": 286
       },
       {
         "label": "HARE TOR",
@@ -2018,20 +1739,20 @@
         "ele": 507
       },
       {
-        "label": "KITTY TOR",
-        "lat": 50.66894998382941,
-        "lon": -4.028761009402047,
-        "via": true,
-        "nt": null,
-        "ele": 567
-      },
-      {
         "label": "DINGER TOR",
         "lat": 50.67525895473643,
         "lon": -4.001999098057237,
         "via": false,
         "nt": null,
         "ele": 547
+      },
+      {
+        "label": "OKEMENT HILL",
+        "lat": 50.67259473950243,
+        "lon": -3.9789577234612694,
+        "via": false,
+        "nt": null,
+        "ele": 556
       },
       {
         "label": "FINISH",
@@ -2054,6 +1775,14 @@
         "ele": 366
       },
       {
+        "label": "OKEMENT HILL",
+        "lat": 50.67259473950243,
+        "lon": -3.9789577234612694,
+        "via": false,
+        "nt": null,
+        "ele": 556
+      },
+      {
         "label": "DINGER TOR",
         "lat": 50.67525895473643,
         "lon": -4.001999098057237,
@@ -2062,34 +1791,18 @@
         "ele": 547
       },
       {
-        "label": "KITTY TOR",
-        "lat": 50.66894998382941,
-        "lon": -4.028761009402047,
-        "via": false,
-        "nt": null,
-        "ele": 567
-      },
-      {
         "label": "HARE TOR",
         "lat": 50.64015232191572,
         "lon": -4.050291170965754,
-        "via": true,
-        "nt": null,
-        "ele": 507
-      },
-      {
-        "label": "WILLSWORTHY",
-        "lat": 50.630435642977524,
-        "lon": -4.085926672979535,
         "via": false,
         "nt": null,
-        "ele": 321
+        "ele": 507
       },
       {
         "label": "STANDON FARM",
         "lat": 50.614654393582235,
         "lon": -4.05794616320515,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 286
       },
@@ -2097,41 +1810,31 @@
         "label": "WHITE BARROW",
         "lat": 50.59591374384258,
         "lon": -4.023922639310708,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 479
       },
       {
-        "label": "HOLMING BEAM",
-        "lat": 50.57085708312392,
-        "lon": -3.9905076543837756,
+        "label": "LITTLE MIS TOR",
+        "lat": 50.568946046630394,
+        "lon": -4.028274079493375,
         "via": false,
-        "nt": null,
-        "ele": 459
+        "nt": null
       },
       {
-        "label": "HIGHER WHITE TOR",
-        "lat": 50.590726472884384,
-        "lon": -3.953764054718143,
-        "via": true,
-        "nt": null,
-        "ele": 503
+        "label": "ROUGH TOR",
+        "lat": 50.601495614272984,
+        "lon": -3.971168145597841,
+        "via": false,
+        "nt": null
       },
       {
         "label": "POSTBRIDGE",
         "lat": 50.59309081830653,
         "lon": -3.9143004419548966,
-        "via": false,
-        "nt": null,
-        "ele": 329
-      },
-      {
-        "label": "WATER HILL",
-        "lat": 50.61605507470089,
-        "lon": -3.8793275414969277,
         "via": true,
         "nt": null,
-        "ele": 494
+        "ele": 329
       },
       {
         "label": "SITTAFORD TOR",
@@ -2150,20 +1853,18 @@
         "ele": 413
       },
       {
-        "label": "WATERN TOR",
-        "lat": 50.66558356724063,
-        "lon": -3.941304416562812,
+        "label": "SHILSTONE TOR",
+        "lat": 50.69591941271859,
+        "lon": -3.9014930120444857,
         "via": false,
-        "nt": null,
-        "ele": 515
+        "nt": null
       },
       {
-        "label": "OKEMENT HILL",
-        "lat": 50.67259473950243,
-        "lon": -3.9789577234612694,
+        "label": "HIGHER TOR",
+        "lat": 50.70833681947965,
+        "lon": -3.9661573183314722,
         "via": false,
-        "nt": null,
-        "ele": 556
+        "nt": null
       },
       {
         "label": "FINISH",
@@ -2186,20 +1887,25 @@
         "ele": 366
       },
       {
-        "label": "COSDON HILL",
-        "lat": 50.70718330239055,
-        "lon": -3.9329666111421377,
+        "label": "HIGHER TOR",
+        "lat": 50.70833681947965,
+        "lon": -3.9661573183314722,
         "via": false,
-        "nt": null,
-        "ele": 538
+        "nt": null
       },
       {
-        "label": "WATERN TOR",
-        "lat": 50.66558356724063,
-        "lon": -3.941304416562812,
+        "label": "HANGINGSTONE HILL",
+        "lat": 50.65855892089285,
+        "lon": -3.9579932253344805,
         "via": false,
-        "nt": null,
-        "ele": 515
+        "nt": null
+      },
+      {
+        "label": "SITTAFORD TOR",
+        "lat": 50.631086978902864,
+        "lon": -3.933519436318861,
+        "via": false,
+        "nt": null
       },
       {
         "label": "KES TOR",
@@ -2210,44 +1916,26 @@
         "ele": 413
       },
       {
-        "label": "FERNWORTHY",
-        "lat": 50.64266985472795,
-        "lon": -3.9238112702997507,
+        "label": "WATER HILL",
+        "lat": 50.61605507470089,
+        "lon": -3.8793275414969277,
         "via": true,
-        "nt": null,
-        "ele": 433
-      },
-      {
-        "label": "STANNON TOR",
-        "lat": 50.61378371529461,
-        "lon": -3.9138683810637995,
-        "via": false,
-        "nt": null,
-        "ele": 446
+        "nt": null
       },
       {
         "label": "POSTBRIDGE",
         "lat": 50.59309081830653,
         "lon": -3.9143004419548966,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 329
       },
       {
-        "label": "HIGHER WHITE TOR",
-        "lat": 50.590726472884384,
-        "lon": -3.953764054718143,
+        "label": "ROUGH TOR",
+        "lat": 50.601495614272984,
+        "lon": -3.971168145597841,
         "via": false,
-        "nt": null,
-        "ele": 503
-      },
-      {
-        "label": "HOLMING BEAM",
-        "lat": 50.57085708312392,
-        "lon": -3.9905076543837756,
-        "via": true,
-        "nt": null,
-        "ele": 459
+        "nt": null
       },
       {
         "label": "WHITE BARROW",
@@ -2261,7 +1949,7 @@
         "label": "STANDON FARM",
         "lat": 50.614654393582235,
         "lon": -4.05794616320515,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 286
       },
@@ -2274,20 +1962,25 @@
         "ele": 321
       },
       {
-        "label": "KITTY TOR",
-        "lat": 50.66894998382941,
-        "lon": -4.028761009402047,
-        "via": false,
-        "nt": null,
-        "ele": 567
+        "label": "HARE TOR",
+        "lat": 50.64015232191572,
+        "lon": -4.050291170965754,
+        "via": true,
+        "nt": null
       },
       {
-        "label": "OKEMENT HILL",
-        "lat": 50.67259473950243,
-        "lon": -3.9789577234612694,
+        "label": "GREAT KNEESET",
+        "lat": 50.65537032372571,
+        "lon": -3.9974746579420315,
         "via": false,
-        "nt": null,
-        "ele": 556
+        "nt": null
+      },
+      {
+        "label": "HIGH WILLHAYS",
+        "lat": 50.68526101302258,
+        "lon": -4.011343769978243,
+        "via": false,
+        "nt": null
       },
       {
         "label": "FINISH",
@@ -2310,20 +2003,25 @@
         "ele": 366
       },
       {
-        "label": "OKEMENT HILL",
-        "lat": 50.67259473950243,
-        "lon": -3.9789577234612694,
+        "label": "HIGH WILLHAYS",
+        "lat": 50.68526101302258,
+        "lon": -4.011343769978243,
         "via": false,
-        "nt": null,
-        "ele": 556
+        "nt": null
       },
       {
-        "label": "KITTY TOR",
-        "lat": 50.66894998382941,
-        "lon": -4.028761009402047,
+        "label": "GREAT KNEESET",
+        "lat": 50.65537032372571,
+        "lon": -3.9974746579420315,
         "via": false,
-        "nt": null,
-        "ele": 567
+        "nt": null
+      },
+      {
+        "label": "HARE TOR",
+        "lat": 50.64015232191572,
+        "lon": -4.050291170965754,
+        "via": true,
+        "nt": null
       },
       {
         "label": "WILLSWORTHY",
@@ -2337,7 +2035,7 @@
         "label": "STANDON FARM",
         "lat": 50.614654393582235,
         "lon": -4.05794616320515,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 286
       },
@@ -2350,44 +2048,26 @@
         "ele": 479
       },
       {
-        "label": "HOLMING BEAM",
-        "lat": 50.57085708312392,
-        "lon": -3.9905076543837756,
-        "via": true,
-        "nt": null,
-        "ele": 459
-      },
-      {
-        "label": "HIGHER WHITE TOR",
-        "lat": 50.590726472884384,
-        "lon": -3.953764054718143,
+        "label": "ROUGH TOR",
+        "lat": 50.601495614272984,
+        "lon": -3.971168145597841,
         "via": false,
-        "nt": null,
-        "ele": 503
+        "nt": null
       },
       {
         "label": "POSTBRIDGE",
         "lat": 50.59309081830653,
         "lon": -3.9143004419548966,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 329
       },
       {
-        "label": "STANNON TOR",
-        "lat": 50.61378371529461,
-        "lon": -3.9138683810637995,
-        "via": false,
-        "nt": null,
-        "ele": 446
-      },
-      {
-        "label": "FERNWORTHY",
-        "lat": 50.64266985472795,
-        "lon": -3.9238112702997507,
+        "label": "WATER HILL",
+        "lat": 50.61605507470089,
+        "lon": -3.8793275414969277,
         "via": true,
-        "nt": null,
-        "ele": 433
+        "nt": null
       },
       {
         "label": "KES TOR",
@@ -2398,26 +2078,24 @@
         "ele": 413
       },
       {
-        "label": "WATERN TOR",
-        "lat": 50.66558356724063,
-        "lon": -3.941304416562812,
+        "label": "SITTAFORD TOR",
+        "lat": 50.631086978902864,
+        "lon": -3.933519436318861,
         "via": false,
-        "nt": null,
-        "ele": 515
+        "nt": null
       },
       {
-        "label": "COSDON HILL",
-        "lat": 50.70718330239055,
-        "lon": -3.9329666111421377,
+        "label": "HANGINGSTONE HILL",
+        "lat": 50.65855892089285,
+        "lon": -3.9579932253344805,
         "via": false,
-        "nt": null,
-        "ele": 538
+        "nt": null
       },
       {
         "label": "HIGHER TOR",
-        "lat": 50.708606441108614,
-        "lon": -3.9661686012820163,
-        "via": true,
+        "lat": 50.70833681947965,
+        "lon": -3.9661573183314722,
+        "via": false,
         "nt": null,
         "ele": 458
       },
@@ -2450,14 +2128,6 @@
         "ele": 538
       },
       {
-        "label": "SHILSTONE TOR",
-        "lat": 50.69591941271859,
-        "lon": -3.9014930120444857,
-        "via": true,
-        "nt": null,
-        "ele": 328
-      },
-      {
         "label": "OKEMENT HILL",
         "lat": 50.67259473950243,
         "lon": -3.9789577234612694,
@@ -2466,28 +2136,19 @@
         "ele": 556
       },
       {
-        "label": "WATERN TOR",
-        "lat": 50.66558356724063,
-        "lon": -3.941304416562812,
-        "via": false,
-        "nt": null,
-        "ele": 515
-      },
-      {
         "label": "KES TOR",
         "lat": 50.66076763230601,
         "lon": -3.88960194600092,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 413
       },
       {
-        "label": "WATER HILL",
-        "lat": 50.61605507470089,
-        "lon": -3.8793275414969277,
+        "label": "SITTAFORD TOR",
+        "lat": 50.631086978902864,
+        "lon": -3.933519436318861,
         "via": false,
-        "nt": null,
-        "ele": 494
+        "nt": null
       },
       {
         "label": "POSTBRIDGE",
@@ -2498,26 +2159,31 @@
         "ele": 329
       },
       {
-        "label": "ROUGH TOR",
-        "lat": 50.601495614272984,
-        "lon": -3.971168145597841,
+        "label": "DUNNABRIDGE HILL",
+        "lat": 50.55654119756884,
+        "lon": -3.9218545873009663,
         "via": false,
-        "nt": null,
-        "ele": 538
+        "nt": null
       },
       {
-        "label": "HOLMING BEAM",
-        "lat": 50.57085708312392,
-        "lon": -3.9905076543837756,
-        "via": true,
-        "nt": null,
-        "ele": 459
+        "label": "EYLESBARROW",
+        "lat": 50.50041187954228,
+        "lon": -3.9759805263701846,
+        "via": false,
+        "nt": null
+      },
+      {
+        "label": "BLACK TOR",
+        "lat": 50.528536401642846,
+        "lon": -4.014264592394848,
+        "via": false,
+        "nt": null
       },
       {
         "label": "LITTLE MIS TOR",
         "lat": 50.568946046630394,
         "lon": -4.028274079493375,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 476
       },
@@ -2525,7 +2191,7 @@
         "label": "WHITE BARROW",
         "lat": 50.59591374384258,
         "lon": -4.023922639310708,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 479
       },
@@ -2533,17 +2199,9 @@
         "label": "STANDON FARM",
         "lat": 50.614654393582235,
         "lon": -4.05794616320515,
-        "via": false,
-        "nt": null,
-        "ele": 286
-      },
-      {
-        "label": "WILLSWORTHY",
-        "lat": 50.630435642977524,
-        "lon": -4.085926672979535,
         "via": true,
         "nt": null,
-        "ele": 321
+        "ele": 286
       },
       {
         "label": "HARE TOR",
@@ -2554,28 +2212,11 @@
         "ele": 507
       },
       {
-        "label": "NODDEN GATE",
-        "lat": 50.65795420841026,
-        "lon": -4.081062002254915,
-        "via": true,
-        "nt": null,
-        "ele": 307
-      },
-      {
-        "label": "KITTY TOR",
-        "lat": 50.66894998382941,
-        "lon": -4.028761009402047,
+        "label": "DINGER TOR",
+        "lat": 50.67525895473643,
+        "lon": -4.001999098057237,
         "via": false,
-        "nt": null,
-        "ele": 567
-      },
-      {
-        "label": "OKE TOR",
-        "lat": 50.691090550646216,
-        "lon": -3.964869623572984,
-        "via": false,
-        "nt": null,
-        "ele": 446
+        "nt": null
       },
       {
         "label": "FINISH",
@@ -2598,36 +2239,25 @@
         "ele": 366
       },
       {
-        "label": "PREWLEY MOOR",
-        "lat": 50.699988091114705,
-        "lon": -4.058989857841791,
+        "label": "DINGER TOR",
+        "lat": 50.67525895473643,
+        "lon": -4.001999098057237,
         "via": false,
-        "nt": null,
-        "ele": 312
+        "nt": null
       },
       {
-        "label": "KITTY TOR",
-        "lat": 50.66894998382941,
-        "lon": -4.028761009402047,
+        "label": "HARE TOR",
+        "lat": 50.64015232191572,
+        "lon": -4.050291170965754,
         "via": false,
-        "nt": null,
-        "ele": 567
+        "nt": null
       },
       {
-        "label": "NODDEN GATE",
-        "lat": 50.65795420841026,
-        "lon": -4.081062002254915,
+        "label": "STANDON FARM",
+        "lat": 50.614654393582235,
+        "lon": -4.05794616320515,
         "via": true,
-        "nt": null,
-        "ele": 307
-      },
-      {
-        "label": "WILLSWORTHY",
-        "lat": 50.630435642977524,
-        "lon": -4.085926672979535,
-        "via": false,
-        "nt": null,
-        "ele": 321
+        "nt": null
       },
       {
         "label": "WHITE BARROW",
@@ -2646,36 +2276,40 @@
         "ele": 476
       },
       {
-        "label": "HOLMING BEAM",
-        "lat": 50.57085708312392,
-        "lon": -3.9905076543837756,
+        "label": "BLACK TOR",
+        "lat": 50.528536401642846,
+        "lon": -4.014264592394848,
         "via": false,
-        "nt": null,
-        "ele": 459
+        "nt": null
       },
       {
-        "label": "ROUGH TOR",
-        "lat": 50.601495614272984,
-        "lon": -3.971168145597841,
-        "via": true,
-        "nt": null,
-        "ele": 538
+        "label": "EYLESBARROW",
+        "lat": 50.50041187954228,
+        "lon": -3.9759805263701846,
+        "via": false,
+        "nt": null
+      },
+      {
+        "label": "DUNNABRIDGE HILL",
+        "lat": 50.55654119756884,
+        "lon": -3.9218545873009663,
+        "via": false,
+        "nt": null
       },
       {
         "label": "POSTBRIDGE",
         "lat": 50.59309081830653,
         "lon": -3.9143004419548966,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 329
       },
       {
-        "label": "WATER HILL",
-        "lat": 50.61605507470089,
-        "lon": -3.8793275414969277,
-        "via": true,
-        "nt": null,
-        "ele": 494
+        "label": "SITTAFORD TOR",
+        "lat": 50.631086978902864,
+        "lon": -3.933519436318861,
+        "via": false,
+        "nt": null
       },
       {
         "label": "KES TOR",
@@ -2686,36 +2320,12 @@
         "ele": 413
       },
       {
-        "label": "FERNWORTHY",
-        "lat": 50.64266985472795,
-        "lon": -3.9238112702997507,
-        "via": true,
-        "nt": null,
-        "ele": 433
-      },
-      {
-        "label": "WATERN TOR",
-        "lat": 50.66558356724063,
-        "lon": -3.941304416562812,
-        "via": false,
-        "nt": null,
-        "ele": 515
-      },
-      {
         "label": "OKEMENT HILL",
         "lat": 50.67259473950243,
         "lon": -3.9789577234612694,
         "via": false,
         "nt": null,
         "ele": 556
-      },
-      {
-        "label": "SHILSTONE TOR",
-        "lat": 50.69591941271859,
-        "lon": -3.9014930120444857,
-        "via": true,
-        "nt": null,
-        "ele": 328
       },
       {
         "label": "COSDON HILL",
@@ -2727,8 +2337,8 @@
       },
       {
         "label": "HIGHER TOR",
-        "lat": 50.708606441108614,
-        "lon": -3.9661686012820163,
+        "lat": 50.70833681947965,
+        "lon": -3.9661573183314722,
         "via": true,
         "nt": null,
         "ele": 458
@@ -2762,26 +2372,10 @@
         "ele": 328
       },
       {
-        "label": "WATERN TOR",
-        "lat": 50.66558356724063,
-        "lon": -3.941304416562812,
-        "via": false,
-        "nt": null,
-        "ele": 515
-      },
-      {
-        "label": "SITTAFORD TOR",
-        "lat": 50.631086978902864,
-        "lon": -3.933519436318861,
-        "via": false,
-        "nt": null,
-        "ele": 531
-      },
-      {
         "label": "KES TOR",
         "lat": 50.66076763230601,
         "lon": -3.88960194600092,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 413
       },
@@ -2802,34 +2396,38 @@
         "ele": 329
       },
       {
-        "label": "ROUGH TOR",
-        "lat": 50.601495614272984,
-        "lon": -3.971168145597841,
+        "label": "DUNNABRIDGE HILL",
+        "lat": 50.55654119756884,
+        "lon": -3.9218545873009663,
         "via": false,
-        "nt": null,
-        "ele": 538
+        "nt": null
       },
       {
-        "label": "HIGHER WHITE TOR",
-        "lat": 50.590726472884384,
-        "lon": -3.953764054718143,
+        "label": "EYLESBARROW",
+        "lat": 50.50041187954228,
+        "lon": -3.9759805263701846,
+        "via": false,
+        "nt": null
+      },
+      {
+        "label": "GUTTER TOR",
+        "lat": 50.48504948613793,
+        "lon": -4.006493729353997,
         "via": true,
-        "nt": null,
-        "ele": 503
+        "nt": null
       },
       {
-        "label": "HOLMING BEAM",
-        "lat": 50.57085708312392,
-        "lon": -3.9905076543837756,
+        "label": "BLACK TOR",
+        "lat": 50.528536401642846,
+        "lon": -4.014264592394848,
         "via": false,
-        "nt": null,
-        "ele": 459
+        "nt": null
       },
       {
         "label": "LITTLE MIS TOR",
         "lat": 50.568946046630394,
         "lon": -4.028274079493375,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 476
       },
@@ -2837,7 +2435,7 @@
         "label": "WHITE BARROW",
         "lat": 50.59591374384258,
         "lon": -4.023922639310708,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 479
       },
@@ -2845,7 +2443,7 @@
         "label": "STANDON FARM",
         "lat": 50.614654393582235,
         "lon": -4.05794616320515,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 286
       },
@@ -2853,25 +2451,16 @@
         "label": "WILLSWORTHY",
         "lat": 50.630435642977524,
         "lon": -4.085926672979535,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 321
       },
       {
-        "label": "NODDEN GATE",
-        "lat": 50.65795420841026,
-        "lon": -4.081062002254915,
-        "via": true,
-        "nt": null,
-        "ele": 307
-      },
-      {
-        "label": "HARE TOR",
-        "lat": 50.64015232191572,
-        "lon": -4.050291170965754,
+        "label": "ARMS TOR",
+        "lat": 50.65743472131696,
+        "lon": -4.064768070871484,
         "via": false,
-        "nt": null,
-        "ele": 507
+        "nt": null
       },
       {
         "label": "GREAT KNEESET",
@@ -2918,28 +2507,11 @@
         "ele": 557
       },
       {
-        "label": "KITTY TOR",
-        "lat": 50.66894998382941,
-        "lon": -4.028761009402047,
-        "via": true,
-        "nt": null,
-        "ele": 567
-      },
-      {
-        "label": "NODDEN GATE",
-        "lat": 50.65795420841026,
-        "lon": -4.081062002254915,
+        "label": "ARMS TOR",
+        "lat": 50.65743472131696,
+        "lon": -4.064768070871484,
         "via": false,
-        "nt": null,
-        "ele": 307
-      },
-      {
-        "label": "HARE TOR",
-        "lat": 50.64015232191572,
-        "lon": -4.050291170965754,
-        "via": false,
-        "nt": null,
-        "ele": 507
+        "nt": null
       },
       {
         "label": "WILLSWORTHY",
@@ -2950,10 +2522,17 @@
         "ele": 321
       },
       {
+        "label": "STANDON FARM",
+        "lat": 50.614654393582235,
+        "lon": -4.05794616320515,
+        "via": false,
+        "nt": null
+      },
+      {
         "label": "WHITE BARROW",
         "lat": 50.59591374384258,
         "lon": -4.023922639310708,
-        "via": false,
+        "via": true,
         "nt": null,
         "ele": 479
       },
@@ -2961,25 +2540,37 @@
         "label": "LITTLE MIS TOR",
         "lat": 50.568946046630394,
         "lon": -4.028274079493375,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 476
       },
       {
-        "label": "HOLMING BEAM",
-        "lat": 50.57085708312392,
-        "lon": -3.9905076543837756,
+        "label": "BLACK TOR",
+        "lat": 50.528536401642846,
+        "lon": -4.014264592394848,
         "via": false,
-        "nt": null,
-        "ele": 459
+        "nt": null
       },
       {
-        "label": "ROUGH TOR",
-        "lat": 50.601495614272984,
-        "lon": -3.971168145597841,
+        "label": "GUTTER TOR",
+        "lat": 50.48504948613793,
+        "lon": -4.006493729353997,
+        "via": true,
+        "nt": null
+      },
+      {
+        "label": "EYLESBARROW",
+        "lat": 50.50041187954228,
+        "lon": -3.9759805263701846,
         "via": false,
-        "nt": null,
-        "ele": 538
+        "nt": null
+      },
+      {
+        "label": "DUNNABRIDGE HILL",
+        "lat": 50.55654119756884,
+        "lon": -3.9218545873009663,
+        "via": false,
+        "nt": null
       },
       {
         "label": "POSTBRIDGE",
@@ -3001,33 +2592,9 @@
         "label": "KES TOR",
         "lat": 50.66076763230601,
         "lon": -3.88960194600092,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 413
-      },
-      {
-        "label": "SITTAFORD TOR",
-        "lat": 50.631086978902864,
-        "lon": -3.933519436318861,
-        "via": false,
-        "nt": null,
-        "ele": 531
-      },
-      {
-        "label": "WATERN TOR",
-        "lat": 50.66558356724063,
-        "lon": -3.941304416562812,
-        "via": true,
-        "nt": null,
-        "ele": 515
-      },
-      {
-        "label": "STEEPERTON TOR",
-        "lat": 50.683217919614,
-        "lon": -3.957037867231583,
-        "via": false,
-        "nt": null,
-        "ele": 513
       },
       {
         "label": "SHILSTONE TOR",
@@ -3036,14 +2603,6 @@
         "via": false,
         "nt": null,
         "ele": 328
-      },
-      {
-        "label": "HIGHER TOR",
-        "lat": 50.708606441108614,
-        "lon": -3.9661686012820163,
-        "via": true,
-        "nt": null,
-        "ele": 458
       },
       {
         "label": "FINISH",
@@ -3066,44 +2625,11 @@
         "ele": 366
       },
       {
-        "label": "COSDON HILL",
-        "lat": 50.70718330239055,
-        "lon": -3.9329666111421377,
-        "via": true,
-        "nt": null,
-        "ele": 538
-      },
-      {
-        "label": "SHILSTONE TOR",
-        "lat": 50.69591941271859,
-        "lon": -3.9014930120444857,
+        "label": "OKEMENT HILL",
+        "lat": 50.67259473950243,
+        "lon": -3.9789577234612694,
         "via": false,
-        "nt": null,
-        "ele": 328
-      },
-      {
-        "label": "STEEPERTON TOR",
-        "lat": 50.683217919614,
-        "lon": -3.957037867231583,
-        "via": false,
-        "nt": null,
-        "ele": 513
-      },
-      {
-        "label": "WATERN TOR",
-        "lat": 50.66558356724063,
-        "lon": -3.941304416562812,
-        "via": true,
-        "nt": null,
-        "ele": 515
-      },
-      {
-        "label": "FERNWORTHY",
-        "lat": 50.64266985472795,
-        "lon": -3.9238112702997507,
-        "via": false,
-        "nt": null,
-        "ele": 433
+        "nt": null
       },
       {
         "label": "KES TOR",
@@ -3112,14 +2638,6 @@
         "via": false,
         "nt": null,
         "ele": 413
-      },
-      {
-        "label": "WATER HILL",
-        "lat": 50.61605507470089,
-        "lon": -3.8793275414969277,
-        "via": true,
-        "nt": null,
-        "ele": 494
       },
       {
         "label": "SITTAFORD TOR",
@@ -3133,25 +2651,37 @@
         "label": "POSTBRIDGE",
         "lat": 50.59309081830653,
         "lon": -3.9143004419548966,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 329
       },
       {
-        "label": "ROUGH TOR",
-        "lat": 50.601495614272984,
-        "lon": -3.971168145597841,
-        "via": false,
-        "nt": null,
-        "ele": 538
+        "label": "DUNNABRIDGE HILL",
+        "lat": 50.55654119756884,
+        "lon": -3.9218545873009663,
+        "via": true,
+        "nt": null
       },
       {
-        "label": "HOLMING BEAM",
-        "lat": 50.57085708312392,
-        "lon": -3.9905076543837756,
+        "label": "EYLESBARROW",
+        "lat": 50.50041187954228,
+        "lon": -3.9759805263701846,
+        "via": false,
+        "nt": null
+      },
+      {
+        "label": "GUTTER TOR",
+        "lat": 50.48504948613793,
+        "lon": -4.006493729353997,
+        "via": false,
+        "nt": null
+      },
+      {
+        "label": "BLACK TOR",
+        "lat": 50.528536401642846,
+        "lon": -4.014264592394848,
         "via": true,
-        "nt": null,
-        "ele": 459
+        "nt": null
       },
       {
         "label": "LITTLE MIS TOR",
@@ -3178,28 +2708,11 @@
         "ele": 286
       },
       {
-        "label": "WILLSWORTHY",
-        "lat": 50.630435642977524,
-        "lon": -4.085926672979535,
-        "via": true,
-        "nt": null,
-        "ele": 321
-      },
-      {
-        "label": "HARE TOR",
-        "lat": 50.64015232191572,
-        "lon": -4.050291170965754,
+        "label": "ARMS TOR",
+        "lat": 50.65743472131696,
+        "lon": -4.064768070871484,
         "via": false,
-        "nt": null,
-        "ele": 507
-      },
-      {
-        "label": "GREAT KNEESET",
-        "lat": 50.65537032372571,
-        "lon": -3.9974746579420315,
-        "via": true,
-        "nt": null,
-        "ele": 557
+        "nt": null
       },
       {
         "label": "EAST MILL TOR",
@@ -3230,28 +2743,18 @@
         "ele": 366
       },
       {
-        "label": "PREWLEY MOOR",
-        "lat": 50.699988091114705,
-        "lon": -4.058989857841791,
+        "label": "EAST MILL TOR",
+        "lat": 50.69157091828485,
+        "lon": -3.9842872159630978,
         "via": false,
-        "nt": null,
-        "ele": 312
+        "nt": null
       },
       {
-        "label": "NODDEN GATE",
-        "lat": 50.65795420841026,
-        "lon": -4.081062002254915,
+        "label": "ARMS TOR",
+        "lat": 50.65743472131696,
+        "lon": -4.064768070871484,
         "via": false,
-        "nt": null,
-        "ele": 307
-      },
-      {
-        "label": "WILLSWORTHY",
-        "lat": 50.630435642977524,
-        "lon": -4.085926672979535,
-        "via": true,
-        "nt": null,
-        "ele": 321
+        "nt": null
       },
       {
         "label": "STANDON FARM",
@@ -3270,44 +2773,55 @@
         "ele": 479
       },
       {
-        "label": "HOLMING BEAM",
-        "lat": 50.57085708312392,
-        "lon": -3.9905076543837756,
+        "label": "LITTLE MIS TOR",
+        "lat": 50.568946046630394,
+        "lon": -4.028274079493375,
         "via": false,
-        "nt": null,
-        "ele": 459
+        "nt": null
       },
       {
-        "label": "HIGHER WHITE TOR",
-        "lat": 50.590726472884384,
-        "lon": -3.953764054718143,
+        "label": "BLACK TOR",
+        "lat": 50.528536401642846,
+        "lon": -4.014264592394848,
         "via": true,
-        "nt": null,
-        "ele": 503
+        "nt": null
       },
       {
-        "label": "ROUGH TOR",
-        "lat": 50.601495614272984,
-        "lon": -3.971168145597841,
+        "label": "GUTTER TOR",
+        "lat": 50.48504948613793,
+        "lon": -4.006493729353997,
         "via": false,
-        "nt": null,
-        "ele": 538
+        "nt": null
+      },
+      {
+        "label": "EYLESBARROW",
+        "lat": 50.50041187954228,
+        "lon": -3.9759805263701846,
+        "via": false,
+        "nt": null
+      },
+      {
+        "label": "DUNNABRIDGE HILL",
+        "lat": 50.55654119756884,
+        "lon": -3.9218545873009663,
+        "via": true,
+        "nt": null
       },
       {
         "label": "POSTBRIDGE",
         "lat": 50.59309081830653,
         "lon": -3.9143004419548966,
-        "via": true,
+        "via": false,
         "nt": null,
         "ele": 329
       },
       {
-        "label": "WATER HILL",
-        "lat": 50.61605507470089,
-        "lon": -3.8793275414969277,
+        "label": "SITTAFORD TOR",
+        "lat": 50.631086978902864,
+        "lon": -3.933519436318861,
         "via": false,
         "nt": null,
-        "ele": 494
+        "ele": 531
       },
       {
         "label": "KES TOR",
@@ -3316,38 +2830,6 @@
         "via": false,
         "nt": null,
         "ele": 413
-      },
-      {
-        "label": "SITTAFORD TOR",
-        "lat": 50.631086978902864,
-        "lon": -3.933519436318861,
-        "via": true,
-        "nt": null,
-        "ele": 531
-      },
-      {
-        "label": "WATERN TOR",
-        "lat": 50.66558356724063,
-        "lon": -3.941304416562812,
-        "via": false,
-        "nt": null,
-        "ele": 515
-      },
-      {
-        "label": "SHILSTONE TOR",
-        "lat": 50.69591941271859,
-        "lon": -3.9014930120444857,
-        "via": false,
-        "nt": null,
-        "ele": 328
-      },
-      {
-        "label": "COSDON HILL",
-        "lat": 50.70718330239055,
-        "lon": -3.9329666111421377,
-        "via": true,
-        "nt": null,
-        "ele": 538
       },
       {
         "label": "OKEMENT HILL",
@@ -3378,20 +2860,11 @@
         "ele": 366
       },
       {
-        "label": "SHILSTONE TOR",
-        "lat": 50.69591941271859,
-        "lon": -3.9014930120444857,
+        "label": "HANGINGSTONE HILL",
+        "lat": 50.65855892089285,
+        "lon": -3.9579932253344805,
         "via": false,
-        "nt": null,
-        "ele": 328
-      },
-      {
-        "label": "WATERN TOR",
-        "lat": 50.66558356724063,
-        "lon": -3.941304416562812,
-        "via": true,
-        "nt": null,
-        "ele": 515
+        "nt": null
       },
       {
         "label": "KES TOR",
@@ -3402,14 +2875,6 @@
         "ele": 413
       },
       {
-        "label": "WATER HILL",
-        "lat": 50.61605507470089,
-        "lon": -3.8793275414969277,
-        "via": true,
-        "nt": null,
-        "ele": 494
-      },
-      {
         "label": "POSTBRIDGE",
         "lat": 50.59309081830653,
         "lon": -3.9143004419548966,
@@ -3418,44 +2883,53 @@
         "ele": 329
       },
       {
-        "label": "SITTAFORD TOR",
-        "lat": 50.631086978902864,
-        "lon": -3.933519436318861,
-        "via": true,
-        "nt": null,
-        "ele": 531
-      },
-      {
-        "label": "OKEMENT HILL",
-        "lat": 50.67259473950243,
-        "lon": -3.9789577234612694,
+        "label": "DUNNABRIDGE HILL",
+        "lat": 50.55654119756884,
+        "lon": -3.9218545873009663,
         "via": false,
-        "nt": null,
-        "ele": 556
+        "nt": null
       },
       {
-        "label": "GREAT KNEESET",
-        "lat": 50.65537032372571,
-        "lon": -3.9974746579420315,
-        "via": true,
-        "nt": null,
-        "ele": 557
-      },
-      {
-        "label": "HARE TOR",
-        "lat": 50.64015232191572,
-        "lon": -4.050291170965754,
+        "label": "PUPERS ROCK",
+        "lat": 50.49106011192124,
+        "lon": -3.872529325764325,
         "via": false,
-        "nt": null,
-        "ele": 507
+        "nt": null
       },
       {
-        "label": "STANDON FARM",
-        "lat": 50.614654393582235,
-        "lon": -4.05794616320515,
+        "label": "EYLESBARROW",
+        "lat": 50.50041187954228,
+        "lon": -3.9759805263701846,
         "via": true,
-        "nt": null,
-        "ele": 286
+        "nt": null
+      },
+      {
+        "label": "GUTTER TOR",
+        "lat": 50.48504948613793,
+        "lon": -4.006493729353997,
+        "via": false,
+        "nt": null
+      },
+      {
+        "label": "BLACK TOR",
+        "lat": 50.528536401642846,
+        "lon": -4.014264592394848,
+        "via": true,
+        "nt": null
+      },
+      {
+        "label": "LITTLE MIS TOR",
+        "lat": 50.568946046630394,
+        "lon": -4.028274079493375,
+        "via": false,
+        "nt": null
+      },
+      {
+        "label": "BEARDOWN TOR",
+        "lat": 50.57963676183409,
+        "lon": -3.971385157125429,
+        "via": true,
+        "nt": null
       },
       {
         "label": "ROUGH TOR",
@@ -3466,60 +2940,19 @@
         "ele": 538
       },
       {
-        "label": "HIGHER WHITE TOR",
-        "lat": 50.590726472884384,
-        "lon": -3.953764054718143,
-        "via": true,
-        "nt": null,
-        "ele": 503
-      },
-      {
-        "label": "HOLMING BEAM",
-        "lat": 50.57085708312392,
-        "lon": -3.9905076543837756,
+        "label": "STANDON FARM",
+        "lat": 50.614654393582235,
+        "lon": -4.05794616320515,
         "via": false,
         "nt": null,
-        "ele": 459
+        "ele": 286
       },
       {
-        "label": "WHITE BARROW",
-        "lat": 50.59591374384258,
-        "lon": -4.023922639310708,
+        "label": "ARMS TOR",
+        "lat": 50.65743472131696,
+        "lon": -4.064768070871484,
         "via": false,
-        "nt": null,
-        "ele": 479
-      },
-      {
-        "label": "WHITE TOR",
-        "lat": 50.58965792420441,
-        "lon": -4.057562115399488,
-        "via": true,
-        "nt": null,
-        "ele": 441
-      },
-      {
-        "label": "WILLSWORTHY",
-        "lat": 50.630435642977524,
-        "lon": -4.085926672979535,
-        "via": false,
-        "nt": null,
-        "ele": 321
-      },
-      {
-        "label": "NODDEN GATE",
-        "lat": 50.65795420841026,
-        "lon": -4.081062002254915,
-        "via": true,
-        "nt": null,
-        "ele": 307
-      },
-      {
-        "label": "KITTY TOR",
-        "lat": 50.66894998382941,
-        "lon": -4.028761009402047,
-        "via": false,
-        "nt": null,
-        "ele": 567
+        "nt": null
       },
       {
         "label": "DINGER TOR",
@@ -3550,60 +2983,11 @@
         "ele": 366
       },
       {
-        "label": "PREWLEY MOOR",
-        "lat": 50.699988091114705,
-        "lon": -4.058989857841791,
+        "label": "ARMS TOR",
+        "lat": 50.65743472131696,
+        "lon": -4.064768070871484,
         "via": false,
-        "nt": null,
-        "ele": 312
-      },
-      {
-        "label": "KITTY TOR",
-        "lat": 50.66894998382941,
-        "lon": -4.028761009402047,
-        "via": true,
-        "nt": null,
-        "ele": 567
-      },
-      {
-        "label": "WILLSWORTHY",
-        "lat": 50.630435642977524,
-        "lon": -4.085926672979535,
-        "via": false,
-        "nt": null,
-        "ele": 321
-      },
-      {
-        "label": "WHITE TOR",
-        "lat": 50.58965792420441,
-        "lon": -4.057562115399488,
-        "via": false,
-        "nt": null,
-        "ele": 441
-      },
-      {
-        "label": "HOLMING BEAM",
-        "lat": 50.57085708312392,
-        "lon": -3.9905076543837756,
-        "via": true,
-        "nt": null,
-        "ele": 459
-      },
-      {
-        "label": "HIGHER WHITE TOR",
-        "lat": 50.590726472884384,
-        "lon": -3.953764054718143,
-        "via": false,
-        "nt": null,
-        "ele": 503
-      },
-      {
-        "label": "ROUGH TOR",
-        "lat": 50.601495614272984,
-        "lon": -3.971168145597841,
-        "via": true,
-        "nt": null,
-        "ele": 538
+        "nt": null
       },
       {
         "label": "STANDON FARM",
@@ -3614,52 +2998,69 @@
         "ele": 286
       },
       {
-        "label": "HARE TOR",
-        "lat": 50.64015232191572,
-        "lon": -4.050291170965754,
-        "via": true,
-        "nt": null,
-        "ele": 507
-      },
-      {
-        "label": "GREAT KNEESET",
-        "lat": 50.65537032372571,
-        "lon": -3.9974746579420315,
+        "label": "ROUGH TOR",
+        "lat": 50.601495614272984,
+        "lon": -3.971168145597841,
         "via": false,
         "nt": null,
-        "ele": 557
+        "ele": 538
       },
       {
-        "label": "OKEMENT HILL",
-        "lat": 50.67259473950243,
-        "lon": -3.9789577234612694,
+        "label": "BEARDOWN TOR",
+        "lat": 50.57963676183409,
+        "lon": -3.971385157125429,
         "via": true,
-        "nt": null,
-        "ele": 556
+        "nt": null
       },
       {
-        "label": "SITTAFORD TOR",
-        "lat": 50.631086978902864,
-        "lon": -3.933519436318861,
+        "label": "LITTLE MIS TOR",
+        "lat": 50.568946046630394,
+        "lon": -4.028274079493375,
         "via": false,
-        "nt": null,
-        "ele": 531
+        "nt": null
+      },
+      {
+        "label": "BLACK TOR",
+        "lat": 50.528536401642846,
+        "lon": -4.014264592394848,
+        "via": true,
+        "nt": null
+      },
+      {
+        "label": "GUTTER TOR",
+        "lat": 50.48504948613793,
+        "lon": -4.006493729353997,
+        "via": false,
+        "nt": null
+      },
+      {
+        "label": "EYLESBARROW",
+        "lat": 50.50041187954228,
+        "lon": -3.9759805263701846,
+        "via": true,
+        "nt": null
+      },
+      {
+        "label": "PUPERS ROCK",
+        "lat": 50.49106011192124,
+        "lon": -3.872529325764325,
+        "via": false,
+        "nt": null
+      },
+      {
+        "label": "DUNNABRIDGE HILL",
+        "lat": 50.55654119756884,
+        "lon": -3.9218545873009663,
+        "via": false,
+        "nt": null
       },
       {
         "label": "POSTBRIDGE",
         "lat": 50.59309081830653,
         "lon": -3.9143004419548966,
-        "via": true,
-        "nt": null,
-        "ele": 329
-      },
-      {
-        "label": "WATER HILL",
-        "lat": 50.61605507470089,
-        "lon": -3.8793275414969277,
         "via": false,
         "nt": null,
-        "ele": 494
+        "ele": 329
       },
       {
         "label": "KES TOR",
@@ -3670,28 +3071,18 @@
         "ele": 413
       },
       {
-        "label": "WATERN TOR",
-        "lat": 50.66558356724063,
-        "lon": -3.941304416562812,
-        "via": true,
-        "nt": null,
-        "ele": 515
-      },
-      {
-        "label": "SHILSTONE TOR",
-        "lat": 50.69591941271859,
-        "lon": -3.9014930120444857,
+        "label": "HANGINGSTONE HILL",
+        "lat": 50.65855892089285,
+        "lon": -3.9579932253344805,
         "via": false,
-        "nt": null,
-        "ele": 328
+        "nt": null
       },
       {
-        "label": "HIGHER TOR",
-        "lat": 50.708606441108614,
-        "lon": -3.9661686012820163,
+        "label": "OKE TOR",
+        "lat": 50.691090550646216,
+        "lon": -3.964869623572984,
         "via": true,
-        "nt": null,
-        "ele": 458
+        "nt": null
       },
       {
         "label": "FINISH",
